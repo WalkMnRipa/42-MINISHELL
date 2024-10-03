@@ -1,3 +1,15 @@
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    Makefile                                           :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2024/10/01 18:14:10 by jcohen            #+#    #+#              #
+#    Updated: 2024/10/01 18:15:40 by jcohen           ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
+
 # Colors
 GREEN = \033[0;32m
 YELLOW = \033[0;33m
@@ -8,6 +20,7 @@ RESET = \033[0m
 NAME = minishell
 CC = cc
 CFLAGS = -Wall -Wextra -Werror
+READLINE_FLAGS = -lreadline
 
 SRCS = src/main.c src/parsing/tokenizer.c src/parsing/parser.c src/parsing/expander.c src/parsing/syntax_validator.c src/execution/executor.c src/execution/redirections.c src/execution/pipes.c src/execution/builtins/echo.c src/execution/builtins/cd.c src/execution/builtins/pwd.c src/execution/builtins/export.c src/execution/builtins/unset.c src/execution/builtins/env.c src/execution/builtins/exit.c src/utils/environment.c src/utils/signal_handler.c src/utils/error_handling.c src/bonus/wildcards.c src/bonus/logical_operators.c
 
@@ -21,7 +34,7 @@ LIBFT = libft/libft.a
 all: $(NAME)
 
 $(NAME): $(OBJS) $(LIBFT)
-	@$(CC) $(CFLAGS) $(OBJS) -Llibft -lft -o $(NAME)
+	@$(CC) $(CFLAGS) $(OBJS) $(READLINE_FLAGS) -Llibft -lft -o $(NAME)
 	@echo "$(BLUE)$(NAME) created!$(RESET)"
 
 $(OBJS_DIR)/%.o: %.c
