@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 20:01:42 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/10/02 19:16:45 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/10/03 16:39:59 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,10 +62,7 @@ static int	remove_env_var(char **env, const char *name)
 			free(env[i]);
 			j = i;
 			while (env[j])
-			{
-				env[j] = env[j + 1];
-				j++;
-			}
+				env[j++] = env[j + 1];
 			return (0);
 		}
 		i++;
