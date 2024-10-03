@@ -6,7 +6,7 @@
 /*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 17:46:57 by jcohen            #+#    #+#             */
-/*   Updated: 2024/10/03 18:23:13 by jcohen           ###   ########.fr       */
+/*   Updated: 2024/10/03 19:27:06 by jcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,6 +65,6 @@ int					handle_double_quotes(char *input, int i, t_token **head);
 int					handle_word(char *input, int i, t_token **head);
 int					handle_space(char *input, int i);
 
-void				expand_tokens(t_token *head, char **env);
+void				free_tokens(t_token *tokens);
 
 #endif

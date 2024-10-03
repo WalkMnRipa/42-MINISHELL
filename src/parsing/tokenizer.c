@@ -6,7 +6,7 @@
 /*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 18:30:32 by jcohen            #+#    #+#             */
-/*   Updated: 2024/10/03 18:27:22 by jcohen           ###   ########.fr       */
+/*   Updated: 2024/10/03 19:53:27 by jcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,10 +17,17 @@ t_token	*ft_create_token(char *value, t_token_type type,
 {
 	t_token	*token;
 
-	token = malloc(sizeof(t_token));
+	if (!value)
+		return (NULL);
+	token = (t_token *)malloc(sizeof(t_token));
 	if (!token)
 		return (NULL);
 	token->value = ft_strdup(value);
+	if (!token->value)
+	{
+		free(token);
+		return (NULL);
+	}
 	token->type = type;
 	token->quote_type = quote_type;
 	token->next = NULL;
@@ -31,15 +38,17 @@ void	add_token(t_token **head, t_token *new_token)
 {
 	t_token	*current;
 
+	if (!head || !new_token)
+		return ;
 	if (!*head)
-		*head = new_token;
-	else
 	{
-		current = *head;
-		while (current->next)
-			current = current->next;
-		current->next = new_token;
+		*head = new_token;
+		return ;
 	}
+	current = *head;
+	while (current->next)
+		current = current->next;
+	current->next = new_token;
 }
 
 t_token_type	get_token_type(char *value)
@@ -61,22 +70,28 @@ t_token_type	get_token_type(char *value)
 t_token	*ft_tokenizer(char *input)
 {
 	t_token	*head;
-	int		i;
 
+	int i, new_i;
+	if (!input)
+		return (NULL);
 	head = NULL;
 	i = 0;
 	while (input[i])
 	{
 		if (input[i] == '\'')
-			i = handle_single_quotes(input, i, &head);
+			new_i = handle_single_quotes(input, i, &head);
 		else if (input[i] == '"')
-			i = handle_double_quotes(input, i, &head);
+			new_i = handle_double_quotes(input, i, &head);
 		else if (ft_isspace(input[i]))
-			i = handle_space(input, i);
+			new_i = handle_space(input, i);
 		else
-			i = handle_word(input, i, &head);
-		if (input[i])
-			i++;
+			new_i = handle_word(input, i, &head);
+		if (new_i < 0)
+		{
+			free_tokens(head);
+			return (NULL);
+		}
+		i = new_i + 1;
 	}
 	return (head);
 }
