@@ -6,7 +6,7 @@
 /*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 18:30:32 by jcohen            #+#    #+#             */
-/*   Updated: 2024/10/01 19:59:26 by jcohen           ###   ########.fr       */
+/*   Updated: 2024/10/03 18:01:09 by jcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,37 +58,20 @@ t_token_type	get_token_type(char *value)
 
 t_token	*ft_tokenizer(char *input)
 {
-	t_token			*head;
-	char			*start;
-	int				i;
-	char			tmp;
-	t_token_type	type;
+	t_token	*head;
+	int		i;
 
 	head = NULL;
-	start = input;
 	i = 0;
 	while (input[i])
 	{
-		if (input[i] == ' ' || input[i] == '\t')
-		{
-			if (start != input)
-			{
-				tmp = input[i];
-				input[i] = '\0';
-				type = get_token_type(start);
-				add_token(&head, ft_create_token(start, type));
-				input[i] = tmp;
-			}
-			start = input + i + 1;
-		}
+		if (input[i] == '\'' || input[i] == '\"')
+			i = handle_quotes(input, i, &head);
+		else if (ft_isspace(input[i]))
+			i = handle_space(input, i);
+		else
+			i = handle_word(input, i, &head);
 		i++;
-	}
-	if (start != input)
-	{
-		type = get_token_type(start);
-		add_token(&head, ft_create_token(start, type));
 	}
 	return (head);
 }
-
-

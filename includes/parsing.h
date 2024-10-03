@@ -6,7 +6,7 @@
 /*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 17:46:57 by jcohen            #+#    #+#             */
-/*   Updated: 2024/10/03 16:35:47 by jcohen           ###   ########.fr       */
+/*   Updated: 2024/10/03 18:01:44 by jcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,5 +45,14 @@ typedef struct s_token
 	char			*value;
 	struct s_token	*next;
 }					t_token;
+
+t_token				*ft_create_token(char *value, t_token_type type);
+void				add_token(t_token **head, t_token *new_token);
+t_token_type		get_token_type(char *value);
+t_token				*ft_tokenizer(char *input);
+
+int					handle_quotes(char *input, int i, t_token **head);
+int					handle_word(char *input, int i, t_token **head);
+int					handle_space(char *input, int i);
 
 #endif
