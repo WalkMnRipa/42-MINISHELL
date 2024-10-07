@@ -6,7 +6,7 @@
 /*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 18:30:32 by jcohen            #+#    #+#             */
-/*   Updated: 2024/10/03 19:53:27 by jcohen           ###   ########.fr       */
+/*   Updated: 2024/10/07 12:59:34 by jcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,8 +70,9 @@ t_token_type	get_token_type(char *value)
 t_token	*ft_tokenizer(char *input)
 {
 	t_token	*head;
+	int		i;
+	int		new_i;
 
-	int i, new_i;
 	if (!input)
 		return (NULL);
 	head = NULL;
@@ -87,10 +88,7 @@ t_token	*ft_tokenizer(char *input)
 		else
 			new_i = handle_word(input, i, &head);
 		if (new_i < 0)
-		{
-			free_tokens(head);
-			return (NULL);
-		}
+			return (free_tokens(head), NULL);
 		i = new_i + 1;
 	}
 	return (head);
