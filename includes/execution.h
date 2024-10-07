@@ -6,57 +6,48 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 19:06:34 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/10/02 18:07:06 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/10/05 20:13:07 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef EXECUTION_H
 # define EXECUTION_H
 
-# include "../libft/libft.h"
-# include <fcntl.h>
-# include <readline/history.h>
-# include <readline/readline.h>
-# include <signal.h>
+# include <unistd.h>
 # include <stdio.h>
 # include <stdlib.h>
 # include <string.h>
 # include <sys/wait.h>
-# include <unistd.h>
+# include <fcntl.h>
+# include <errno.h>
 
-# define MAX_ARGS 1024
-
-typedef struct s_shell
+typedef struct s_env
 {
-	char	**env;
-	char	**cmd_paths;
-	char	**cmd_args;
-	char	*cmd;
-	int		exit_status;
-}			t_shell;
+    char *key;
+    char *value;
+    struct s_env *next;
+} t_env;
 
-void		initialize_shell(t_shell *shell, char **envp);
-void		execute_command(t_shell *shell, char *input);
-void		cleanup_shell(t_shell *shell);
-void		error_exit(t_shell *shell, char *error_message);
+typedef struct s_cmd
+{
+    char **args;
+    int input_fd;
+    int output_fd;
+    struct s_cmd *next;
+} t_cmd;
 
-// Builtin functions
-void		builtin_echo(char **args);
-void		builtin_cd(t_shell *shell, char **args);
-void		builtin_pwd(void);
-void		builtin_export(t_shell *shell, char **args);
-void		builtin_unset(t_shell *shell, char **args);
-void		builtin_env(t_shell *shell);
-void		builtin_exit(t_shell *shell, char **args);
-void		update_pwd(t_shell *shell, char *old_pwd, char *new_pwd);
+// Environment functions
+t_env *init_env(char **envp);
+char *get_env_value(t_env *env, const char *key);
+void free_env(t_env *env);
 
-// Utility functions
-void		free_string_array(char **arr);
-char		*get_cmd(char **paths, char *cmd);
-char		*ft_strjoin_shell(char const *s1, char const *s2);
-char		*expand_env_vars(t_shell *shell, char *str);
+// Command execution functions
+void execute_command(t_cmd *cmd, t_env *env);
+char *find_command_path(const char *command, t_env *env);
 
-// Signal handling
-void		setup_signals(void);
+// Cleanup and error handling functions
+void free_cmd(t_cmd *cmd);
+void cleanup(t_env *env, t_cmd *cmd);
+void error_exit_message(t_env *env, t_cmd *cmd, const char *message);
 
 #endif
