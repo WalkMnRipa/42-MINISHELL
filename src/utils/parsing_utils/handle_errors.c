@@ -1,47 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   cleanup.c                                          :+:      :+:    :+:   */
+/*   handle_errors.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/01 19:54:50 by jcohen            #+#    #+#             */
-/*   Updated: 2024/10/07 14:15:32 by jcohen           ###   ########.fr       */
+/*   Created: 2024/10/07 13:42:22 by jcohen            #+#    #+#             */
+/*   Updated: 2024/10/07 14:19:58 by jcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/parsing.h"
 
-void	free_tokens(t_token *head)
+t_parse_error	ft_handle_parse_error(t_parse_error error)
 {
-	t_token	*tmp;
-
-	while (head)
-	{
-		tmp = head;
-		head = head->next;
-		free(tmp->value);
-		free(tmp);
-	}
+	if (error == PARSE_ERROR_SYNTAX)
+		ft_putstr_fd("minishell: syntax error\n", 2);
+	else if (error == PARSE_ERROR_MALLOC)
+		ft_putstr_fd("minishell: malloc error\n", 2);
+	else if (error == PARSE_ERROR_PIPE)
+		ft_putstr_fd("minishell: syntax error near unexpected token `|'\n", 2);
+	return (error);
 }
 
-void	free_commands(t_command *head)
-{
-	t_command	*tmp;
-	int			i;
-
-	while (head)
-	{
-		tmp = head;
-		head = head->next;
-		i = 0;
-		while (tmp->args[i])
-		{
-			free(tmp->args[i]);
-			i++;
-		}
-		free(tmp->args);
-		free_redirects(tmp->redirects);
-		free(tmp);
-	}
-}

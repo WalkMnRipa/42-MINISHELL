@@ -1,47 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   cleanup.c                                          :+:      :+:    :+:   */
+/*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/01 19:54:50 by jcohen            #+#    #+#             */
-/*   Updated: 2024/10/07 14:15:32 by jcohen           ###   ########.fr       */
+/*   Created: 2024/10/07 14:20:17 by jcohen            #+#    #+#             */
+/*   Updated: 2024/10/07 14:20:39 by jcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/parsing.h"
 
-void	free_tokens(t_token *head)
+void	ft_copy_array(char **src, char **dst)
 {
-	t_token	*tmp;
+	int	i;
 
-	while (head)
+	if (!src || !dst)
+		return ;
+	i = 0;
+	while (src[i])
 	{
-		tmp = head;
-		head = head->next;
-		free(tmp->value);
-		free(tmp);
+		dst[i] = src[i];
+		i++;
 	}
-}
-
-void	free_commands(t_command *head)
-{
-	t_command	*tmp;
-	int			i;
-
-	while (head)
-	{
-		tmp = head;
-		head = head->next;
-		i = 0;
-		while (tmp->args[i])
-		{
-			free(tmp->args[i]);
-			i++;
-		}
-		free(tmp->args);
-		free_redirects(tmp->redirects);
-		free(tmp);
-	}
+	dst[i] = NULL;
 }
