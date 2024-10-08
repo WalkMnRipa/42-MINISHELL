@@ -6,11 +6,11 @@
 /*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 16:50:42 by jcohen            #+#    #+#             */
-/*   Updated: 2024/10/08 16:51:00 by jcohen           ###   ########.fr       */
+/*   Updated: 2024/10/08 17:40:15 by jcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/parsing.h"
+#include "../../includes/minishell.h"
 
 t_token	*ft_create_token(char *value, t_token_type type,
 		t_quote_type quote_type)
@@ -65,4 +65,26 @@ t_token_type	get_token_type(char *value)
 		return (TOKEN_HERE_DOC);
 	else
 		return (TOKEN_WORD);
+}
+
+t_token	*tokenize_input(char *input, t_env *env, int last_exit_status)
+{
+	t_token	*head;
+	int		i;
+	int		result;
+
+	head = NULL;
+	i = 0;
+	while (input[i])
+	{
+		result = process_token(input, i, &head);
+		if (result < 0)
+		{
+			free_tokens(head);
+			return (NULL);
+		}
+		i = result;
+	}
+	expand_variables_in_tokens(&head, env, last_exit_status);
+	return (head);
 }

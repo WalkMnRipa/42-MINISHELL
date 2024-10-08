@@ -6,7 +6,7 @@
 /*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 17:24:43 by jcohen            #+#    #+#             */
-/*   Updated: 2024/10/08 17:37:31 by jcohen           ###   ########.fr       */
+/*   Updated: 2024/10/08 17:29:10 by jcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,24 +82,4 @@ int	handle_backslash(char *input, int i, t_token **head)
 		return (ft_handle_parse_error(PARSE_ERROR_MALLOC));
 	add_token(head, new_token);
 	return (i + 1);
-}
-
-int	handle_here_doc(char *input, int i, t_token **head)
-{
-	char	*delimiter;
-	int		start;
-	t_token	*new_token;
-
-	start = ++i;
-	while (input[i] && !ft_isspace(input[i]))
-		i++;
-	delimiter = ft_substr(input, start, i - start);
-	if (!delimiter)
-		return (ft_handle_parse_error(PARSE_ERROR_MALLOC));
-	new_token = ft_create_token(delimiter, TOKEN_HERE_DOC, QUOTE_NONE);
-	free(delimiter);
-	if (!new_token)
-		return (ft_handle_parse_error(PARSE_ERROR_MALLOC));
-	add_token(head, new_token);
-	return (i - 1);
 }
