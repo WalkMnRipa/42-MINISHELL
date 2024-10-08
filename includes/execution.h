@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 19:06:34 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/10/08 17:04:18 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/10/08 18:43:08 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,5 +79,8 @@ void				update_pwd(t_env *env, char *old_pwd, char *new_pwd);
 void				create_pipe(int pipefd[2]);
 void				child_process(t_cmd *cmd, t_env **env, int pipefd[2],
 						int is_last);
+char				*ft_strjoin_array(char **array, char *delimiter);
+void				ft_free_array(char **array);
+char				*ft_strtok(char *str, const char *delim);
 
 #endif
