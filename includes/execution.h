@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 19:06:34 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/10/08 18:43:08 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/10/08 18:51:55 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,10 @@
 # define EXECUTION_H
 
 # include "../libft/libft.h"
+# include <dirent.h>
 # include <errno.h>
 # include <fcntl.h>
+# include <signal.h>
 # include <stdio.h>
 # include <stdlib.h>
 # include <sys/wait.h>
@@ -66,8 +68,7 @@ void				builtin_unset(t_env **env, char **args);
 // Cleanup and error handling functions
 void				free_cmd(t_cmd *cmd);
 void				cleanup(t_env *env, t_cmd *cmd);
-void				error_exit_message(t_env *env, t_cmd *cmd,
-						const char *message);
+void				error_exit_message(t_env *env, t_cmd *cmd, char *message);
 
 // Heredoc function
 void				handle_heredoc(t_cmd *cmd, char *delimiter);

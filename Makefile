@@ -1,15 +1,3 @@
-# **************************************************************************** #
-#                                                                              #
-#                                                         :::      ::::::::    #
-#    Makefile                                           :+:      :+:    :+:    #
-#                                                     +:+ +:+         +:+      #
-#    By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+         #
-#                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2024/10/01 18:14:10 by jcohen            #+#    #+#              #
-#    Updated: 2024/10/01 18:15:40 by jcohen           ###   ########.fr        #
-#                                                                              #
-# **************************************************************************** #
-
 # Colors
 GREEN = \033[0;32m
 YELLOW = \033[0;33m
@@ -20,9 +8,8 @@ RESET = \033[0m
 NAME = minishell
 CC = cc
 CFLAGS = -Wall -Wextra -Werror
-READLINE_FLAGS = -lreadline
 
-SRCS = src/main.c src/parsing/tokenizer.c src/parsing/parser.c src/parsing/expander.c src/parsing/syntax_validator.c src/execution/executor.c src/execution/redirections.c src/execution/pipes.c src/execution/builtins/echo.c src/execution/builtins/cd.c src/execution/builtins/pwd.c src/execution/builtins/export.c src/execution/builtins/unset.c src/execution/builtins/env.c src/execution/builtins/exit.c src/utils/environment.c src/utils/signal_handler.c src/utils/error_handling.c src/bonus/wildcards.c src/bonus/logical_operators.c
+SRCS = src/main.c src/parsing/cleanup.c src/parsing/tokenizer.c src/utils/parsing_utils/handles_token_utils.c src/execution/execution_cleanup.c src/execution/env_utils.c src/execution/execute_command.c src/execution/heredoc.c src/execution/pipeline.c src/execution/builtins/cd.c src/execution/builtins/echo.c src/execution/builtins/env.c src/execution/builtins/exit.c src/execution/builtins/export.c src/execution/builtins/pwd.c src/execution/builtins/unset.c src/execution/builtins/update_pwd.c
 
 OBJS_DIR = objs
 OBJS = $(SRCS:%.c=$(OBJS_DIR)/%.o)
@@ -34,13 +21,13 @@ LIBFT = libft/libft.a
 all: $(NAME)
 
 $(NAME): $(OBJS) $(LIBFT)
-	@$(CC) $(CFLAGS) $(OBJS) $(READLINE_FLAGS) -Llibft -lft -o $(NAME)
+	@$(CC) $(CFLAGS) $(OBJS) -Llibft -lft -o $(NAME)
 	@echo "$(BLUE)$(NAME) created!$(RESET)"
 
 $(OBJS_DIR)/%.o: %.c
 	@mkdir -p $(@D)
 	@printf "$(YELLOW)Compiling $<... $(RESET)"
-	@if $(CC) $(CFLAGS) -MMD -MP -I./includes -Ilibft -c $< -o $@ 2>/dev/null; then 		printf "$(GREEN)Done!$(RESET)\n"; 	else 		printf "$(RED)Failed!$(RESET)\n"; 		exit 1; 	fi
+	@if $(CC) $(CFLAGS) -MMD -MP -I./includes -Ilibft -c $< -o $@ ; then 		printf "$(GREEN)Done!$(RESET)\n"; 	else 		printf "$(RED)Failed!$(RESET)\n"; 		exit 1; 	fi
 
 $(LIBFT):
 	@echo "$(YELLOW)Compiling libft...$(RESET)"

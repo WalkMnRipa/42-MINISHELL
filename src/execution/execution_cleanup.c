@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execution_cleanup.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 20:11:10 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/10/07 17:04:40 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/10/08 18:41:15 by jcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ void	cleanup(t_env *env, t_cmd *cmd)
 	}
 }
 
-void	error_exit_message(t_env *env, t_cmd *cmd, const char *message)
+void	error_exit_message(t_env *env, t_cmd *cmd, char *message)
 {
 	if (message)
 		ft_putendl_fd(message, 2);
