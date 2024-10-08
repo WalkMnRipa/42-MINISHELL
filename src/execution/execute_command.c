@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   execute_command.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 20:14:16 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/10/08 17:07:44 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/10/08 18:56:44 by jcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/execution.h"
 
-static char	*find_command_path(const char *command, t_env *env)
+char	*find_command_path(const char *command, t_env *env)
 {
 	char	*path;
 	char	*path_copy;
