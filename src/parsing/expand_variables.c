@@ -1,25 +1,15 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   expand_variables.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/07 13:21:16 by jcohen            #+#    #+#             */
-/*   Updated: 2024/10/08 17:19:18 by jcohen           ###   ########.fr       */
+/*   Created: 2024/10/08 17:07:48 by jcohen            #+#    #+#             */
+/*   Updated: 2024/10/08 17:25:11 by jcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/minishell.h"
+#include "../../includes/parsing.h"
 
-int	main(int argc, char **argv, char **envp)
-{
-	t_shell_data	shell_state;
 
-	(void)argc;
-	(void)argv;
-	init_shell_data(&shell_state, envp);
-	run_shell(&shell_state);
-	cleanup_shell_data(&shell_state);
-	return (shell_state.last_exit_status);
-}

@@ -6,18 +6,28 @@
 /*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 18:30:32 by jcohen            #+#    #+#             */
-/*   Updated: 2024/10/08 16:58:46 by jcohen           ###   ########.fr       */
+/*   Updated: 2024/10/08 17:23:56 by jcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/parsing.h"
 
-static int	process_token(char *input, int i, t_token **head)
+static int	process_token(char *input, int i, t_token **head,
+		int last_exit_status)
 {
 	if (input[i] == '\'')
 		return (handle_single_quotes(input, i, head));
 	else if (input[i] == '"')
 		return (handle_double_quotes(input, i, head));
+	else if (input[i] == '$')
+	{
+		if (input[i + 1] == '?' || input[i + 1] == '$')
+			return (handle_special_variable(input, i, head, last_exit_status));
+		else
+			return (handle_env_variable(input, i, head));
+	}
+	else if (input[i] == '\\')
+		return (handle_backslash(input, i, head));
 	else if (ft_isspace(input[i]))
 		return (handle_space(input, i));
 	else
