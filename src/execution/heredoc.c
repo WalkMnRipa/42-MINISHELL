@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 16:38:41 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/10/07 17:04:30 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/10/08 17:23:59 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ void	handle_heredoc(t_cmd *cmd, char *delimiter)
 	tmp_fd = open(HEREDOC_TMP, O_CREAT | O_WRONLY | O_TRUNC, 0644);
 	if (tmp_fd < 0)
 		error_exit_message(NULL, NULL,
-				"Failed to create temporary heredoc file");
+			"Failed to create temporary heredoc file");
 	write_heredoc(tmp_fd, delimiter);
 	close(tmp_fd);
 	cmd->input_fd = open(HEREDOC_TMP, O_RDONLY);

@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 19:06:34 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/10/07 17:03:10 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/10/08 17:04:18 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@ typedef struct s_cmd
 	char			**args;
 	int				input_fd;
 	int				output_fd;
+	int				exit_status;
 	struct s_cmd	*next;
 }					t_cmd;
 
@@ -42,15 +43,25 @@ typedef struct s_cmd
 t_env				*init_env(char **envp);
 char				*get_env_value(t_env *env, const char *key);
 void				free_env(t_env *env);
+int					custom_setenv(t_env **env, const char *name,
+						const char *value);
+void				remove_env_var(t_env **env, const char *name);
 
 // Command execution functions
-void				execute_command(t_cmd *cmd, t_env *env);
+void				execute_command(t_cmd *cmd, t_env **env);
 char				*find_command_path(const char *command, t_env *env);
-void				execute_pipeline(t_cmd *cmd_list, t_env *env);
+void				execute_pipeline(t_cmd *cmd_list, t_env **env);
 
 // Builtin functions
 int					is_builtin(char *cmd);
-void				execute_builtin(t_cmd *cmd, t_env *env);
+void				execute_builtin(t_cmd *cmd, t_env **env);
+void				builtin_cd(t_env *env, char **args);
+void				builtin_echo(char **args);
+void				builtin_env(t_env *env);
+void				builtin_exit(char **args, int *exit_status);
+void				builtin_export(t_env **env, char **args);
+void				builtin_pwd(void);
+void				builtin_unset(t_env **env, char **args);
 
 // Cleanup and error handling functions
 void				free_cmd(t_cmd *cmd);
@@ -60,5 +71,13 @@ void				error_exit_message(t_env *env, t_cmd *cmd,
 
 // Heredoc function
 void				handle_heredoc(t_cmd *cmd, char *delimiter);
+
+// Update PWD function
+void				update_pwd(t_env *env, char *old_pwd, char *new_pwd);
+
+// Additional functions
+void				create_pipe(int pipefd[2]);
+void				child_process(t_cmd *cmd, t_env **env, int pipefd[2],
+						int is_last);
 
 #endif

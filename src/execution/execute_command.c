@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 20:14:16 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/10/07 17:04:02 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/10/08 17:07:44 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ static char	*find_command_path(const char *command, t_env *env)
 		ft_strlcpy(full_path, dir, ft_strlen(dir) + 1);
 		ft_strlcat(full_path, "/", ft_strlen(full_path) + 2);
 		ft_strlcat(full_path, command, ft_strlen(full_path) + ft_strlen(command)
-				+ 1);
+			+ 1);
 		if (access(full_path, X_OK) == 0)
 		{
 			free(path_copy);
@@ -38,11 +38,28 @@ static char	*find_command_path(const char *command, t_env *env)
 		free(full_path);
 		dir = ft_strtok(NULL, ":");
 	}
-	free(path_copy);
-	return (NULL);
+	return (free(path_copy), NULL);
 }
 
-void	execute_command(t_cmd *cmd, t_env *env)
+void	execute_builtin(t_cmd *cmd, t_env **env)
+{
+	if (ft_strcmp(cmd->args[0], "cd") == 0)
+		builtin_cd(*env, cmd->args);
+	else if (ft_strcmp(cmd->args[0], "echo") == 0)
+		builtin_echo(cmd->args);
+	else if (ft_strcmp(cmd->args[0], "env") == 0)
+		builtin_env(*env);
+	else if (ft_strcmp(cmd->args[0], "exit") == 0)
+		builtin_exit(cmd->args, &(cmd->exit_status));
+	else if (ft_strcmp(cmd->args[0], "export") == 0)
+		builtin_export(env, cmd->args);
+	else if (ft_strcmp(cmd->args[0], "pwd") == 0)
+		builtin_pwd();
+	else if (ft_strcmp(cmd->args[0], "unset") == 0)
+		builtin_unset(env, cmd->args);
+}
+
+void	execute_command(t_cmd *cmd, t_env **env)
 {
 	char	*command_path;
 
@@ -51,7 +68,7 @@ void	execute_command(t_cmd *cmd, t_env *env)
 		execute_builtin(cmd, env);
 		return ;
 	}
-	command_path = find_command_path(cmd->args[0], env);
+	command_path = find_command_path(cmd->args[0], *env);
 	if (!command_path)
 	{
 		ft_putstr_fd("Command not found: ", 2);

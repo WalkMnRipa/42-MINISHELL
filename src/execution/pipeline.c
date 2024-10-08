@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 16:37:14 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/10/07 17:04:19 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/10/08 17:21:11 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ static void	create_pipe(int pipefd[2])
 		error_exit_message(NULL, NULL, "Error: Pipe creation failed");
 }
 
-static void	child_process(t_cmd *cmd, t_env *env, int pipefd[2], int is_last)
+void	child_process(t_cmd *cmd, t_env **env, int pipefd[2], int is_last)
 {
 	if (cmd->input_fd != STDIN_FILENO)
 	{
@@ -37,37 +37,39 @@ static void	child_process(t_cmd *cmd, t_env *env, int pipefd[2], int is_last)
 		close(cmd->output_fd);
 	}
 	execute_command(cmd, env);
-	exit(EXIT_FAILURE); // In case execute_command fails
+	exit(EXIT_FAILURE);
 }
 
-void	execute_pipeline(t_cmd *cmd_list, t_env *env)
+static void	setup_and_execute_command(t_cmd *current, t_cmd *next, t_env **env,
+		int pipefd[2])
+{
+	pid_t	pid;
+
+	if (next)
+		create_pipe(pipefd);
+	pid = fork();
+	if (pid == 0)
+		child_process(current, env, pipefd, next == NULL);
+	else if (pid < 0)
+		error_exit_message(*env, current, "Error: Fork failed");
+	if (next)
+	{
+		next->input_fd = pipefd[0];
+		close(pipefd[1]);
+	}
+}
+
+void	execute_pipeline(t_cmd *cmd_list, t_env **env)
 {
 	t_cmd	*current;
 	int		pipefd[2];
-	pid_t	pid;
 
 	current = cmd_list;
 	while (current)
 	{
-		if (current->next)
-			create_pipe(pipefd);
-		pid = fork();
-		if (pid == 0)
-		{
-			child_process(current, env, pipefd, current->next == NULL);
-		}
-		else if (pid < 0)
-		{
-			error_exit_message(env, cmd_list, "Error: Fork failed");
-		}
-		if (current->next)
-		{
-			current->next->input_fd = pipefd[0];
-			close(pipefd[1]);
-		}
+		setup_and_execute_command(current, current->next, env, pipefd);
 		current = current->next;
 	}
-	// Wait for all child processes
 	while (wait(NULL) > 0)
 		;
 }
