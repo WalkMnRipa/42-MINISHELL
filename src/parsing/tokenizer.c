@@ -6,21 +6,30 @@
 /*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 18:30:32 by jcohen            #+#    #+#             */
-/*   Updated: 2024/10/01 19:59:26 by jcohen           ###   ########.fr       */
+/*   Updated: 2024/10/07 12:59:34 by jcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/parsing.h"
 
-t_token	*ft_create_token(char *value, t_token_type type)
+t_token	*ft_create_token(char *value, t_token_type type,
+		t_quote_type quote_type)
 {
 	t_token	*token;
 
-	token = malloc(sizeof(t_token));
+	if (!value)
+		return (NULL);
+	token = (t_token *)malloc(sizeof(t_token));
 	if (!token)
 		return (NULL);
 	token->value = ft_strdup(value);
+	if (!token->value)
+	{
+		free(token);
+		return (NULL);
+	}
 	token->type = type;
+	token->quote_type = quote_type;
 	token->next = NULL;
 	return (token);
 }
@@ -29,15 +38,17 @@ void	add_token(t_token **head, t_token *new_token)
 {
 	t_token	*current;
 
+	if (!head || !new_token)
+		return ;
 	if (!*head)
-		*head = new_token;
-	else
 	{
-		current = *head;
-		while (current->next)
-			current = current->next;
-		current->next = new_token;
+		*head = new_token;
+		return ;
 	}
+	current = *head;
+	while (current->next)
+		current = current->next;
+	current->next = new_token;
 }
 
 t_token_type	get_token_type(char *value)
@@ -58,37 +69,27 @@ t_token_type	get_token_type(char *value)
 
 t_token	*ft_tokenizer(char *input)
 {
-	t_token			*head;
-	char			*start;
-	int				i;
-	char			tmp;
-	t_token_type	type;
+	t_token	*head;
+	int		i;
+	int		new_i;
 
+	if (!input)
+		return (NULL);
 	head = NULL;
-	start = input;
 	i = 0;
 	while (input[i])
 	{
-		if (input[i] == ' ' || input[i] == '\t')
-		{
-			if (start != input)
-			{
-				tmp = input[i];
-				input[i] = '\0';
-				type = get_token_type(start);
-				add_token(&head, ft_create_token(start, type));
-				input[i] = tmp;
-			}
-			start = input + i + 1;
-		}
-		i++;
-	}
-	if (start != input)
-	{
-		type = get_token_type(start);
-		add_token(&head, ft_create_token(start, type));
+		if (input[i] == '\'')
+			new_i = handle_single_quotes(input, i, &head);
+		else if (input[i] == '"')
+			new_i = handle_double_quotes(input, i, &head);
+		else if (ft_isspace(input[i]))
+			new_i = handle_space(input, i);
+		else
+			new_i = handle_word(input, i, &head);
+		if (new_i < 0)
+			return (free_tokens(head), NULL);
+		i = new_i + 1;
 	}
 	return (head);
 }
-
-
