@@ -6,11 +6,11 @@
 /*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 14:20:17 by jcohen            #+#    #+#             */
-/*   Updated: 2024/10/07 14:20:39 by jcohen           ###   ########.fr       */
+/*   Updated: 2024/10/08 16:19:46 by jcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/parsing.h"
+#include "../../../includes/parsing.h"
 
 void	ft_copy_array(char **src, char **dst)
 {

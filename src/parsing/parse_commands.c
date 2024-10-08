@@ -6,7 +6,7 @@
 /*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 13:07:39 by jcohen            #+#    #+#             */
-/*   Updated: 2024/10/07 14:46:10 by jcohen           ###   ########.fr       */
+/*   Updated: 2024/10/08 16:19:06 by jcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,7 +130,7 @@ t_command	*parse_commands(t_token *tokens)
 			error = add_redirect(current_command, tokens);
 			if (error != PARSE_ERROR_NONE)
 				return (NULL);
-			tokens = tokens->next; // Skip the file name or delimiter token
+			tokens = tokens->next; // passe le filename ou le redirecter 
 		}
 		else if (tokens->type == TOKEN_WORD)
 		{

@@ -6,7 +6,7 @@
 /*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 17:46:57 by jcohen            #+#    #+#             */
-/*   Updated: 2024/10/07 14:30:49 by jcohen           ###   ########.fr       */
+/*   Updated: 2024/10/08 16:43:26 by jcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,11 @@ typedef enum e_parse_error
 	PARSE_ERROR_MALLOC,
 	PARSE_ERROR_PIPE,
 	PARSE_ERROR_REDIR,
+	PARSE_ERROR_REDIR_NO_FILE,
+	PARSE_ERROR_NO_COMMAND,
+	PARSE_ERROR_UNCLOSED_QUOTE,
+	PARSE_ERROR_INVALID_TOKEN,
+	PARSE_ERROR_UNEXPECTED_EOF,
 }						t_parse_error;
 
 typedef struct s_token
@@ -82,6 +87,7 @@ t_token					*ft_create_token(char *value, t_token_type type,
 							t_quote_type quote_type);
 void					add_token(t_token **head, t_token *new_token);
 t_token_type			get_token_type(char *value);
+t_parse_error			check_token_syntax(t_token *tokens);
 t_token					*ft_tokenizer(char *input);
 
 int						handle_single_quotes(char *input, int i,
@@ -92,7 +98,8 @@ int						handle_word(char *input, int i, t_token **head);
 int						handle_space(char *input, int i);
 
 void					free_tokens(t_token *tokens);
+void					*free_commands(t_command *head);
 
 t_parse_error			ft_handle_parse_error(t_parse_error error);
-
+void					ft_copy_array(char **src, char **dst);
 #endif

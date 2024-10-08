@@ -6,11 +6,10 @@
 /*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 13:21:16 by jcohen            #+#    #+#             */
-/*   Updated: 2024/10/07 13:21:40 by jcohen           ###   ########.fr       */
+/*   Updated: 2024/10/08 16:15:34 by jcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-// minishell.c
 int	main(int argc, char **argv, char **envp)
 {
 	t_shell_data	shell_data;

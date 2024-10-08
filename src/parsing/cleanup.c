@@ -6,7 +6,7 @@
 /*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 19:54:50 by jcohen            #+#    #+#             */
-/*   Updated: 2024/10/07 14:15:32 by jcohen           ###   ########.fr       */
+/*   Updated: 2024/10/08 16:30:19 by jcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,23 +25,43 @@ void	free_tokens(t_token *head)
 	}
 }
 
-void	free_commands(t_command *head)
+static void	free_redirects(t_redirect *redirects)
 {
-	t_command	*tmp;
-	int			i;
+	t_redirect	*temp;
+
+	while (redirects)
+	{
+		temp = redirects;
+		redirects = redirects->next;
+		free(temp->file);
+		free(temp);
+	}
+}
+
+static void	free_args(char **args)
+{
+	int	i;
+
+	i = 0;
+	while (args[i])
+	{
+		free(args[i]);
+		i++;
+	}
+	free(args);
+}
+
+void	*free_commands(t_command *head)
+{
+	t_command *temp;
 
 	while (head)
 	{
-		tmp = head;
+		temp = head;
 		head = head->next;
-		i = 0;
-		while (tmp->args[i])
-		{
-			free(tmp->args[i]);
-			i++;
-		}
-		free(tmp->args);
-		free_redirects(tmp->redirects);
-		free(tmp);
+		free_args(temp->args);
+		free_redirects(temp->redirects);
+		free(temp);
 	}
+	return (NULL);
 }
