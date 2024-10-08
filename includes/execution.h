@@ -6,7 +6,7 @@
 /*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 19:06:34 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/10/08 18:56:42 by jcohen           ###   ########.fr       */
+/*   Updated: 2024/10/08 19:30:59 by jcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 # include <signal.h>
 # include <stdio.h>
 # include <stdlib.h>
+# include <string.h>
 # include <sys/wait.h>
 # include <unistd.h>
 
@@ -83,5 +84,9 @@ void				child_process(t_cmd *cmd, t_env **env, int pipefd[2],
 char				*ft_strjoin_array(char **array, char *delimiter);
 void				ft_free_array(char **array);
 char				*ft_strtok(char *str, const char *delim);
+
+char *ft_strjoin_array(char **array, char *separator);
+void ft_free_array(char **array);
+
 
 #endif

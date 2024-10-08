@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   update_pwd.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/02 17:54:26 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/10/08 17:19:25 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/10/08 19:11:26 by jcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ static int	create_env_var(t_env **env, const char *name, const char *value)
 	return (0);
 }
 
-static int	custom_setenv(t_env **env, const char *name, const char *value)
+int	custom_setenv(t_env **env, const char *name, const char *value)
 {
 	t_env	*current;
 

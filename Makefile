@@ -7,9 +7,9 @@ RESET = \033[0m
 
 NAME = minishell
 CC = cc
-CFLAGS = -Wall -Wextra -Werror 
+CFLAGS = -Wall -Wextra -Werror
 
-SRCS = src/main.c src/parsing/cleanup.c src/parsing/tokenizer.c src/utils/parsing_utils/handles_token_utils.c src/execution/execution_cleanup.c src/execution/env_utils.c src/execution/execute_command.c src/execution/heredoc.c src/execution/pipeline.c src/execution/builtins/cd.c src/execution/builtins/echo.c src/execution/builtins/env.c src/execution/builtins/exit.c src/execution/builtins/export.c src/execution/builtins/pwd.c src/execution/builtins/unset.c src/execution/builtins/update_pwd.c
+SRCS = src/main.c src/parsing/cleanup.c src/parsing/tokenizer.c src/utils/parsing_utils/handles_token_utils.c src/execution/execution_cleanup.c src/execution/env_utils.c src/execution/execute_command.c src/execution/heredoc.c src/execution/pipeline.c src/execution/utils.c src/execution/builtins/echo.c src/execution/builtins/env.c src/execution/builtins/exit.c src/execution/builtins/export.c src/execution/builtins/pwd.c src/execution/builtins/unset.c src/execution/builtins/update_pwd.c src/execution/builtins/cd.c
 
 OBJS_DIR = objs
 OBJS = $(SRCS:%.c=$(OBJS_DIR)/%.o)
@@ -21,13 +21,13 @@ LIBFT = libft/libft.a
 all: $(NAME)
 
 $(NAME): $(OBJS) $(LIBFT)
-	@$(CC) $(CFLAGS) $(OBJS) -Llibft -lft -o $(NAME)
+	@$(CC) $(CFLAGS) $(OBJS) -Llibft -lft -lreadline -o $(NAME)
 	@echo "$(BLUE)$(NAME) created!$(RESET)"
 
 $(OBJS_DIR)/%.o: %.c
 	@mkdir -p $(@D)
 	@printf "$(YELLOW)Compiling $<... $(RESET)"
-	@if $(CC) $(CFLAGS) -MMD -MP -I./includes -I/libft -c $< -o $@ ; then 		printf "$(GREEN)Done!$(RESET)\n"; 	else 		printf "$(RED)Failed!$(RESET)\n"; 		exit 1; 	fi
+	@if $(CC) $(CFLAGS) -MMD -MP -I./includes -Ilibft -c $< -o $@ 2>/dev/null; then 		printf "$(GREEN)Done!$(RESET)\n"; 	else 		printf "$(RED)Failed!$(RESET)\n"; 		exit 1; 	fi
 
 $(LIBFT):
 	@echo "$(YELLOW)Compiling libft...$(RESET)"

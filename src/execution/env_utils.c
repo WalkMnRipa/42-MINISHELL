@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env_utils.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 20:13:29 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/10/08 17:23:10 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/10/08 19:27:10 by jcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,3 +80,6 @@ void	free_env(t_env *env)
 		free(tmp);
 	}
 }
+
+// ft_strjoin_free 
+

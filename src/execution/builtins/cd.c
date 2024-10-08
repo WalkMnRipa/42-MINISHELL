@@ -3,24 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cd.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 20:00:59 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/10/08 18:21:42 by ggaribot         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
-#include "../../../includes/execution.h"
-
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   cd.c                                               :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/01 20:00:59 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/10/09 15:30:00 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/10/08 19:10:40 by jcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +56,7 @@ static char	*normalize_path(const char *path)
 	return (result);
 }
 
-static void	change_directory(t_env *env, const char *path)
+static void	change_directory(t_env *env, char *path)
 {
 	char	*old_pwd;
 	char	*new_pwd;

@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   pipeline.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 16:37:14 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/10/08 17:21:11 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/10/08 19:09:49 by jcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/execution.h"
 
-static void	create_pipe(int pipefd[2])
+void	create_pipe(int pipefd[2])
 {
 	if (pipe(pipefd) < 0)
 		error_exit_message(NULL, NULL, "Error: Pipe creation failed");
