@@ -6,13 +6,14 @@
 /*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 19:06:34 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/10/08 19:30:59 by jcohen           ###   ########.fr       */
+/*   Updated: 2024/10/09 14:16:40 by jcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef EXECUTION_H
 # define EXECUTION_H
 
+# include "../libft/get_next_line.h"
 # include "../libft/libft.h"
 # include <dirent.h>
 # include <errno.h>
@@ -85,8 +86,7 @@ char				*ft_strjoin_array(char **array, char *delimiter);
 void				ft_free_array(char **array);
 char				*ft_strtok(char *str, const char *delim);
 
-char *ft_strjoin_array(char **array, char *separator);
-void ft_free_array(char **array);
-
+char				*ft_strjoin_array(char **array, char *separator);
+void				ft_free_array(char **array);
 
 #endif
