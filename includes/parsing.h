@@ -6,7 +6,7 @@
 /*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 17:46:57 by jcohen            #+#    #+#             */
-/*   Updated: 2024/10/03 19:27:06 by jcohen           ###   ########.fr       */
+/*   Updated: 2024/10/10 18:20:27 by jcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 # define PARSING_H
 
 # include "../libft/libft.h"
+# include "execution.h"
 # include <dirent.h>
 # include <fcntl.h>
 # include <readline/history.h>
@@ -28,6 +29,9 @@
 # include <term.h>
 # include <termios.h>
 # include <unistd.h>
+
+# define ERR_UNEXPECTED_NEWLINE "syntax error near unexpected token `newline'\n"
+# define ERR_UNEXPECTED_PIPE "syntax error near unexpected token `|'\n"
 
 typedef enum e_token_type
 {
@@ -60,10 +64,15 @@ void				add_token(t_token **head, t_token *new_token);
 t_token_type		get_token_type(char *value);
 t_token				*ft_tokenizer(char *input);
 
-int					handle_single_quotes(char *input, int i, t_token **head);
-int					handle_double_quotes(char *input, int i, t_token **head);
-int					handle_word(char *input, int i, t_token **head);
-int					handle_space(char *input, int i);
+int					modify_token_type(t_token *token, t_token_type new_type);
+int					handle_pipe(t_token *current);
+int					handle_redir_input(t_token *current);
+int					handle_redir_output(t_token *current);
+int					handle_redir_append(t_token *current);
+int					handle_here_doc(t_token *current);
+
+int					check_syntax_errors(t_token *tokens);
+int					handle_operators(t_token **tokens);
 
 void				free_tokens(t_token *tokens);
 

@@ -6,7 +6,7 @@
 /*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 18:30:32 by jcohen            #+#    #+#             */
-/*   Updated: 2024/10/07 12:59:34 by jcohen           ###   ########.fr       */
+/*   Updated: 2024/10/10 16:18:13 by jcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,5 +91,7 @@ t_token	*ft_tokenizer(char *input)
 			return (free_tokens(head), NULL);
 		i = new_i + 1;
 	}
+	if (handle_operators(&head))
+		return (free_tokens(head), NULL);
 	return (head);
 }

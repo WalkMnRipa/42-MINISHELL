@@ -6,7 +6,7 @@
 /*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 18:00:00 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/10/09 14:27:46 by jcohen           ###   ########.fr       */
+/*   Updated: 2024/10/10 18:09:17 by jcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,6 +91,12 @@ int	main(int argc, char **argv, char **envp)
 		tokens = ft_tokenizer(input);
 		if (!tokens)
 		{
+			free(input);
+			continue ;
+		}
+		if (handle_operators(&tokens))
+		{
+			free_tokens(tokens);
 			free(input);
 			continue ;
 		}
