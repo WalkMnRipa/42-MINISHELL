@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 20:01:56 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/10/08 16:50:30 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/10/10 13:13:13 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 
 void	builtin_exit(char **args, int *exit_status)
 {
-	ft_putendl_fd("exit", 1);
 	if (args[1])
 	{
 		*exit_status = ft_atoi(args[1]);

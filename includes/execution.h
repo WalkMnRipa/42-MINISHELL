@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execution.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
+/*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 19:06:34 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/10/09 14:16:40 by jcohen           ###   ########.fr       */
+/*   Updated: 2024/10/10 13:52:00 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,8 @@ void				builtin_exit(char **args, int *exit_status);
 void				builtin_export(t_env **env, char **args);
 void				builtin_pwd(void);
 void				builtin_unset(t_env **env, char **args);
+int					is_readonly_var(const char *name);
+int					is_valid_env_name(const char *name);
 
 // Cleanup and error handling functions
 void				free_cmd(t_cmd *cmd);

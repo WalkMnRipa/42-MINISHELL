@@ -3,45 +3,45 @@
 /*                                                        :::      ::::::::   */
 /*   unset.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
+/*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 20:01:42 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/10/08 19:25:58 by jcohen           ###   ########.fr       */
+/*   Updated: 2024/10/10 13:51:55 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../../includes/execution.h"
 
-// static int	is_valid_env_name(const char *name)
-// {
-// 	int	i;
+int	is_valid_env_name(const char *name)
+{
+	int	i;
 
-// 	if (!name || !*name || ft_isdigit(*name))
-// 		return (0);
-// 	i = 0;
-// 	while (name[i])
-// 	{
-// 		if (!ft_isalnum(name[i]) && name[i] != '_')
-// 			return (0);
-// 		i++;
-// 	}
-// 	return (1);
-// }
+	if (!name || !*name || ft_isdigit(*name))
+		return (0);
+	i = 0;
+	while (name[i])
+	{
+		if (!ft_isalnum(name[i]) && name[i] != '_')
+			return (0);
+		i++;
+	}
+	return (1);
+}
 
-// static int	is_readonly_var(const char *name)
-// {
-// 	const char	*readonly_vars[] = {"PWD", "OLDPWD", NULL};
-// 	int			i;
+int	is_readonly_var(const char *name)
+{
+	const char	*readonly_vars[] = {"PWD", "OLDPWD", NULL};
+	int			i;
 
-// 	i = 0;
-// 	while (readonly_vars[i])
-// 	{
-// 		if (ft_strcmp(name, readonly_vars[i]) == 0)
-// 			return (1);
-// 		i++;
-// 	}
-// 	return (0);
-// }
+	i = 0;
+	while (readonly_vars[i])
+	{
+		if (ft_strcmp(name, readonly_vars[i]) == 0)
+			return (1);
+		i++;
+	}
+	return (0);
+}
 
 void	remove_env_var(t_env **env, const char *name)
 {
@@ -75,12 +75,25 @@ void	builtin_unset(t_env **env, char **args)
 	i = 1;
 	while (args[i])
 	{
-		remove_env_var(env, args[i]);
+		if (!is_valid_env_name(args[i]))
+		{
+			ft_putstr_fd("minishell: unset: `", 2);
+			ft_putstr_fd(args[i], 2);
+			ft_putendl_fd("': not a valid identifier", 2);
+		}
+		else if (is_readonly_var(args[i]))
+		{
+			ft_putstr_fd("minishell: unset: ", 2);
+			ft_putstr_fd(args[i], 2);
+			ft_putendl_fd(": readonly variable", 2);
+		}
+		else
+		{
+			remove_env_var(env, args[i]);
+		}
 		i++;
 	}
 }
-
-// is_builtin("unset") returns 1
 
 int	is_builtin(char *cmd)
 {

@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 20:01:24 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/10/08 16:53:58 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/10/10 14:05:35 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@ void	builtin_export(t_env **env, char **args)
 	int		i;
 	char	*equal_sign;
 
+	if (!env || !*env)
+		return ;
 	i = 1;
 	while (args[i])
 	{
@@ -28,7 +30,9 @@ void	builtin_export(t_env **env, char **args)
 			*equal_sign = '=';
 		}
 		else
+		{
 			custom_setenv(env, args[i], "");
+		}
 		i++;
 	}
 }
