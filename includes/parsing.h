@@ -6,7 +6,7 @@
 /*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 17:46:57 by jcohen            #+#    #+#             */
-/*   Updated: 2024/10/10 18:20:27 by jcohen           ###   ########.fr       */
+/*   Updated: 2024/10/10 18:51:16 by jcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,9 @@
 
 # define ERR_UNEXPECTED_NEWLINE "syntax error near unexpected token `newline'\n"
 # define ERR_UNEXPECTED_PIPE "syntax error near unexpected token `|'\n"
+# define ERR_UNEXPECTED_TOKEN "syntax error near unexpected token\n"
+# define ERR_MALLOC_FAILED "malloc failed\n"
+# define ERR_INVALID_TOKEN "invalid token\n"
 
 typedef enum e_token_type
 {
@@ -58,11 +61,12 @@ typedef struct s_token
 	struct s_token	*next;
 }					t_token;
 
-t_token				*ft_create_token(char *value, t_token_type type,
+t_token				*create_token(char *value, t_token_type type,
 						t_quote_type quote_type);
 void				add_token(t_token **head, t_token *new_token);
-t_token_type		get_token_type(char *value);
-t_token				*ft_tokenizer(char *input);
+t_token_type		determine_token_type(char *value);
+t_token				*tokenizer(char *input);
+int					check_syntax_errors(t_token *tokens);
 
 int					modify_token_type(t_token *token, t_token_type new_type);
 int					handle_pipe(t_token *current);
@@ -71,8 +75,16 @@ int					handle_redir_output(t_token *current);
 int					handle_redir_append(t_token *current);
 int					handle_here_doc(t_token *current);
 
+int					token_handle_single_quotes(char *input, int i,
+						t_token **head);
+int					token_handle_double_quotes(char *input, int i,
+						t_token **head);
+int					token_handle_word(char *input, int i, t_token **head);
+int					token_handle_space(char *input, int i);
+
 int					check_syntax_errors(t_token *tokens);
 int					handle_operators(t_token **tokens);
+int					handle_token(t_token *token);
 
 void				free_tokens(t_token *tokens);
 

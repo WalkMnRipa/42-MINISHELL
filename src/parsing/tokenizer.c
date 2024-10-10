@@ -6,14 +6,13 @@
 /*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 18:30:32 by jcohen            #+#    #+#             */
-/*   Updated: 2024/10/10 16:18:13 by jcohen           ###   ########.fr       */
+/*   Updated: 2024/10/10 18:46:51 by jcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/parsing.h"
 
-t_token	*ft_create_token(char *value, t_token_type type,
-		t_quote_type quote_type)
+t_token	*create_token(char *value, t_token_type type, t_quote_type quote_type)
 {
 	t_token	*token;
 
@@ -51,7 +50,7 @@ void	add_token(t_token **head, t_token *new_token)
 	current->next = new_token;
 }
 
-t_token_type	get_token_type(char *value)
+t_token_type	determine_token_type(char *value)
 {
 	if (ft_strncmp(value, "|", 2) == 0)
 		return (TOKEN_PIPE);
@@ -67,7 +66,7 @@ t_token_type	get_token_type(char *value)
 		return (TOKEN_WORD);
 }
 
-t_token	*ft_tokenizer(char *input)
+t_token	*tokenizer(char *input)
 {
 	t_token	*head;
 	int		i;
@@ -80,13 +79,13 @@ t_token	*ft_tokenizer(char *input)
 	while (input[i])
 	{
 		if (input[i] == '\'')
-			new_i = handle_single_quotes(input, i, &head);
+			new_i = token_handle_single_quotes(input, i, &head);
 		else if (input[i] == '"')
-			new_i = handle_double_quotes(input, i, &head);
+			new_i = token_handle_double_quotes(input, i, &head);
 		else if (ft_isspace(input[i]))
-			new_i = handle_space(input, i);
+			new_i = token_handle_space(input, i);
 		else
-			new_i = handle_word(input, i, &head);
+			new_i = token_handle_word(input, i, &head);
 		if (new_i < 0)
 			return (free_tokens(head), NULL);
 		i = new_i + 1;

@@ -6,7 +6,7 @@
 /*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 19:06:34 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/10/10 17:47:10 by jcohen           ###   ########.fr       */
+/*   Updated: 2024/10/10 18:57:11 by jcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,8 @@ typedef struct s_env
 	char			*value;
 	struct s_env	*next;
 }					t_env;
+
+
 
 typedef struct s_cmd
 {

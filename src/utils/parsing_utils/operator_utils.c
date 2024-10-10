@@ -6,39 +6,11 @@
 /*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/10 16:27:47 by jcohen            #+#    #+#             */
-/*   Updated: 2024/10/10 18:19:54 by jcohen           ###   ########.fr       */
+/*   Updated: 2024/10/10 18:50:50 by jcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../../includes/parsing.h"
-
-int	handle_operators(t_token **tokens)
-{
-	t_token	*current;
-	int		result;
-
-	if (check_syntax_errors(*tokens))
-		return (1);
-	current = *tokens;
-	while (current)
-	{
-		result = 0;
-		if (current->type == TOKEN_PIPE)
-			result = handle_pipe(current);
-		else if (current->type == TOKEN_REDIR_INPUT)
-			result = handle_redir_input(current);
-		else if (current->type == TOKEN_REDIR_OUTPUT)
-			result = handle_redir_output(current);
-		else if (current->type == TOKEN_REDIR_APPEND)
-			result = handle_redir_append(current);
-		else if (current->type == TOKEN_HERE_DOC)
-			result = handle_here_doc(current);
-		if (result)
-			return (result);
-		current = current->next;
-	}
-	return (0);
-}
 
 int	check_syntax_errors(t_token *tokens)
 {
@@ -52,7 +24,7 @@ int	check_syntax_errors(t_token *tokens)
 		if (expect_word)
 		{
 			if (current->type != TOKEN_WORD)
-				return (ft_putstr_fd("Syntax error: unexpected token\n", 2), 1);
+				return (ft_putstr_fd(ERR_UNEXPECTED_TOKEN, 2), 1);
 			expect_word = 0;
 		}
 		else
@@ -60,11 +32,41 @@ int	check_syntax_errors(t_token *tokens)
 			if (current->type != TOKEN_WORD)
 			{
 				if (!current->next)
-					return (ft_putstr_fd("Syntax error: unexpected token\n", 2),
-						1);
+					return (ft_putstr_fd(ERR_UNEXPECTED_TOKEN, 2), 1);
 				expect_word = 1;
 			}
 		}
+		current = current->next;
+	}
+	return (0);
+}
+
+int	handle_token(t_token *token)
+{
+	if (token->type == TOKEN_PIPE)
+		return (handle_pipe(token));
+	else if (token->type == TOKEN_REDIR_INPUT)
+		return (handle_redir_input(token));
+	else if (token->type == TOKEN_REDIR_OUTPUT)
+		return (handle_redir_output(token));
+	else if (token->type == TOKEN_REDIR_APPEND)
+		return (handle_redir_append(token));
+	else if (token->type == TOKEN_HERE_DOC)
+		return (handle_here_doc(token));
+	return (0);
+}
+
+int	handle_operators(t_token **tokens)
+{
+	t_token	*current;
+
+	if (check_syntax_errors(*tokens))
+		return (1);
+	current = *tokens;
+	while (current)
+	{
+		if (handle_token(current))
+			return (1);
 		current = current->next;
 	}
 	return (0);
