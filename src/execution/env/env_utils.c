@@ -6,13 +6,17 @@
 /*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 20:13:29 by ggaribot          #+#    #+#             */
+<<<<<<< HEAD:src/execution/env_utils.c
 /*   Updated: 2024/10/08 19:27:10 by jcohen           ###   ########.fr       */
+=======
+/*   Updated: 2024/10/11 16:24:05 by ggaribot         ###   ########.fr       */
+>>>>>>> ec5ff35 (ordonner, aucun changement dans code a part makefile):src/execution/env/env_utils.c
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/execution.h"
+#include "../../../includes/execution.h"
 
-static t_env	*create_env_node(char *envp)
+t_env	*create_env_node(char *envp)
 {
 	t_env	*new_node;
 	char	*equals_sign;
@@ -81,5 +85,28 @@ void	free_env(t_env *env)
 	}
 }
 
+<<<<<<< HEAD:src/execution/env_utils.c
 // ft_strjoin_free 
 
+=======
+int	create_env_var(t_env **env, const char *name, const char *value)
+{
+	t_env	*new_node;
+
+	new_node = malloc(sizeof(t_env));
+	if (!new_node)
+		return (-1);
+	new_node->key = ft_strdup(name);
+	new_node->value = ft_strdup(value);
+	new_node->next = *env;
+	*env = new_node;
+	if (!new_node->key || !new_node->value)
+	{
+		free(new_node->key);
+		free(new_node->value);
+		free(new_node);
+		return (-1);
+	}
+	return (0);
+}
+>>>>>>> ec5ff35 (ordonner, aucun changement dans code a part makefile):src/execution/env/env_utils.c
