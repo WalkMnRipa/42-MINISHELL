@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parser.c                                           :+:      :+:    :+:   */
+/*   command_builder.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/10 16:27:46 by jcohen            #+#    #+#             */
-/*   Updated: 2024/10/11 21:49:38 by jcohen           ###   ########.fr       */
+/*   Updated: 2024/10/11 22:35:35 by jcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,7 @@ static int	handle_redirection(t_token **token, t_cmd *cmd)
 	return (1);
 }
 
-static int	process_token(t_token **token, t_cmd **current, t_cmd **head)
+static int	process_token(t_token **token, t_cmd **current)
 {
 	if ((*token)->type == TOKEN_WORD)
 	{
@@ -119,7 +119,7 @@ t_cmd	*group_tokens_into_commands(t_token *token_list)
 			if (!head)
 				head = current;
 		}
-		if (!process_token(&token, &current, &head))
+		if (!process_token(&token, &current))
 			return (NULL);
 		token = token->next;
 	}

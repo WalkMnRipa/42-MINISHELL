@@ -6,7 +6,7 @@
 /*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 18:00:00 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/10/11 22:30:19 by jcohen           ###   ########.fr       */
+/*   Updated: 2024/10/11 22:33:15 by jcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ static void	process_input(char *input, t_env **env)
 		free_tokens(tokens);
 		return ;
 	}
-	execute_commands(cmd_list, env);
+	execute_command(cmd_list, env);
 	free_tokens(tokens);
 	free_cmd_list(cmd_list);
 }

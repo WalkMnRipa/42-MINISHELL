@@ -6,7 +6,7 @@
 /*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 18:00:39 by jcohen            #+#    #+#             */
-/*   Updated: 2024/10/11 22:25:11 by jcohen           ###   ########.fr       */
+/*   Updated: 2024/10/11 22:37:17 by jcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ int	token_handle_single_quotes(char *input, int i, t_token **head)
 		value = ft_substr(input, start + 1, i - start - 1);
 		if (!value)
 			return (-1);
-		new_token = ft_create_token(value, TOKEN_WORD, QUOTE_SINGLE);
+		new_token = create_token(value, TOKEN_WORD, QUOTE_SINGLE);
 		if (!new_token)
 		{
 			free(value);
@@ -57,7 +57,7 @@ int	token_handle_double_quotes(char *input, int i, t_token **head)
 		value = ft_substr(input, start + 1, i - start - 1);
 		if (!value)
 			return (-1);
-		new_token = ft_create_token(value, TOKEN_WORD, QUOTE_DOUBLE);
+		new_token = create_token(value, TOKEN_WORD, QUOTE_DOUBLE);
 		if (!new_token)
 		{
 			free(value);
@@ -82,7 +82,7 @@ int	token_handle_word(char *input, int i, t_token **head)
 	value = ft_substr(input, start, i - start);
 	if (!value)
 		return (i);
-	new_token = ft_create_token(value, determine_token_type(value), QUOTE_NONE);
+	new_token = create_token(value, determine_token_type(value), QUOTE_NONE);
 	free(value);
 	if (!new_token)
 		return (-1);
