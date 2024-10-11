@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 20:01:42 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/10/10 13:51:55 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/10/11 15:56:29 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,16 +30,10 @@ int	is_valid_env_name(const char *name)
 
 int	is_readonly_var(const char *name)
 {
-	const char	*readonly_vars[] = {"PWD", "OLDPWD", NULL};
-	int			i;
-
-	i = 0;
-	while (readonly_vars[i])
-	{
-		if (ft_strcmp(name, readonly_vars[i]) == 0)
-			return (1);
-		i++;
-	}
+	if (ft_strcmp(name, "PWD") == 0)
+		return (1);
+	if (ft_strcmp(name, "OLDPWD") == 0)
+		return (1);
 	return (0);
 }
 
@@ -93,14 +87,4 @@ void	builtin_unset(t_env **env, char **args)
 		}
 		i++;
 	}
-}
-
-int	is_builtin(char *cmd)
-{
-	if (ft_strcmp(cmd, "cd") == 0 || ft_strcmp(cmd, "echo") == 0
-		|| ft_strcmp(cmd, "env") == 0 || ft_strcmp(cmd, "exit") == 0
-		|| ft_strcmp(cmd, "export") == 0 || ft_strcmp(cmd, "pwd") == 0
-		|| ft_strcmp(cmd, "unset") == 0)
-		return (1);
-	return (0);
 }

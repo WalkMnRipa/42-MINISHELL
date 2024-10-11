@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 19:06:34 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/10/10 13:52:00 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/10/11 15:51:32 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,8 +66,12 @@ void				builtin_exit(char **args, int *exit_status);
 void				builtin_export(t_env **env, char **args);
 void				builtin_pwd(void);
 void				builtin_unset(t_env **env, char **args);
-int					is_readonly_var(const char *name);
-int					is_valid_env_name(const char *name);
+
+// Utility functions
+char				*ft_strjoin3(const char *s1, const char *s2,
+						const char *s3);
+int					is_direct_executable(const char *command);
+char				*try_path(const char *dir, const char *command);
 
 // Cleanup and error handling functions
 void				free_cmd(t_cmd *cmd);
@@ -79,16 +83,6 @@ void				handle_heredoc(t_cmd *cmd, char *delimiter);
 
 // Update PWD function
 void				update_pwd(t_env *env, char *old_pwd, char *new_pwd);
-
-// Additional functions
-void				create_pipe(int pipefd[2]);
-void				child_process(t_cmd *cmd, t_env **env, int pipefd[2],
-						int is_last);
-char				*ft_strjoin_array(char **array, char *delimiter);
-void				ft_free_array(char **array);
 char				*ft_strtok(char *str, const char *delim);
-
-char				*ft_strjoin_array(char **array, char *separator);
-void				ft_free_array(char **array);
 
 #endif

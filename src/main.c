@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
+/*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 18:00:00 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/10/09 14:27:46 by jcohen           ###   ########.fr       */
+/*   Updated: 2024/10/11 15:40:14 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,13 +79,11 @@ int	main(int argc, char **argv, char **envp)
 	env = init_env(envp);
 	if (!env)
 		return (1);
-	signal(SIGINT, signal_handler);
-	signal(SIGQUIT, SIG_IGN);
 	while (1)
 	{
 		input = readline("minishell> ");
 		if (!input)
-			break ;
+			break ; // EOF (Ctrl+D)
 		if (*input)
 			add_history(input);
 		tokens = ft_tokenizer(input);
@@ -95,16 +93,14 @@ int	main(int argc, char **argv, char **envp)
 			continue ;
 		}
 		cmd = tokens_to_cmd(tokens);
+		// This function needs to be implemented by the parsing team
 		if (!cmd)
 		{
 			free_tokens(tokens);
 			free(input);
 			continue ;
 		}
-		if (is_builtin(cmd->args[0]))
-			execute_builtin(cmd, &env);
-		else
-			execute_command(cmd, &env);
+		execute_command(cmd, &env);
 		free_tokens(tokens);
 		free_cmd(cmd);
 		free(input);

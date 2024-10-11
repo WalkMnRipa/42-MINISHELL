@@ -9,7 +9,7 @@ NAME = minishell
 CC = cc
 CFLAGS = -Wall -Wextra -Werror
 
-SRCS = src/main.c src/parsing/cleanup.c src/parsing/tokenizer.c src/utils/parsing_utils/handles_token_utils.c src/execution/execution_cleanup.c src/execution/env_utils.c src/execution/execute_command.c src/execution/heredoc.c src/execution/pipeline.c src/execution/utils.c src/execution/builtins/echo.c src/execution/builtins/env.c src/execution/builtins/exit.c src/execution/builtins/export.c src/execution/builtins/pwd.c src/execution/builtins/unset.c src/execution/builtins/update_pwd.c src/execution/builtins/cd.c
+SRCS = src/main.c src/parsing/cleanup.c src/parsing/tokenizer.c src/utils/parsing_utils/handles_token_utils.c src/execution/execution_cleanup.c src/execution/env_utils.c src/execution/execute_command.c src/execution/heredoc.c src/execution/pipeline.c src/execution/utils.c src/execution/builtins/echo.c src/execution/builtins/env.c src/execution/builtins/exit.c src/execution/builtins/export.c src/execution/builtins/pwd.c src/execution/builtins/unset.c src/execution/builtins/update_pwd.c src/execution/builtins/cd.c src/execution/command_utils.c src/execution/builtins/builtins.c
 
 OBJS_DIR = objs
 OBJS = $(SRCS:%.c=$(OBJS_DIR)/%.o)
