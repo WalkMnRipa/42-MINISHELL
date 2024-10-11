@@ -1,40 +1,35 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   unset.c                                            :+:      :+:    :+:   */
+/*   custom_setenv.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/01 20:01:42 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/10/11 16:25:46 by ggaribot         ###   ########.fr       */
+/*   Created: 2024/10/11 16:23:05 by ggaribot          #+#    #+#             */
+/*   Updated: 2024/10/11 16:24:09 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../../includes/execution.h"
 
-void	builtin_unset(t_env **env, char **args)
+int	custom_setenv(t_env **env, const char *name, const char *value)
 {
-	int	i;
+	t_env *current;
 
-	i = 1;
-	while (args[i])
+	if (!env || !*env || !name || !value)
+		return (-1);
+	current = *env;
+	while (current)
 	{
-		if (!is_valid_env_name(args[i]))
+		if (ft_strcmp(current->key, name) == 0)
 		{
-			ft_putstr_fd("minishell: unset: `", 2);
-			ft_putstr_fd(args[i], 2);
-			ft_putendl_fd("': not a valid identifier", 2);
+			free(current->value);
+			current->value = ft_strdup(value);
+			if (!current->value)
+				return (-1);
+			return (0);
 		}
-		else if (is_readonly_var(args[i]))
-		{
-			ft_putstr_fd("minishell: unset: ", 2);
-			ft_putstr_fd(args[i], 2);
-			ft_putendl_fd(": readonly variable", 2);
-		}
-		else
-		{
-			remove_env_var(env, args[i]);
-		}
-		i++;
+		current = current->next;
 	}
+	return (create_env_var(env, name, value));
 }

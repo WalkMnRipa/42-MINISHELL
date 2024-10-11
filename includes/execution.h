@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 19:06:34 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/10/11 15:51:32 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/10/11 16:26:22 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,12 @@ char				*get_env_value(t_env *env, const char *key);
 void				free_env(t_env *env);
 int					custom_setenv(t_env **env, const char *name,
 						const char *value);
+t_env				*create_env_node(char *envp);
+int					create_env_var(t_env **env, const char *name,
+						const char *value);
 void				remove_env_var(t_env **env, const char *name);
+int					is_readonly_var(const char *name);
+int					is_valid_env_name(const char *name);
 
 // Command execution functions
 void				execute_command(t_cmd *cmd, t_env **env);

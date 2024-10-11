@@ -6,11 +6,11 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/11 15:38:44 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/10/11 15:41:21 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/10/11 16:48:59 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/execution.h"
+#include "../../../includes/execution.h"
 
 char	*ft_strjoin3(const char *s1, const char *s2, const char *s3)
 {

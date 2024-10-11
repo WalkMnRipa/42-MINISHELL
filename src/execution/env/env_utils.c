@@ -6,13 +6,13 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 20:13:29 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/10/10 12:50:58 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/10/11 16:24:05 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/execution.h"
+#include "../../../includes/execution.h"
 
-static t_env	*create_env_node(char *envp)
+t_env	*create_env_node(char *envp)
 {
 	t_env	*new_node;
 	char	*equals_sign;
@@ -79,4 +79,25 @@ void	free_env(t_env *env)
 		free(tmp->value);
 		free(tmp);
 	}
+}
+
+int	create_env_var(t_env **env, const char *name, const char *value)
+{
+	t_env	*new_node;
+
+	new_node = malloc(sizeof(t_env));
+	if (!new_node)
+		return (-1);
+	new_node->key = ft_strdup(name);
+	new_node->value = ft_strdup(value);
+	new_node->next = *env;
+	*env = new_node;
+	if (!new_node->key || !new_node->value)
+	{
+		free(new_node->key);
+		free(new_node->value);
+		free(new_node);
+		return (-1);
+	}
+	return (0);
 }
