@@ -6,7 +6,7 @@
 /*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 17:46:57 by jcohen            #+#    #+#             */
-/*   Updated: 2024/10/10 18:51:16 by jcohen           ###   ########.fr       */
+/*   Updated: 2024/10/11 22:23:23 by jcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,11 +30,14 @@
 # include <termios.h>
 # include <unistd.h>
 
-# define ERR_UNEXPECTED_NEWLINE "syntax error near unexpected token `newline'\n"
-# define ERR_UNEXPECTED_PIPE "syntax error near unexpected token `|'\n"
-# define ERR_UNEXPECTED_TOKEN "syntax error near unexpected token\n"
-# define ERR_MALLOC_FAILED "malloc failed\n"
-# define ERR_INVALID_TOKEN "invalid token\n"
+# define ERR_UNEXPECTED_NEWLINE "syntax error near unexpected token `newline'"
+# define ERR_UNEXPECTED_PIPE "syntax error near unexpected token `|'"
+# define ERR_UNEXPECTED_TOKEN "syntax error near unexpected token"
+# define ERR_MALLOC_FAILED "malloc failed"
+# define ERR_INVALID_TOKEN "invalid token"
+
+# define ERR_SINGLE_QUOTE "Error: Unclosed single quote"
+# define ERR_DOUBLE_QUOTE "Error: Unclosed double quote"
 
 typedef enum e_token_type
 {
@@ -85,6 +88,10 @@ int					token_handle_space(char *input, int i);
 int					check_syntax_errors(t_token *tokens);
 int					handle_operators(t_token **tokens);
 int					handle_token(t_token *token);
+
+t_cmd				*group_tokens_into_commands(t_token *token_list);
+
+int					check_unclosed_quotes(char *input);
 
 void				free_tokens(t_token *tokens);
 

@@ -6,7 +6,7 @@
 /*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 18:00:39 by jcohen            #+#    #+#             */
-/*   Updated: 2024/10/10 18:46:24 by jcohen           ###   ########.fr       */
+/*   Updated: 2024/10/11 22:25:11 by jcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,4 +95,28 @@ int	token_handle_space(char *input, int i)
 	while (input[i] && ft_isspace(input[i]))
 		i++;
 	return (i - 1);
+}
+
+int	check_unclosed_quotes(char *input)
+{
+	int	i;
+	int	in_single_quote;
+	int	in_double_quote;
+
+	i = 0;
+	in_single_quote = 0;
+	in_double_quote = 0;
+	while (input[i])
+	{
+		if (input[i] == '\'' && !in_double_quote)
+			in_single_quote = !in_single_quote;
+		else if (input[i] == '"' && !in_single_quote)
+			in_double_quote = !in_double_quote;
+		i++;
+	}
+	if (in_single_quote)
+		return (ft_putendl_fd(ERR_SINGLE_QUOTE, 2), 1);
+	if (in_double_quote)
+		return (ft_putendl_fd(ERR_DOUBLE_QUOTE, 2), 1);
+	return (0);
 }
