@@ -6,7 +6,7 @@
 /*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/10 16:27:47 by jcohen            #+#    #+#             */
-/*   Updated: 2024/10/11 22:25:26 by jcohen           ###   ########.fr       */
+/*   Updated: 2024/10/15 14:35:37 by jcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,16 @@ int	check_syntax_errors(t_token *tokens)
 	return (0);
 }
 
+int	handle_here_doc(t_token *current)
+{
+	if (!current->next)
+	{
+		ft_putendl_fd(ERR_UNEXPECTED_NEWLINE, 2);
+		return (1);
+	}
+	return (modify_token_type(current, TOKEN_HERE_DOC));
+}
+
 int	handle_token(t_token *token)
 {
 	if (token->type == TOKEN_PIPE)
@@ -58,7 +68,7 @@ int	handle_token(t_token *token)
 
 int	handle_operators(t_token **tokens)
 {
-	t_token	*current;
+	t_token *current;
 
 	if (check_syntax_errors(*tokens))
 		return (1);
@@ -70,14 +80,4 @@ int	handle_operators(t_token **tokens)
 		current = current->next;
 	}
 	return (0);
-}
-
-int	handle_here_doc(t_token *current)
-{
-	if (!current->next)
-	{
-		ft_putendl_fd(ERR_UNEXPECTED_NEWLINE, 2);
-		return (1);
-	}
-	return (modify_token_type(current, TOKEN_HERE_DOC));
 }
