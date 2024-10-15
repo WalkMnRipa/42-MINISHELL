@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokenizer.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
+/*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 18:30:32 by jcohen            #+#    #+#             */
-/*   Updated: 2024/10/15 14:31:17 by jcohen           ###   ########.fr       */
+/*   Updated: 2024/10/15 20:13:08 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,12 +66,26 @@ t_token_type	determine_token_type(char *value)
 
 static int	handle_token(char *input, int i, t_token **head)
 {
+	char	*value;
+	t_token	*new_token;
+
 	if (input[i] == '\'')
 		return (token_handle_single_quotes(input, i, head));
 	else if (input[i] == '"')
 		return (token_handle_double_quotes(input, i, head));
 	else if (ft_isspace(input[i]))
 		return (token_handle_space(input, i));
+	else if (input[i] == '<' || input[i] == '>' || input[i] == '|')
+	{
+		value = ft_substr(input, i, 1);
+		new_token = create_token(value, determine_token_type(value),
+				QUOTE_NONE);
+		free(value);
+		if (!new_token)
+			return (-1);
+		add_token(head, new_token);
+		return (i);
+	}
 	else
 		return (token_handle_word(input, i, head));
 }

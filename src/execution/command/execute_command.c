@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 20:14:16 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/10/15 19:03:53 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/10/15 20:12:36 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,16 +49,6 @@ static void	handle_command_not_found(t_cmd *cmd)
 	cmd->exit_status = 127;
 }
 
-static void	execute_child_process(char *command_path, t_cmd *cmd)
-{
-	execve(command_path, cmd->args, NULL);
-	ft_putstr_fd("minishell: ", 2);
-	ft_putstr_fd(cmd->args[0], 2);
-	ft_putstr_fd(": ", 2);
-	perror("");
-	exit(126);
-}
-
 static void	wait_for_child(pid_t pid, t_cmd *cmd)
 {
 	int	status;
@@ -68,13 +58,6 @@ static void	wait_for_child(pid_t pid, t_cmd *cmd)
 		cmd->exit_status = WEXITSTATUS(status);
 	else if (WIFSIGNALED(status))
 		cmd->exit_status = 128 + WTERMSIG(status);
-}
-
-static void	execute_external_command(char *command_path, t_cmd *cmd)
-{
-	if (setup_redirections(cmd))
-		execute_child_process(command_path, cmd);
-	exit(EXIT_FAILURE);
 }
 
 static void	handle_external_command(t_cmd *cmd, t_env **env)
@@ -95,7 +78,11 @@ static void	handle_external_command(t_cmd *cmd, t_env **env)
 		cmd->exit_status = 1;
 	}
 	else if (pid == 0)
-		execute_external_command(command_path, cmd);
+	{
+		execve(command_path, cmd->args, NULL);
+		perror("minishell: execve");
+		exit(EXIT_FAILURE);
+	}
 	else
 		wait_for_child(pid, cmd);
 	free(command_path);
@@ -105,11 +92,13 @@ void	execute_command(t_cmd *cmd, t_env **env)
 {
 	if (!cmd || !cmd->args || !cmd->args[0])
 		return ;
-	if (is_builtin(cmd->args[0]))
+	if (setup_redirections(cmd) == 0)
 	{
-		if (setup_redirections(cmd))
-			execute_builtin(cmd, env);
+		cmd->exit_status = 1;
+		return ;
 	}
+	if (is_builtin(cmd->args[0]))
+		execute_builtin(cmd, env);
 	else
 		handle_external_command(cmd, env);
 }
