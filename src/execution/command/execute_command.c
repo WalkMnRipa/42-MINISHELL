@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 20:14:16 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/10/11 16:49:05 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/10/15 17:43:05 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,16 +70,18 @@ static void	wait_for_child(pid_t pid, t_cmd *cmd)
 		cmd->exit_status = 128 + WTERMSIG(status);
 }
 
-void	execute_command(t_cmd *cmd, t_env **env)
+static void	execute_external_command(char *command_path, t_cmd *cmd)
+{
+	if (setup_redirections(cmd))
+		execute_child_process(command_path, cmd);
+	exit(EXIT_FAILURE);
+}
+
+static void	handle_external_command(t_cmd *cmd, t_env **env)
 {
 	char	*command_path;
 	pid_t	pid;
 
-	if (is_builtin(cmd->args[0]))
-	{
-		execute_builtin(cmd, env);
-		return ;
-	}
 	command_path = find_command_path(cmd->args[0], *env);
 	if (!command_path)
 	{
@@ -93,8 +95,19 @@ void	execute_command(t_cmd *cmd, t_env **env)
 		cmd->exit_status = 1;
 	}
 	else if (pid == 0)
-		execute_child_process(command_path, cmd);
+		execute_external_command(command_path, cmd);
 	else
 		wait_for_child(pid, cmd);
 	free(command_path);
+}
+
+void	execute_command(t_cmd *cmd, t_env **env)
+{
+	if (is_builtin(cmd->args[0]))
+	{
+		if (setup_redirections(cmd))
+			execute_builtin(cmd, env);
+		return ;
+	}
+	handle_external_command(cmd, env);
 }

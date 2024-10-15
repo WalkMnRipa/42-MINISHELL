@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 19:06:34 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/10/11 16:26:22 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/10/15 17:45:51 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,9 @@ typedef struct s_env
 typedef struct s_cmd
 {
 	char			**args;
+	char			*input_file;
+	char			*output_file;
+	int				append_output;
 	int				input_fd;
 	int				output_fd;
 	int				exit_status;
@@ -89,5 +92,7 @@ void				handle_heredoc(t_cmd *cmd, char *delimiter);
 // Update PWD function
 void				update_pwd(t_env *env, char *old_pwd, char *new_pwd);
 char				*ft_strtok(char *str, const char *delim);
+
+int					setup_redirections(t_cmd *cmd);
 
 #endif
