@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   command_builder.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
+/*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/10 16:27:46 by jcohen            #+#    #+#             */
-/*   Updated: 2024/10/11 22:35:35 by jcohen           ###   ########.fr       */
+/*   Updated: 2024/10/15 19:03:28 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,9 @@ static t_cmd	*create_new_command(void)
 	if (!new_cmd)
 		return (NULL);
 	new_cmd->args = NULL;
+	new_cmd->input_file = NULL;
+	new_cmd->output_file = NULL;
+	new_cmd->append_output = 0;
 	new_cmd->input_fd = STDIN_FILENO;
 	new_cmd->output_fd = STDOUT_FILENO;
 	new_cmd->exit_status = 0;
@@ -56,22 +59,20 @@ static int	add_argument(t_cmd *cmd, char *arg)
 
 static int	handle_redirection(t_token **token, t_cmd *cmd)
 {
-	int	fd;
-
 	if ((*token)->type == TOKEN_REDIR_INPUT)
-		fd = open((*token)->next->value, O_RDONLY);
+		cmd->input_file = ft_strdup((*token)->next->value);
 	else if ((*token)->type == TOKEN_REDIR_OUTPUT)
-		fd = open((*token)->next->value, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	{
+		cmd->output_file = ft_strdup((*token)->next->value);
+		cmd->append_output = 0;
+	}
 	else if ((*token)->type == TOKEN_REDIR_APPEND)
-		fd = open((*token)->next->value, O_WRONLY | O_CREAT | O_APPEND, 0644);
+	{
+		cmd->output_file = ft_strdup((*token)->next->value);
+		cmd->append_output = 1;
+	}
 	else
 		return (0);
-	if (fd == -1)
-		return (0);
-	if ((*token)->type == TOKEN_REDIR_INPUT)
-		cmd->input_fd = fd;
-	else
-		cmd->output_fd = fd;
 	*token = (*token)->next;
 	return (1);
 }
@@ -91,8 +92,8 @@ static int	process_token(t_token **token, t_cmd **current)
 		*current = (*current)->next;
 	}
 	else if ((*token)->type == TOKEN_REDIR_INPUT
-		|| (*token)->type == TOKEN_REDIR_OUTPUT
-		|| (*token)->type == TOKEN_REDIR_APPEND)
+			|| (*token)->type == TOKEN_REDIR_OUTPUT
+			|| (*token)->type == TOKEN_REDIR_APPEND)
 	{
 		if (!handle_redirection(token, *current))
 			return (0);

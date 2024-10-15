@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/15 17:39:24 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/10/15 17:42:37 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/10/15 19:04:18 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,6 +78,8 @@ static int	handle_output_redirection(t_cmd *cmd)
 
 int	setup_redirections(t_cmd *cmd)
 {
+	if (!cmd)
+		return (0);
 	if (!handle_input_redirection(cmd))
 		return (0);
 	if (!handle_output_redirection(cmd))

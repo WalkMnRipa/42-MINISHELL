@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 18:00:00 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/10/15 18:10:35 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/10/15 19:05:23 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,44 +29,6 @@ void	signal_handler(int signo)
 	}
 }
 
-t_cmd	*tokens_to_cmd(t_token *tokens)
-{
-	t_cmd	*cmd;
-	int		arg_count;
-	t_token	*current;
-	int		i;
-
-	cmd = malloc(sizeof(t_cmd));
-	if (!cmd)
-		return (NULL);
-	arg_count = 0;
-	current = tokens;
-	while (current && current->type != TOKEN_PIPE)
-	{
-		arg_count++;
-		current = current->next;
-	}
-	cmd->args = malloc(sizeof(char *) * (arg_count + 1));
-	if (!cmd->args)
-	{
-		free(cmd);
-		return (NULL);
-	}
-	i = 0;
-	current = tokens;
-	while (current && current->type != TOKEN_PIPE)
-	{
-		cmd->args[i] = ft_strdup(current->value);
-		i++;
-		current = current->next;
-	}
-	cmd->args[i] = NULL;
-	cmd->input_fd = STDIN_FILENO;
-	cmd->output_fd = STDOUT_FILENO;
-	cmd->next = NULL;
-	return (cmd);
-}
-
 int	main(int argc, char **argv, char **envp)
 {
 	char	*input;
@@ -79,21 +41,22 @@ int	main(int argc, char **argv, char **envp)
 	env = init_env(envp);
 	if (!env)
 		return (1);
+	signal(SIGINT, signal_handler);
+	signal(SIGQUIT, SIG_IGN);
 	while (1)
 	{
 		input = readline("minishell> ");
 		if (!input)
-			break ; // EOF (Ctrl+D)
+			break ;
 		if (*input)
 			add_history(input);
-		tokens = ft_tokenizer(input);
+		tokens = tokenizer(input);
 		if (!tokens)
 		{
 			free(input);
 			continue ;
 		}
-		cmd = tokens_to_cmd(tokens);
-		// This function needs to be implemented by the parsing team
+		cmd = group_tokens_into_commands(tokens);
 		if (!cmd)
 		{
 			free_tokens(tokens);

@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 20:14:16 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/10/15 17:43:05 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/10/15 19:03:53 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,11 +103,13 @@ static void	handle_external_command(t_cmd *cmd, t_env **env)
 
 void	execute_command(t_cmd *cmd, t_env **env)
 {
+	if (!cmd || !cmd->args || !cmd->args[0])
+		return ;
 	if (is_builtin(cmd->args[0]))
 	{
 		if (setup_redirections(cmd))
 			execute_builtin(cmd, env);
-		return ;
 	}
-	handle_external_command(cmd, env);
+	else
+		handle_external_command(cmd, env);
 }
