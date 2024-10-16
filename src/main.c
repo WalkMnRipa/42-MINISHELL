@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 18:00:00 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/10/15 20:13:28 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/10/17 01:09:32 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,15 +46,9 @@ int	main(int argc, char **argv, char **envp)
 	stdin_backup = dup(STDIN_FILENO);
 	while (1)
 	{
-		g_signal_received = 0;
-		dup2(stdin_backup, STDIN_FILENO);
 		input = readline("minishell> ");
 		if (!input)
-		{
-			if (isatty(STDIN_FILENO))
-				printf("\nExiting minishell\n");
 			break ;
-		}
 		if (*input)
 		{
 			add_history(input);

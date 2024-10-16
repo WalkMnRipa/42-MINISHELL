@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 20:14:16 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/10/15 20:12:36 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/10/17 01:09:50 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,6 +90,11 @@ static void	handle_external_command(t_cmd *cmd, t_env **env)
 
 void	execute_command(t_cmd *cmd, t_env **env)
 {
+	int	stdin_backup;
+	int	stdout_backup;
+
+	stdin_backup = dup(STDIN_FILENO);
+	stdout_backup = dup(STDOUT_FILENO);
 	if (!cmd || !cmd->args || !cmd->args[0])
 		return ;
 	if (setup_redirections(cmd) == 0)
@@ -101,4 +106,8 @@ void	execute_command(t_cmd *cmd, t_env **env)
 		execute_builtin(cmd, env);
 	else
 		handle_external_command(cmd, env);
+	dup2(stdin_backup, STDIN_FILENO);
+	dup2(stdout_backup, STDOUT_FILENO);
+	close(stdin_backup);
+	close(stdout_backup);
 }

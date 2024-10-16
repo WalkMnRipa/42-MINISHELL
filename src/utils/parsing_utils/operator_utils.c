@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   operator_utils.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
+/*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/10 16:27:47 by jcohen            #+#    #+#             */
-/*   Updated: 2024/10/15 14:35:37 by jcohen           ###   ########.fr       */
+/*   Updated: 2024/10/17 01:20:21 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ int	handle_token(t_token *token)
 
 int	handle_operators(t_token **tokens)
 {
-	t_token *current;
+	t_token	*current;
 
 	if (check_syntax_errors(*tokens))
 		return (1);

@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/10 16:27:46 by jcohen            #+#    #+#             */
-/*   Updated: 2024/10/15 20:13:00 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/10/17 01:13:10 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,8 +92,8 @@ static int	process_token(t_token **token, t_cmd **current)
 		*current = (*current)->next;
 	}
 	else if ((*token)->type == TOKEN_REDIR_INPUT
-			|| (*token)->type == TOKEN_REDIR_OUTPUT
-			|| (*token)->type == TOKEN_REDIR_APPEND)
+		|| (*token)->type == TOKEN_REDIR_OUTPUT
+		|| (*token)->type == TOKEN_REDIR_APPEND)
 	{
 		if (!handle_redirection(token, *current))
 			return (0);

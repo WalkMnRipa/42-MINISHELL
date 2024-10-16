@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 18:30:32 by jcohen            #+#    #+#             */
-/*   Updated: 2024/10/15 20:13:08 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/10/17 01:14:26 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,10 @@ static int	handle_token(char *input, int i, t_token **head)
 		return (token_handle_space(input, i));
 	else if (input[i] == '<' || input[i] == '>' || input[i] == '|')
 	{
-		value = ft_substr(input, i, 1);
+		if (input[i] == '>' && input[i + 1] == '>')
+			value = ft_substr(input, i++, 2);
+		else
+			value = ft_substr(input, i, 1);
 		new_token = create_token(value, determine_token_type(value),
 				QUOTE_NONE);
 		free(value);
