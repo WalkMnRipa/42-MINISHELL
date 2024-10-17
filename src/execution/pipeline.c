@@ -3,73 +3,98 @@
 /*                                                        :::      ::::::::   */
 /*   pipeline.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
+/*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 16:37:14 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/10/08 19:09:49 by jcohen           ###   ########.fr       */
+/*   Updated: 2024/10/17 14:07:54 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/execution.h"
+#include <fcntl.h>
 
-void	create_pipe(int pipefd[2])
+static void execute_piped_command(t_cmd *cmd, t_env **env, int input_fd, int output_fd)
 {
-	if (pipe(pipefd) < 0)
-		error_exit_message(NULL, NULL, "Error: Pipe creation failed");
+    pid_t pid;
+
+    dprintf(2, "Setting up command: %s\n", cmd->args[0]);
+    pid = fork();
+    if (pid == -1)
+        error_exit_message(*env, cmd, "Fork failed");
+    else if (pid == 0)
+    {
+        // Child process
+        dprintf(2, "Child process for command: %s\n", cmd->args[0]);
+        if (input_fd != STDIN_FILENO)
+        {
+            dprintf(2, "Redirecting input for %s from fd %d\n", cmd->args[0], input_fd);
+            dup2(input_fd, STDIN_FILENO);
+            close(input_fd);
+        }
+        if (output_fd != STDOUT_FILENO)
+        {
+            dprintf(2, "Redirecting output for %s to fd %d\n", cmd->args[0], output_fd);
+            dup2(output_fd, STDOUT_FILENO);
+            close(output_fd);
+        }
+        
+        dprintf(2, "Executing command: %s, input_fd: %d, output_fd: %d\n", cmd->args[0], input_fd, output_fd);
+        
+        execute_command(cmd, env);
+        dprintf(2, "Command %s finished execution\n", cmd->args[0]);
+        exit(cmd->exit_status);
+    }
+    else
+    {
+        dprintf(2, "Parent process: command %s forked with PID %d\n", cmd->args[0], pid);
+    }
 }
 
-void	child_process(t_cmd *cmd, t_env **env, int pipefd[2], int is_last)
+void execute_pipeline(t_cmd *cmd_list, t_env **env)
 {
-	if (cmd->input_fd != STDIN_FILENO)
-	{
-		dup2(cmd->input_fd, STDIN_FILENO);
-		close(cmd->input_fd);
-	}
-	if (!is_last)
-	{
-		dup2(pipefd[1], STDOUT_FILENO);
-		close(pipefd[0]);
-		close(pipefd[1]);
-	}
-	else if (cmd->output_fd != STDOUT_FILENO)
-	{
-		dup2(cmd->output_fd, STDOUT_FILENO);
-		close(cmd->output_fd);
-	}
-	execute_command(cmd, env);
-	exit(EXIT_FAILURE);
-}
+    int pipefd[2];
+    int prev_pipe = STDIN_FILENO;
+    t_cmd *current = cmd_list;
+    int cmd_count = 0;
 
-static void	setup_and_execute_command(t_cmd *current, t_cmd *next, t_env **env,
-		int pipefd[2])
-{
-	pid_t	pid;
+    dprintf(2, "Starting pipeline execution\n");
 
-	if (next)
-		create_pipe(pipefd);
-	pid = fork();
-	if (pid == 0)
-		child_process(current, env, pipefd, next == NULL);
-	else if (pid < 0)
-		error_exit_message(*env, current, "Error: Fork failed");
-	if (next)
-	{
-		next->input_fd = pipefd[0];
-		close(pipefd[1]);
-	}
-}
+    while (current)
+    {
+        cmd_count++;
+        dprintf(2, "Processing command %d: %s\n", cmd_count, current->args[0]);
+        
+        if (current->next)
+        {
+            if (pipe(pipefd) == -1)
+                error_exit_message(*env, current, "Pipe creation failed");
+            
+            dprintf(2, "Pipe created for command %d: read_fd: %d, write_fd: %d\n", cmd_count, pipefd[0], pipefd[1]);
+        }
 
-void	execute_pipeline(t_cmd *cmd_list, t_env **env)
-{
-	t_cmd	*current;
-	int		pipefd[2];
+        execute_piped_command(current, env, prev_pipe, 
+                              current->next ? pipefd[1] : STDOUT_FILENO);
 
-	current = cmd_list;
-	while (current)
-	{
-		setup_and_execute_command(current, current->next, env, pipefd);
-		current = current->next;
-	}
-	while (wait(NULL) > 0)
-		;
+        if (prev_pipe != STDIN_FILENO)
+        {
+            dprintf(2, "Closing previous pipe read end: %d\n", prev_pipe);
+            close(prev_pipe);
+        }
+
+        if (current->next)
+        {
+            dprintf(2, "Closing current pipe write end: %d\n", pipefd[1]);
+            close(pipefd[1]);
+            prev_pipe = pipefd[0];
+        }
+
+        current = current->next;
+    }
+
+    dprintf(2, "Waiting for child processes to finish\n");
+    while (wait(NULL) > 0)
+    {
+        dprintf(2, "Child process finished\n");
+    }
+    dprintf(2, "Pipeline execution completed\n");
 }
