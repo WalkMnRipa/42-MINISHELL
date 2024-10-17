@@ -6,10 +6,9 @@
 /*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 19:06:34 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/10/15 14:52:15 by jcohen           ###   ########.fr       */
+/*   Updated: 2024/10/17 16:11:08 by jcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
 
 #ifndef EXECUTION_H
 # define EXECUTION_H
@@ -38,6 +37,9 @@ typedef struct s_env
 typedef struct s_cmd
 {
 	char			**args;
+	char			*input_file;
+	char			*output_file;
+	int				append_output;
 	int				input_fd;
 	int				output_fd;
 	int				exit_status;
@@ -68,10 +70,17 @@ void				execute_builtin(t_cmd *cmd, t_env **env);
 void				builtin_cd(t_env *env, char **args);
 void				builtin_echo(char **args);
 void				builtin_env(t_env *env);
-void				builtin_exit(char **args, int *exit_status);
+void				builtin_exit(char **args, int *exit_status, t_env *env,
+						t_cmd *cmd);
 void				builtin_export(t_env **env, char **args);
 void				builtin_pwd(void);
 void				builtin_unset(t_env **env, char **args);
+
+// Utility functions
+char				*ft_strjoin3(const char *s1, const char *s2,
+						const char *s3);
+int					is_direct_executable(const char *command);
+char				*try_path(const char *dir, const char *command);
 
 // Cleanup and error handling functions
 void				free_cmd(t_cmd *cmd);
@@ -83,16 +92,8 @@ void				handle_heredoc(t_cmd *cmd, char *delimiter);
 
 // Update PWD function
 void				update_pwd(t_env *env, char *old_pwd, char *new_pwd);
-
-// Additional functions
-void				create_pipe(int pipefd[2]);
-void				child_process(t_cmd *cmd, t_env **env, int pipefd[2],
-						int is_last);
-char				*ft_strjoin_array(char **array, char *delimiter);
-void				ft_free_array(char **array);
 char				*ft_strtok(char *str, const char *delim);
 
-char				*ft_strjoin_array(char **array, char *separator);
-void				ft_free_array(char **array);
+int					setup_redirections(t_cmd *cmd);
 
 #endif

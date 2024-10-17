@@ -6,11 +6,7 @@
 /*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 20:13:29 by ggaribot          #+#    #+#             */
-<<<<<<< HEAD:src/execution/env_utils.c
-/*   Updated: 2024/10/08 19:27:10 by jcohen           ###   ########.fr       */
-=======
-/*   Updated: 2024/10/11 16:24:05 by ggaribot         ###   ########.fr       */
->>>>>>> ec5ff35 (ordonner, aucun changement dans code a part makefile):src/execution/env/env_utils.c
+/*   Updated: 2024/10/17 16:12:06 by jcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,10 +81,6 @@ void	free_env(t_env *env)
 	}
 }
 
-<<<<<<< HEAD:src/execution/env_utils.c
-// ft_strjoin_free 
-
-=======
 int	create_env_var(t_env **env, const char *name, const char *value)
 {
 	t_env	*new_node;
@@ -109,4 +101,3 @@ int	create_env_var(t_env **env, const char *name, const char *value)
 	}
 	return (0);
 }
->>>>>>> ec5ff35 (ordonner, aucun changement dans code a part makefile):src/execution/env/env_utils.c

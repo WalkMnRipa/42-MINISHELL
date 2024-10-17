@@ -5,10 +5,11 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/11 15:48:08 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/10/15 14:50:47 by jcohen           ###   ########.fr       */
+/*   Created: 2024/10/17 16:08:52 by jcohen            #+#    #+#             */
+/*   Updated: 2024/10/17 16:09:18 by jcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 
 #include "../../../includes/execution.h"
 
@@ -22,6 +23,8 @@ int	is_builtin(char *cmd)
 
 void	execute_builtin(t_cmd *cmd, t_env **env)
 {
+	if (!cmd || !cmd->args || !cmd->args[0])
+		return ;
 	if (ft_strcmp(cmd->args[0], "echo") == 0)
 		builtin_echo(cmd->args);
 	else if (ft_strcmp(cmd->args[0], "cd") == 0)
@@ -35,5 +38,5 @@ void	execute_builtin(t_cmd *cmd, t_env **env)
 	else if (ft_strcmp(cmd->args[0], "env") == 0)
 		builtin_env(*env);
 	else if (ft_strcmp(cmd->args[0], "exit") == 0)
-		builtin_exit(cmd->args, &(cmd->exit_status));
+		builtin_exit(cmd->args, &(cmd->exit_status), *env, cmd);
 }

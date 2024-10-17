@@ -3,10 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   execute_command.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
+/*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 20:14:16 by ggaribot          #+#    #+#             */
+<<<<<<< HEAD
 /*   Updated: 2024/10/15 14:50:36 by jcohen           ###   ########.fr       */
+=======
+/*   Updated: 2024/10/17 14:47:27 by ggaribot         ###   ########.fr       */
+>>>>>>> ac8ba2fbabd508d4c278a9e0997b5503fc1967b6
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,65 +21,58 @@ char	*find_command_path(const char *command, t_env *env)
 	char	*path;
 	char	*path_copy;
 	char	*dir;
-	char	*full_path;
+	char	*result;
 
+	if (is_direct_executable(command))
+		return (ft_strdup(command));
 	path = get_env_value(env, "PATH");
+	if (!path)
+		return (NULL);
 	path_copy = ft_strdup(path);
+	if (!path_copy)
+		return (NULL);
 	dir = ft_strtok(path_copy, ":");
-	full_path = NULL;
 	while (dir != NULL)
 	{
-		full_path = malloc(ft_strlen(dir) + ft_strlen(command) + 2);
-		ft_strlcpy(full_path, dir, ft_strlen(dir) + 1);
-		ft_strlcat(full_path, "/", ft_strlen(full_path) + 2);
-		ft_strlcat(full_path, command, ft_strlen(full_path) + ft_strlen(command)
-			+ 1);
-		if (access(full_path, X_OK) == 0)
+		result = try_path(dir, command);
+		if (result)
 		{
 			free(path_copy);
-			return (full_path);
+			return (result);
 		}
-		free(full_path);
 		dir = ft_strtok(NULL, ":");
 	}
 	return (free(path_copy), NULL);
 }
 
-void	execute_builtin(t_cmd *cmd, t_env **env)
+static void	handle_command_not_found(t_cmd *cmd)
 {
-	if (ft_strcmp(cmd->args[0], "cd") == 0)
-		builtin_cd(*env, cmd->args);
-	else if (ft_strcmp(cmd->args[0], "echo") == 0)
-		builtin_echo(cmd->args);
-	else if (ft_strcmp(cmd->args[0], "env") == 0)
-		builtin_env(*env);
-	else if (ft_strcmp(cmd->args[0], "exit") == 0)
-		builtin_exit(cmd->args, &(cmd->exit_status));
-	else if (ft_strcmp(cmd->args[0], "export") == 0)
-		builtin_export(env, cmd->args);
-	else if (ft_strcmp(cmd->args[0], "pwd") == 0)
-		builtin_pwd();
-	else if (ft_strcmp(cmd->args[0], "unset") == 0)
-		builtin_unset(env, cmd->args);
+	ft_putstr_fd("minishell: ", 2);
+	ft_putstr_fd(cmd->args[0], 2);
+	ft_putendl_fd(": command not found", 2);
+	cmd->exit_status = 127;
+}
+
+static void	execute_external_command(t_cmd *cmd, t_env **env)
+{
+	char	*command_path;
+
+	command_path = find_command_path(cmd->args[0], *env);
+	if (!command_path)
+	{
+		handle_command_not_found(cmd);
+		return ;
+	}
+	execve(command_path, cmd->args, NULL);
+	perror("minishell: execve");
+	free(command_path);
+	exit(EXIT_FAILURE);
 }
 
 void	execute_command(t_cmd *cmd, t_env **env)
 {
-	char	*command_path;
-
 	if (is_builtin(cmd->args[0]))
-	{
 		execute_builtin(cmd, env);
-		return ;
-	}
-	command_path = find_command_path(cmd->args[0], *env);
-	if (!command_path)
-	{
-		ft_putstr_fd("Command not found: ", 2);
-		ft_putendl_fd(cmd->args[0], 2);
-		return ;
-	}
-	execve(command_path, cmd->args, NULL);
-	perror("execve");
-	free(command_path);
+	else
+		execute_external_command(cmd, env);
 }

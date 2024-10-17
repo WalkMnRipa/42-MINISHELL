@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   custom_setenv.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/11 16:23:05 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/10/11 16:24:09 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/10/17 16:13:20 by jcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 int	custom_setenv(t_env **env, const char *name, const char *value)
 {
-	t_env *current;
+	t_env	*current;
 
 	if (!env || !*env || !name || !value)
 		return (-1);

@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   handles_token_utils.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
+/*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 18:00:39 by jcohen            #+#    #+#             */
-/*   Updated: 2024/10/03 19:58:10 by jcohen           ###   ########.fr       */
+/*   Updated: 2024/10/15 20:13:20 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../../includes/parsing.h"
 
-int	handle_single_quotes(char *input, int i, t_token **head)
+int	token_handle_single_quotes(char *input, int i, t_token **head)
 {
 	int		start;
 	char	*value;
@@ -28,7 +28,7 @@ int	handle_single_quotes(char *input, int i, t_token **head)
 		value = ft_substr(input, start + 1, i - start - 1);
 		if (!value)
 			return (-1);
-		new_token = ft_create_token(value, TOKEN_WORD, QUOTE_SINGLE);
+		new_token = create_token(value, TOKEN_WORD, QUOTE_SINGLE);
 		if (!new_token)
 		{
 			free(value);
@@ -41,7 +41,7 @@ int	handle_single_quotes(char *input, int i, t_token **head)
 	return (start);
 }
 
-int	handle_double_quotes(char *input, int i, t_token **head)
+int	token_handle_double_quotes(char *input, int i, t_token **head)
 {
 	int		start;
 	char	*value;
@@ -57,7 +57,7 @@ int	handle_double_quotes(char *input, int i, t_token **head)
 		value = ft_substr(input, start + 1, i - start - 1);
 		if (!value)
 			return (-1);
-		new_token = ft_create_token(value, TOKEN_WORD, QUOTE_DOUBLE);
+		new_token = create_token(value, TOKEN_WORD, QUOTE_DOUBLE);
 		if (!new_token)
 		{
 			free(value);
@@ -70,30 +70,53 @@ int	handle_double_quotes(char *input, int i, t_token **head)
 	return (start);
 }
 
-int	handle_word(char *input, int i, t_token **head)
+int	token_handle_word(char *input, int i, t_token **head)
 {
 	int		start;
 	char	*value;
 	t_token	*new_token;
 
 	start = i;
-	while (input[i] && !ft_isspace(input[i]) && input[i] != '\''
-		&& input[i] != '"' && input[i] != '|' && input[i] != '<'
-		&& input[i] != '>')
+	while (input[i] && !ft_isspace(input[i]) && !ft_strchr("|><", input[i]))
 		i++;
 	value = ft_substr(input, start, i - start);
 	if (!value)
 		return (i);
-	new_token = ft_create_token(value, get_token_type(value), QUOTE_NONE);
+	new_token = create_token(value, determine_token_type(value), QUOTE_NONE);
 	free(value);
-	if (new_token)
-		add_token(head, new_token);
+	if (!new_token)
+		return (-1);
+	add_token(head, new_token);
 	return (i - 1);
 }
 
-int	handle_space(char *input, int i)
+int	token_handle_space(char *input, int i)
 {
 	while (input[i] && ft_isspace(input[i]))
 		i++;
 	return (i - 1);
+}
+
+int	check_unclosed_quotes(char *input)
+{
+	int	i;
+	int	in_single_quote;
+	int	in_double_quote;
+
+	i = 0;
+	in_single_quote = 0;
+	in_double_quote = 0;
+	while (input[i])
+	{
+		if (input[i] == '\'' && !in_double_quote)
+			in_single_quote = !in_single_quote;
+		else if (input[i] == '"' && !in_single_quote)
+			in_double_quote = !in_double_quote;
+		i++;
+	}
+	if (in_single_quote)
+		return (ft_putendl_fd(ERR_SINGLE_QUOTE, 2), 1);
+	if (in_double_quote)
+		return (ft_putendl_fd(ERR_DOUBLE_QUOTE, 2), 1);
+	return (0);
 }
