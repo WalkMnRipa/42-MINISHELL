@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execution_cleanup.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
+/*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 20:11:10 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/10/08 18:41:15 by jcohen           ###   ########.fr       */
+/*   Updated: 2024/10/17 13:42:53 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,10 @@ void	free_cmd(t_cmd *cmd)
 			args++;
 		}
 		free(cmd->args);
+		if (cmd->input_file)
+			free(cmd->input_file);
+		if (cmd->output_file)
+			free(cmd->output_file);
 		if (cmd->input_fd != STDIN_FILENO)
 			close(cmd->input_fd);
 		if (cmd->output_fd != STDOUT_FILENO)

@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/11 15:48:08 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/10/17 01:10:48 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/10/17 13:49:33 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,5 +37,5 @@ void	execute_builtin(t_cmd *cmd, t_env **env)
 	else if (ft_strcmp(cmd->args[0], "env") == 0)
 		builtin_env(*env);
 	else if (ft_strcmp(cmd->args[0], "exit") == 0)
-		builtin_exit(cmd->args, &(cmd->exit_status));
+		builtin_exit(cmd->args, &(cmd->exit_status), *env, cmd);
 }

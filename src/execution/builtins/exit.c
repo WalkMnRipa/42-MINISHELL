@@ -6,13 +6,13 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 20:01:56 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/10/15 19:06:10 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/10/17 13:46:26 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../../includes/execution.h"
 
-void	builtin_exit(char **args, int *exit_status)
+void	builtin_exit(char **args, int *exit_status, t_env *env, t_cmd *cmd)
 {
 	printf("exit\n");
 	if (args[1])
@@ -24,5 +24,6 @@ void	builtin_exit(char **args, int *exit_status)
 			*exit_status = 2;
 		}
 	}
+	cleanup(env, cmd);
 	exit(*exit_status);
 }
