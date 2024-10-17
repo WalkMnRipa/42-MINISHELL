@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execution.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
+/*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 19:06:34 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/10/17 16:11:08 by jcohen           ###   ########.fr       */
+/*   Updated: 2024/10/17 17:21:08 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,5 +95,7 @@ void				update_pwd(t_env *env, char *old_pwd, char *new_pwd);
 char				*ft_strtok(char *str, const char *delim);
 
 int					setup_redirections(t_cmd *cmd);
+void				execute_external_command(t_cmd *cmd, t_env **env);
+void				execute_single_command(t_cmd *cmd, t_env **env);
 
 #endif

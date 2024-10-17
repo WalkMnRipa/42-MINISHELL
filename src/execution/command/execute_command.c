@@ -6,11 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 20:14:16 by ggaribot          #+#    #+#             */
-<<<<<<< HEAD
-/*   Updated: 2024/10/15 14:50:36 by jcohen           ###   ########.fr       */
-=======
-/*   Updated: 2024/10/17 14:47:27 by ggaribot         ###   ########.fr       */
->>>>>>> ac8ba2fbabd508d4c278a9e0997b5503fc1967b6
+/*   Updated: 2024/10/17 17:20:27 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +49,7 @@ static void	handle_command_not_found(t_cmd *cmd)
 	cmd->exit_status = 127;
 }
 
-static void	execute_external_command(t_cmd *cmd, t_env **env)
+void	execute_external_command(t_cmd *cmd, t_env **env)
 {
 	char	*command_path;
 
@@ -71,8 +67,16 @@ static void	execute_external_command(t_cmd *cmd, t_env **env)
 
 void	execute_command(t_cmd *cmd, t_env **env)
 {
-	if (is_builtin(cmd->args[0]))
-		execute_builtin(cmd, env);
+	if (cmd->next)
+	{
+		execute_pipeline(cmd, env);
+		return ;
+	}
 	else
-		execute_external_command(cmd, env);
+	{
+		if (is_builtin(cmd->args[0]))
+			execute_builtin(cmd, env);
+		else
+			execute_external_command(cmd, env);
+	}
 }
