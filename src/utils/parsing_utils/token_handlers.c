@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   handles_token_utils.c                              :+:      :+:    :+:   */
+/*   token_handlers.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 18:00:39 by jcohen            #+#    #+#             */
-/*   Updated: 2024/10/15 20:13:20 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/10/17 19:04:34 by jcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,13 +90,6 @@ int	token_handle_word(char *input, int i, t_token **head)
 	return (i - 1);
 }
 
-int	token_handle_space(char *input, int i)
-{
-	while (input[i] && ft_isspace(input[i]))
-		i++;
-	return (i - 1);
-}
-
 int	check_unclosed_quotes(char *input)
 {
 	int	i;
@@ -119,4 +112,25 @@ int	check_unclosed_quotes(char *input)
 	if (in_double_quote)
 		return (ft_putendl_fd(ERR_DOUBLE_QUOTE, 2), 1);
 	return (0);
+}
+
+int	token_handle_redirection(char *input, int i, t_token **head)
+{
+	char	*value;
+	t_token	*new_token;
+	int		len;
+
+	len = 1;
+	if (input[i + 1] && (ft_strncmp(input + i, ">>", 2) == 0 || ft_strncmp(input
+				+ i, "<<", 2) == 0))
+		len = 2;
+	value = ft_substr(input, i, len);
+	if (!value)
+		return (-1);
+	new_token = create_token(value, determine_token_type(value), QUOTE_NONE);
+	free(value);
+	if (!new_token)
+		return (-1);
+	add_token(head, new_token);
+	return (i + len - 1);
 }

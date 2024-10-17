@@ -6,7 +6,7 @@
 /*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 18:30:32 by jcohen            #+#    #+#             */
-/*   Updated: 2024/10/17 16:08:02 by jcohen           ###   ########.fr       */
+/*   Updated: 2024/10/17 19:07:20 by jcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,35 +60,22 @@ t_token_type	determine_token_type(char *value)
 		return (TOKEN_REDIR_OUTPUT);
 	else if (ft_strcmp(value, ">>") == 0)
 		return (TOKEN_REDIR_APPEND);
+	else if (ft_strcmp(value, "<<") == 0)
+		return (TOKEN_HERE_DOC);
 	else
 		return (TOKEN_WORD);
 }
 
 static int	handle_token(char *input, int i, t_token **head)
 {
-	char	*value;
-	t_token	*new_token;
-
 	if (input[i] == '\'')
 		return (token_handle_single_quotes(input, i, head));
 	else if (input[i] == '"')
 		return (token_handle_double_quotes(input, i, head));
 	else if (ft_isspace(input[i]))
 		return (token_handle_space(input, i));
-	else if (input[i] == '<' || input[i] == '>' || input[i] == '|')
-	{
-		if (input[i] == '>' && input[i + 1] == '>')
-			value = ft_substr(input, i++, 2);
-		else
-			value = ft_substr(input, i, 1);
-		new_token = create_token(value, determine_token_type(value),
-				QUOTE_NONE);
-		free(value);
-		if (!new_token)
-			return (-1);
-		add_token(head, new_token);
-		return (i);
-	}
+	else if (ft_strchr("|><", input[i]))
+		return (token_handle_redirection(input, i, head));
 	else
 		return (token_handle_word(input, i, head));
 }
@@ -110,6 +97,8 @@ t_token	*tokenizer(char *input)
 			return (free_tokens(head), NULL);
 		i = new_i + 1;
 	}
+	if (check_syntax_errors(head))
+		return (free_tokens(head), NULL);
 	if (handle_operators(&head))
 		return (free_tokens(head), NULL);
 	return (head);
