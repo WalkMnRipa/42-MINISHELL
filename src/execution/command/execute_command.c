@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 20:14:16 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/10/17 17:20:27 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/10/17 17:45:12 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,18 +65,47 @@ void	execute_external_command(t_cmd *cmd, t_env **env)
 	exit(EXIT_FAILURE);
 }
 
-void	execute_command(t_cmd *cmd, t_env **env)
+static void	execute_non_builtin(t_cmd *cmd, t_env **env)
 {
-	if (cmd->next)
+	pid_t	pid;
+	int		status;
+
+	pid = fork();
+	if (pid == 0)
 	{
-		execute_pipeline(cmd, env);
-		return ;
+		execute_external_command(cmd, env);
+		exit(cmd->exit_status);
+	}
+	else if (pid > 0)
+	{
+		waitpid(pid, &status, 0);
+		if (WIFEXITED(status))
+			cmd->exit_status = WEXITSTATUS(status);
 	}
 	else
 	{
-		if (is_builtin(cmd->args[0]))
-			execute_builtin(cmd, env);
-		else
-			execute_external_command(cmd, env);
+		perror("fork");
+		cmd->exit_status = 1;
 	}
+}
+
+void	execute_command(t_cmd *cmd, t_env **env)
+{
+	int	stdin_backup;
+	int	stdout_backup;
+
+	stdin_backup = dup(STDIN_FILENO);
+	stdout_backup = dup(STDOUT_FILENO);
+	if (cmd->next)
+		execute_pipeline(cmd, env);
+	else if (!setup_redirections(cmd))
+		cmd->exit_status = 1;
+	else if (is_builtin(cmd->args[0]))
+		execute_builtin(cmd, env);
+	else
+		execute_non_builtin(cmd, env);
+	dup2(stdin_backup, STDIN_FILENO);
+	dup2(stdout_backup, STDOUT_FILENO);
+	close(stdin_backup);
+	close(stdout_backup);
 }
