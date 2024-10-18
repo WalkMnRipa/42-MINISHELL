@@ -6,7 +6,7 @@
 /*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 17:46:57 by jcohen            #+#    #+#             */
-/*   Updated: 2024/10/18 16:57:27 by jcohen           ###   ########.fr       */
+/*   Updated: 2024/10/18 17:32:15 by jcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,6 +93,8 @@ int					token_handle_variable(char *input, int i, t_token **head);
 int					handle_operators(t_token **tokens);
 
 t_cmd				*group_tokens_into_commands(t_token *token_list);
+
+int					is_valid_var_char(char c);
 
 void				free_tokens(t_token *tokens);
 void				free_cmd_list(t_cmd *head);

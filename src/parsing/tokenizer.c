@@ -6,7 +6,7 @@
 /*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 18:30:32 by jcohen            #+#    #+#             */
-/*   Updated: 2024/10/18 16:46:14 by jcohen           ###   ########.fr       */
+/*   Updated: 2024/10/18 17:56:56 by jcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,7 +92,7 @@ t_token	*tokenizer(char *input)
 		return (NULL);
 	head = NULL;
 	i = 0;
-	while (input[i])
+	while (input[i]) 
 	{
 		new_i = handle_token(input, i, &head);
 		if (new_i < 0)

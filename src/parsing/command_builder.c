@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   command_builder.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/10 16:27:46 by jcohen            #+#    #+#             */
-/*   Updated: 2024/10/17 01:13:10 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/10/18 18:17:54 by jcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,12 @@ static int	add_argument(t_cmd *cmd, char *arg)
 	}
 	new_args[i] = ft_strdup(arg);
 	if (!new_args[i])
-		return (free(new_args), 0);
+	{
+		while (--i >= 0)
+			free(new_args[i]);
+		free(new_args);
+		return (0);
+	}
 	new_args[i + 1] = NULL;
 	free(cmd->args);
 	cmd->args = new_args;
@@ -106,6 +111,7 @@ t_cmd	*group_tokens_into_commands(t_token *token_list)
 	t_cmd	*head;
 	t_cmd	*current;
 	t_token	*token;
+	t_cmd	*tmp;
 
 	head = NULL;
 	current = NULL;
@@ -116,12 +122,12 @@ t_cmd	*group_tokens_into_commands(t_token *token_list)
 		{
 			current = create_new_command();
 			if (!current)
-				return (NULL);
+				return (free_cmd_list(head), NULL);
 			if (!head)
 				head = current;
 		}
 		if (!process_token(&token, &current))
-			return (NULL);
+			return (free_cmd_list(head), NULL);
 		token = token->next;
 	}
 	return (head);
