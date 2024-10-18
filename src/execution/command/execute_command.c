@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 20:14:16 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/10/17 17:45:12 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/10/18 15:46:35 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,7 @@ void	execute_external_command(t_cmd *cmd, t_env **env)
 		handle_command_not_found(cmd);
 		return ;
 	}
+	reset_signals();
 	execve(command_path, cmd->args, NULL);
 	perror("minishell: execve");
 	free(command_path);
@@ -81,12 +82,15 @@ static void	execute_non_builtin(t_cmd *cmd, t_env **env)
 		waitpid(pid, &status, 0);
 		if (WIFEXITED(status))
 			cmd->exit_status = WEXITSTATUS(status);
+		else if (WIFSIGNALED(status))
+		{
+			cmd->exit_status = 128 + WTERMSIG(status);
+			if (WTERMSIG(status) == SIGQUIT)
+				ft_putendl_fd("Quit (core dumped)", STDERR_FILENO);
+		}
 	}
 	else
-	{
-		perror("fork");
-		cmd->exit_status = 1;
-	}
+		cmd->exit_status = (perror("fork"), 1);
 }
 
 void	execute_command(t_cmd *cmd, t_env **env)

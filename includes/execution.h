@@ -6,9 +6,11 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 19:06:34 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/10/17 17:21:08 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/10/18 15:32:01 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+extern int			g_signal_received;
 
 #ifndef EXECUTION_H
 # define EXECUTION_H
@@ -97,5 +99,8 @@ char				*ft_strtok(char *str, const char *delim);
 int					setup_redirections(t_cmd *cmd);
 void				execute_external_command(t_cmd *cmd, t_env **env);
 void				execute_single_command(t_cmd *cmd, t_env **env);
+void				signal_handler(int signo);
+void				setup_signals(void);
+void				reset_signals(void);
 
 #endif
