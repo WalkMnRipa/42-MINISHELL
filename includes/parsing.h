@@ -6,7 +6,7 @@
 /*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 17:46:57 by jcohen            #+#    #+#             */
-/*   Updated: 2024/10/17 19:05:51 by jcohen           ###   ########.fr       */
+/*   Updated: 2024/10/18 16:57:27 by jcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,9 +30,9 @@
 # include <termios.h>
 # include <unistd.h>
 
-# define ERR_UNEXPECTED_NEWLINE "syntax error near unexpected token `newline'"
-# define ERR_UNEXPECTED_PIPE "syntax error near unexpected token `|'"
-# define ERR_UNEXPECTED_TOKEN "syntax error near unexpected token"
+# define ERR_UNEXPECTED_NEWLINE "bash: syntax error near unexpected token `newline'"
+# define ERR_UNEXPECTED_PIPE "bash: syntax error near unexpected token `|'"
+# define ERR_UNEXPECTED_TOKEN "bash: syntax error near unexpected token"
 # define ERR_MALLOC_FAILED "malloc failed"
 # define ERR_INVALID_TOKEN "invalid token"
 
@@ -47,6 +47,7 @@ typedef enum e_token_type
 	TOKEN_REDIR_OUTPUT,
 	TOKEN_REDIR_APPEND,
 	TOKEN_HERE_DOC,
+	TOKEN_VARIABLE,
 }					t_token_type;
 
 typedef enum e_quote_type
@@ -82,16 +83,16 @@ int					token_handle_single_quotes(char *input, int i,
 						t_token **head);
 int					token_handle_double_quotes(char *input, int i,
 						t_token **head);
+int					check_unclosed_quotes(char *input);
+
 int					token_handle_word(char *input, int i, t_token **head);
 int					token_handle_space(char *input, int i);
 int					token_handle_redirection(char *input, int i,
 						t_token **head);
-int					check_syntax_errors(t_token *tokens);
+int					token_handle_variable(char *input, int i, t_token **head);
 int					handle_operators(t_token **tokens);
 
 t_cmd				*group_tokens_into_commands(t_token *token_list);
-
-int					check_unclosed_quotes(char *input);
 
 void				free_tokens(t_token *tokens);
 void				free_cmd_list(t_cmd *head);
