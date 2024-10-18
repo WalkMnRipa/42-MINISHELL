@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env_utils.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
+/*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 20:13:29 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/10/17 16:12:06 by jcohen           ###   ########.fr       */
+/*   Updated: 2024/10/18 17:35:31 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,16 +31,24 @@ t_env	*create_env_node(char *envp)
 		new_node->key = ft_strdup(envp);
 		new_node->value = ft_strdup("");
 	}
-	new_node->next = NULL;
-	return (new_node);
+	if (!new_node->key || !new_node->value)
+	{
+		free(new_node->key);
+		free(new_node->value);
+		free(new_node);
+		return (NULL);
+	}
+	return (new_node->next = NULL, new_node);
 }
 
 t_env	*init_env(char **envp)
 {
 	t_env	*env;
 	t_env	*new_node;
+	t_env	*last_node;
 
 	env = NULL;
+	last_node = NULL;
 	while (*envp)
 	{
 		new_node = create_env_node(*envp);
@@ -49,8 +57,11 @@ t_env	*init_env(char **envp)
 			free_env(env);
 			return (NULL);
 		}
-		new_node->next = env;
-		env = new_node;
+		if (!env)
+			env = new_node;
+		else
+			last_node->next = new_node;
+		last_node = new_node;
 		envp++;
 	}
 	return (env);
