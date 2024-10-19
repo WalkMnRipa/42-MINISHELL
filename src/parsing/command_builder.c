@@ -6,7 +6,7 @@
 /*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/10 16:27:46 by jcohen            #+#    #+#             */
-/*   Updated: 2024/10/18 18:23:20 by jcohen           ###   ########.fr       */
+/*   Updated: 2024/10/20 01:56:44 by jcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,33 +30,39 @@ static t_cmd	*create_new_command(void)
 	return (new_cmd);
 }
 
-static int	add_argument(t_cmd *cmd, char *arg)
+static int	add_argument(t_cmd *cmd, char *arg, t_env *env)
 {
 	int		args_count;
 	char	**new_args;
 	int		i;
+	char	*expanded_arg;
 
+	expanded_arg = expand_variables(arg, env);
+	if (!expanded_arg)
+		return (0);
 	args_count = 0;
 	while (cmd->args && cmd->args[args_count])
 		args_count++;
 	new_args = (char **)malloc(sizeof(char *) * (args_count + 2));
 	if (!new_args)
-		return (0);
+		return (free(expanded_arg), 0);
 	i = 0;
 	while (cmd->args && cmd->args[i])
 	{
 		new_args[i] = cmd->args[i];
 		i++;
 	}
-	new_args[i] = ft_strdup(arg);
+	new_args[i] = ft_strdup(expanded_arg);
 	if (!new_args[i])
 	{
+		free(expanded_arg);
 		while (--i >= 0)
 			free(new_args[i]);
 		free(new_args);
 		return (0);
 	}
 	new_args[i + 1] = NULL;
+	free(expanded_arg);
 	free(cmd->args);
 	cmd->args = new_args;
 	return (1);
@@ -79,14 +85,14 @@ static int	handle_redirection(t_token **token, t_cmd *cmd)
 	else
 		return (0);
 	*token = (*token)->next;
-	return (1);
+	return (cmd->input_file || cmd->output_file);
 }
 
-static int	process_token(t_token **token, t_cmd **current)
+static int	process_token(t_token **token, t_cmd **current, t_env *env)
 {
 	if ((*token)->type == TOKEN_WORD)
 	{
-		if (!add_argument(*current, (*token)->value))
+		if (!add_argument(*current, (*token)->value, env))
 			return (0);
 	}
 	else if ((*token)->type == TOKEN_PIPE)
@@ -106,7 +112,7 @@ static int	process_token(t_token **token, t_cmd **current)
 	return (1);
 }
 
-t_cmd	*group_tokens_into_commands(t_token *token_list)
+t_cmd	*group_tokens_into_commands(t_token *token_list, t_env *env)
 {
 	t_cmd	*head;
 	t_cmd	*current;
@@ -125,7 +131,7 @@ t_cmd	*group_tokens_into_commands(t_token *token_list)
 			if (!head)
 				head = current;
 		}
-		if (!process_token(&token, &current))
+		if (!process_token(&token, &current, env))
 			return (free_cmd_list(head), NULL);
 		token = token->next;
 	}

@@ -6,7 +6,7 @@
 /*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 17:46:57 by jcohen            #+#    #+#             */
-/*   Updated: 2024/10/19 19:48:29 by jcohen           ###   ########.fr       */
+/*   Updated: 2024/10/20 01:48:47 by jcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,6 +102,7 @@ char				*replace_var(char *str, int *i, t_env *env);
 char				*expand_special_variable(t_env *env, const char *var_name);
 char				*get_env_variable(t_env *env, const char *var_name);
 char				*expand_variables(char *str, t_env *env);
+int					get_var_name_length(char *str);
 
 void				free_tokens(t_token *tokens);
 void				free_cmd_list(t_cmd *head);

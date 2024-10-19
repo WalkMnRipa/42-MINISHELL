@@ -6,7 +6,7 @@
 /*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/18 15:27:34 by jcohen            #+#    #+#             */
-/*   Updated: 2024/10/19 19:44:45 by jcohen           ###   ########.fr       */
+/*   Updated: 2024/10/20 01:52:26 by jcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,11 +23,21 @@ char	*expand_special_variable(t_env *env, const char *var_name)
 
 char	*get_env_variable(t_env *env, const char *var_name)
 {
-	char	*value;
+	char	*special_var;
+	char	*env_var;
 
-	value = get_env_value(env, var_name);
-	if (value)
-		return (ft_strdup(value));
+	special_var = expand_special_variable(env, var_name);
+	if (special_var)
+		return (special_var);
+	env_var = get_env_value(env, var_name);
+	if (env_var)
+		return (ft_strdup(env_var));
+	if (getenv(var_name) == NULL)
+	{
+		ft_putstr_fd("minishell: ", 2);
+		ft_putstr_fd(var_name, 2);
+		ft_putendl_fd(": variable not found", 2);
+	}
 	return (ft_strdup(""));
 }
 
