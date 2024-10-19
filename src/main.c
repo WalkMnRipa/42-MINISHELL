@@ -6,7 +6,7 @@
 /*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 18:00:00 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/10/18 18:09:17 by jcohen           ###   ########.fr       */
+/*   Updated: 2024/10/19 19:50:45 by jcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ int	main(int argc, char **argv, char **envp)
 		if (!input)
 		{
 			if (isatty(STDIN_FILENO))
-				printf("\nExiting minishell\n");
+				printf("\nexit minishell\n");
 			break ;
 		}
 		if (*input)
