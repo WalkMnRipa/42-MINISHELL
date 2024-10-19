@@ -6,7 +6,7 @@
 /*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/10 16:27:46 by jcohen            #+#    #+#             */
-/*   Updated: 2024/10/18 18:17:54 by jcohen           ###   ########.fr       */
+/*   Updated: 2024/10/18 18:23:20 by jcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,7 +111,6 @@ t_cmd	*group_tokens_into_commands(t_token *token_list)
 	t_cmd	*head;
 	t_cmd	*current;
 	t_token	*token;
-	t_cmd	*tmp;
 
 	head = NULL;
 	current = NULL;
