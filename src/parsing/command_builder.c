@@ -6,7 +6,7 @@
 /*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/10 16:27:46 by jcohen            #+#    #+#             */
-/*   Updated: 2024/10/20 01:56:44 by jcohen           ###   ########.fr       */
+/*   Updated: 2024/10/20 02:14:25 by jcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,18 +54,9 @@ static int	add_argument(t_cmd *cmd, char *arg, t_env *env)
 	}
 	new_args[i] = ft_strdup(expanded_arg);
 	if (!new_args[i])
-	{
-		free(expanded_arg);
-		while (--i >= 0)
-			free(new_args[i]);
-		free(new_args);
-		return (0);
-	}
+		return (free(expanded_arg), free_string_array(new_args, i), 0);
 	new_args[i + 1] = NULL;
-	free(expanded_arg);
-	free(cmd->args);
-	cmd->args = new_args;
-	return (1);
+	return (free(expanded_arg), free(cmd->args), cmd->args = new_args, 1);
 }
 
 static int	handle_redirection(t_token **token, t_cmd *cmd)

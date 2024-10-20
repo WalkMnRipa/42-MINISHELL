@@ -6,7 +6,7 @@
 /*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 19:54:50 by jcohen            #+#    #+#             */
-/*   Updated: 2024/10/18 18:08:43 by jcohen           ###   ########.fr       */
+/*   Updated: 2024/10/20 02:12:55 by jcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,5 +46,15 @@ void	free_cmd_list(t_cmd *head)
 		free(current->output_file);
 		free(current);
 		current = next;
+	}
+}
+
+void	free_string_array(char **array, int count)
+{
+	if (array)
+	{
+		while (count--)
+			free(array[count]);
+		free(array);
 	}
 }
