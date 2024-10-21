@@ -6,7 +6,7 @@
 /*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/18 15:27:34 by jcohen            #+#    #+#             */
-/*   Updated: 2024/10/20 02:15:46 by jcohen           ###   ########.fr       */
+/*   Updated: 2024/10/21 15:05:57 by jcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ char	*expand_special_variable(t_env *env, const char *var_name)
 	return (NULL);
 }
 
-char	*get_env_variable(t_env *env, const char *var_name)
+char	*get_env_variable(t_env *env, char *var_name)
 {
 	char	*special_var;
 	char	*env_var;

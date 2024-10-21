@@ -6,7 +6,7 @@
 /*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 18:00:00 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/10/21 15:03:20 by jcohen           ###   ########.fr       */
+/*   Updated: 2024/10/21 17:30:28 by jcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,31 +17,14 @@
 
 int				g_signal_received = 0;
 
-static void	process_input(char *input, t_env **env)
-{
-	t_token	*tokens;
-	t_cmd	*cmd;
-
-	add_history(input);
-	tokens = tokenizer(input);
-	if (tokens)
-	{
-		cmd = group_tokens_into_commands(tokens, *env);
-		if (cmd)
-		{
-			execute_command(cmd, env);
-			free_cmd_list(cmd);
-		}
-		free_tokens(tokens);
-	}
-}
-
-static int	shell_loop(t_env *env, int stdin_backup)
+static int	shell_loop(t_env **env, int stdin_backup)
 {
 	char	*input;
 	t_token	*tokens;
 	t_cmd	*cmd;
+	int		exit_status;
 
+	exit_status = 0;
 	while (1)
 	{
 		g_signal_received = 0;
@@ -50,7 +33,7 @@ static int	shell_loop(t_env *env, int stdin_backup)
 		if (!input)
 		{
 			if (isatty(STDIN_FILENO))
-				printf("\nexit minishell\n");
+				printf("\nexit\n");
 			break ;
 		}
 		if (*input)
@@ -59,22 +42,19 @@ static int	shell_loop(t_env *env, int stdin_backup)
 			tokens = tokenizer(input);
 			if (tokens)
 			{
-				cmd = group_tokens_into_commands(tokens, env);
+				cmd = group_tokens_into_commands(tokens, *env);
 				if (cmd)
 				{
-					execute_command(cmd, &env);
+					execute_command(cmd, env);
+					exit_status = cmd->exit_status;
 					free_cmd_list(cmd);
 				}
 				free_tokens(tokens);
 			}
 		}
-		ft_putendl_fd("exit", STDOUT_FILENO);
-		break ;
+		free(input);
 	}
-	if (*input)
-		process_input(input, &env);
-	free(input);
-	return (0);
+	return (exit_status);
 }
 
 static t_env	*initialize_shell(char **envp)
@@ -100,7 +80,7 @@ int	main(int argc, char **argv, char **envp)
 	if (!env)
 		return (1);
 	stdin_backup = dup(STDIN_FILENO);
-	exit_status = shell_loop(env, stdin_backup);
+	exit_status = shell_loop(&env, stdin_backup);
 	close(stdin_backup);
 	cleanup(env, NULL);
 	return (exit_status);

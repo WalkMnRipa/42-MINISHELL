@@ -6,7 +6,7 @@
 /*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 17:46:57 by jcohen            #+#    #+#             */
-/*   Updated: 2024/10/20 02:18:16 by jcohen           ###   ########.fr       */
+/*   Updated: 2024/10/21 15:08:35 by jcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,7 +116,7 @@ t_cmd				*group_tokens_into_commands(t_token *token_list,
 
 // expand_variables.c
 char				*expand_special_variable(t_env *env, const char *var_name);
-char				*get_env_variable(t_env *env, const char *var_name);
+char				*get_env_variable(t_env *env, char *var_name);
 char				*expand_variables(char *str, t_env *env);
 
 // cleanup.c

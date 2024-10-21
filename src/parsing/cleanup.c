@@ -6,7 +6,7 @@
 /*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 19:54:50 by jcohen            #+#    #+#             */
-/*   Updated: 2024/10/20 02:12:55 by jcohen           ###   ########.fr       */
+/*   Updated: 2024/10/21 17:37:33 by jcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,12 +21,12 @@ void	free_tokens(t_token *tokens)
 	while (current)
 	{
 		next = current->next;
-		free(current->value);
+		if (current->value)
+			free(current->value);
 		free(current);
 		current = next;
 	}
 }
-
 void	free_cmd_list(t_cmd *head)
 {
 	t_cmd	*current;
@@ -37,11 +37,7 @@ void	free_cmd_list(t_cmd *head)
 	{
 		next = current->next;
 		if (current->args)
-		{
-			while (*current->args)
-				free(*current->args++);
 			free(current->args);
-		}
 		free(current->input_file);
 		free(current->output_file);
 		free(current);
