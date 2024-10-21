@@ -6,7 +6,7 @@
 /*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 18:30:32 by jcohen            #+#    #+#             */
-/*   Updated: 2024/10/20 02:20:57 by jcohen           ###   ########.fr       */
+/*   Updated: 2024/10/22 00:58:29 by jcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,16 +88,23 @@ t_token	*tokenizer(char *input)
 	int		i;
 	int		new_i;
 
-	if (!input || check_unclosed_quotes(input))
+	if (!input)
 		return (NULL);
 	head = NULL;
 	i = 0;
-	while (input[i]) 
+	while (input[i])
 	{
 		new_i = handle_token(input, i, &head);
 		if (new_i < 0)
 			return (free_tokens(head), NULL);
+		if (new_i <= i)
+		{
+			i++;
+			continue ;
+		}
 		i = new_i + 1;
+		if (i >= (int)ft_strlen(input))
+			break ;
 	}
 	if (check_syntax_errors(head))
 		return (free_tokens(head), NULL);
