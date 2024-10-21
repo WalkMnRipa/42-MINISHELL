@@ -6,7 +6,7 @@
 /*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 18:30:32 by jcohen            #+#    #+#             */
-/*   Updated: 2024/10/17 19:07:20 by jcohen           ###   ########.fr       */
+/*   Updated: 2024/10/20 02:20:57 by jcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,8 @@ static int	handle_token(char *input, int i, t_token **head)
 		return (token_handle_space(input, i));
 	else if (ft_strchr("|><", input[i]))
 		return (token_handle_redirection(input, i, head));
+	else if (input[i] == '$' && input[i + 1] && !ft_isspace(input[i + 1]))
+		return (token_handle_variable(input, i, head));
 	else
 		return (token_handle_word(input, i, head));
 }
@@ -90,7 +92,7 @@ t_token	*tokenizer(char *input)
 		return (NULL);
 	head = NULL;
 	i = 0;
-	while (input[i])
+	while (input[i]) 
 	{
 		new_i = handle_token(input, i, &head);
 		if (new_i < 0)

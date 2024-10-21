@@ -6,41 +6,55 @@
 /*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 19:54:50 by jcohen            #+#    #+#             */
-/*   Updated: 2024/10/11 22:34:06 by jcohen           ###   ########.fr       */
+/*   Updated: 2024/10/20 02:12:55 by jcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/parsing.h"
 
-void	free_tokens(t_token *head)
+void	free_tokens(t_token *tokens)
 {
-	t_token	*tmp;
+	t_token	*current;
+	t_token	*next;
 
-	while (head)
+	current = tokens;
+	while (current)
 	{
-		tmp = head;
-		head = head->next;
-		free(tmp->value);
-		free(tmp);
+		next = current->next;
+		free(current->value);
+		free(current);
+		current = next;
 	}
 }
 
 void	free_cmd_list(t_cmd *head)
 {
-	t_cmd	*tmp;
-	int		i;
+	t_cmd	*current;
+	t_cmd	*next;
 
-	while (head)
+	current = head;
+	while (current)
 	{
-		tmp = head;
-		head = head->next;
-		i = 0;
-		while (tmp->args && tmp->args[i])
+		next = current->next;
+		if (current->args)
 		{
-			free(tmp->args[i]);
-			i++;
+			while (*current->args)
+				free(*current->args++);
+			free(current->args);
 		}
-		free(tmp->args);
-		free(tmp);
+		free(current->input_file);
+		free(current->output_file);
+		free(current);
+		current = next;
+	}
+}
+
+void	free_string_array(char **array, int count)
+{
+	if (array)
+	{
+		while (count--)
+			free(array[count]);
+		free(array);
 	}
 }
