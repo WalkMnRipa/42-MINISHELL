@@ -6,7 +6,7 @@
 /*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 18:00:00 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/10/19 19:50:45 by jcohen           ###   ########.fr       */
+/*   Updated: 2024/10/21 15:00:20 by jcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ int	main(int argc, char **argv, char **envp)
 			tokens = tokenizer(input);
 			if (tokens)
 			{
-				cmd = group_tokens_into_commands(tokens);
+				cmd = group_tokens_into_commands(tokens, env);
 				if (cmd)
 				{
 					execute_command(cmd, &env);
