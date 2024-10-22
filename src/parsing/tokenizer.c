@@ -6,7 +6,7 @@
 /*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 18:30:32 by jcohen            #+#    #+#             */
-/*   Updated: 2024/10/22 00:58:29 by jcohen           ###   ########.fr       */
+/*   Updated: 2024/10/22 18:09:51 by jcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,23 +66,23 @@ t_token_type	determine_token_type(char *value)
 		return (TOKEN_WORD);
 }
 
-static int	handle_token(char *input, int i, t_token **head)
+int	handle_token(char *input, int i, t_token **head, t_env *env)
 {
 	if (input[i] == '\'')
 		return (token_handle_single_quotes(input, i, head));
 	else if (input[i] == '"')
-		return (token_handle_double_quotes(input, i, head));
+		return (token_handle_double_quotes(input, i, head, env));
 	else if (ft_isspace(input[i]))
 		return (token_handle_space(input, i));
 	else if (ft_strchr("|><", input[i]))
 		return (token_handle_redirection(input, i, head));
-	else if (input[i] == '$' && input[i + 1] && !ft_isspace(input[i + 1]))
-		return (token_handle_variable(input, i, head));
+	else if (input[i] == '$')
+		return (token_handle_variable(input, i, head, env));
 	else
-		return (token_handle_word(input, i, head));
+		return (token_handle_word(input, i, head, env));
 }
 
-t_token	*tokenizer(char *input)
+t_token	*tokenizer(char *input, t_env *env)
 {
 	t_token	*head;
 	int		i;
@@ -94,21 +94,18 @@ t_token	*tokenizer(char *input)
 	i = 0;
 	while (input[i])
 	{
-		new_i = handle_token(input, i, &head);
+		new_i = handle_token(input, i, &head, env);
 		if (new_i < 0)
-			return (free_tokens(head), NULL);
-		if (new_i <= i)
 		{
-			i++;
-			continue ;
+			free_tokens(head);
+			return (NULL);
 		}
 		i = new_i + 1;
-		if (i >= (int)ft_strlen(input))
-			break ;
 	}
 	if (check_syntax_errors(head))
-		return (free_tokens(head), NULL);
-	if (handle_operators(&head))
-		return (free_tokens(head), NULL);
+	{
+		free_tokens(head);
+		return (NULL);
+	}
 	return (head);
 }

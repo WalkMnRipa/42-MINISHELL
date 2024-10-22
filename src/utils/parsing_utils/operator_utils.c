@@ -6,7 +6,7 @@
 /*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/10 16:27:47 by jcohen            #+#    #+#             */
-/*   Updated: 2024/10/17 18:48:24 by jcohen           ###   ########.fr       */
+/*   Updated: 2024/10/22 18:11:09 by jcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ int	handle_here_doc(t_token *current)
 	return (modify_token_type(current, TOKEN_HERE_DOC));
 }
 
-int	handle_token(t_token *token)
+static int	handle_token(t_token *token)
 {
 	if (token->type == TOKEN_PIPE)
 		return (handle_pipe(token));

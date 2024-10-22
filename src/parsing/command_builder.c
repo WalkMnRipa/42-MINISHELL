@@ -6,7 +6,7 @@
 /*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/10 16:27:46 by jcohen            #+#    #+#             */
-/*   Updated: 2024/10/21 17:28:18 by jcohen           ###   ########.fr       */
+/*   Updated: 2024/10/22 18:12:16 by jcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,34 +30,33 @@ static t_cmd	*create_new_command(void)
 	return (new_cmd);
 }
 
-static int	add_argument(t_cmd *cmd, char *arg, t_env *env)
+static int	add_argument(t_cmd *cmd, char *arg)
 {
 	int		args_count;
 	char	**new_args;
-	char	*expanded_arg;
 	int		i;
 
-	expanded_arg = expand_variables(arg, env);
-	if (!expanded_arg)
-		return (0);
 	args_count = 0;
 	while (cmd->args && cmd->args[args_count])
 		args_count++;
 	new_args = malloc(sizeof(char *) * (args_count + 2));
 	if (!new_args)
-	{
-		free(expanded_arg);
 		return (0);
-	}
 	i = 0;
 	while (i < args_count)
 	{
 		new_args[i] = cmd->args[i];
 		i++;
 	}
-	new_args[args_count] = expanded_arg;
+	new_args[args_count] = ft_strdup(arg);
+	if (!new_args[args_count])
+	{
+		free(new_args);
+		return (0);
+	}
 	new_args[args_count + 1] = NULL;
-	free(cmd->args);
+	if (cmd->args)
+		free(cmd->args);
 	cmd->args = new_args;
 	return (1);
 }
@@ -90,11 +89,11 @@ static int	handle_redirection(t_token **token, t_cmd *cmd)
 	return (cmd->input_file || cmd->output_file);
 }
 
-static int	process_token(t_token **token, t_cmd **current, t_env *env)
+static int	process_token(t_token **token, t_cmd **current)
 {
 	if ((*token)->type == TOKEN_WORD)
 	{
-		if (!add_argument(*current, (*token)->value, env))
+		if (!add_argument(*current, (*token)->value))
 			return (0);
 	}
 	else if ((*token)->type == TOKEN_PIPE)
@@ -120,6 +119,8 @@ t_cmd	*group_tokens_into_commands(t_token *token_list, t_env *env)
 	t_cmd	*current;
 	t_token	*token;
 
+	(void)env;
+	// Nous n'avons plus besoin de env ici car l'expansion est faite pendant la tokenization
 	head = NULL;
 	current = NULL;
 	token = token_list;
@@ -133,7 +134,7 @@ t_cmd	*group_tokens_into_commands(t_token *token_list, t_env *env)
 			if (!head)
 				head = current;
 		}
-		if (!process_token(&token, &current, env))
+		if (!process_token(&token, &current))
 			return (free_cmd_list(head), NULL);
 		token = token->next;
 	}

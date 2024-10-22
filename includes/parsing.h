@@ -6,7 +6,7 @@
 /*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 17:46:57 by jcohen            #+#    #+#             */
-/*   Updated: 2024/10/22 00:48:15 by jcohen           ###   ########.fr       */
+/*   Updated: 2024/10/22 18:12:54 by jcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,9 +36,6 @@
 # define ERR_MALLOC_FAILED "malloc failed"
 # define ERR_INVALID_TOKEN "invalid token"
 # define ERR_VARIABLE_NOT_FOUND ": variable not found"
-
-# define ERR_SINGLE_QUOTE "Error: Unclosed single quote"
-# define ERR_DOUBLE_QUOTE "Error: Unclosed double quote"
 
 typedef enum e_token_type
 {
@@ -71,19 +68,19 @@ t_token				*create_token(char *value, t_token_type type,
 						t_quote_type quote_type);
 void				add_token(t_token **head, t_token *new_token);
 t_token_type		determine_token_type(char *value);
-t_token				*tokenizer(char *input);
+t_token				*tokenizer(char *input, t_env *env);
 
 // token_handlers.c
 int					token_handle_single_quotes(char *input, int i,
 						t_token **head);
 int					token_handle_double_quotes(char *input, int i,
-						t_token **head);
-int					token_handle_word(char *input, int i, t_token **head);
+						t_token **head, t_env *env);
+int					token_handle_word(char *input, int i, t_token **head,
+						t_env *env);
 int					token_handle_redirection(char *input, int i,
 						t_token **head);
-
-// token_handler_variable.c
-int					token_handle_variable(char *input, int i, t_token **head);
+int					token_handle_variable(char *input, int i, t_token **head,
+						t_env *env);
 
 // operator_utils.c
 int					handle_here_doc(t_token *current);
@@ -98,25 +95,20 @@ int					handle_redir_append(t_token *current);
 
 // utils.c
 int					token_handle_space(char *input, int i);
-int					is_valid_var_char(char c);
-int					is_valid_var_start(char c);
 char				*ft_strjoin_free(char *s1, char *s2);
-
-// expand_utils.c
-int					get_var_name_length(char *str);
-char				*replace_var(char *str, int *i, t_env *env);
 
 // syntax_checker.c
 int					check_syntax_errors(t_token *tokens);
 
+// expansion.c
+char				*expand_variables_in_str(char *str, t_env *env,
+						t_quote_type quote_type);
+char				*expand_variable(char *var_name, t_env *env);
+void				expand_command_variables(t_cmd *cmd, t_env *env);
+
 // command_builder.c
 t_cmd				*group_tokens_into_commands(t_token *token_list,
 						t_env *env);
-
-// expand_variables.c
-char				*expand_special_variable(t_env *env, const char *var_name);
-char				*get_env_variable(t_env *env, char *var_name);
-char				*expand_variables(char *str, t_env *env);
 
 // cleanup.c
 void				free_tokens(t_token *tokens);

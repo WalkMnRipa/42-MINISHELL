@@ -6,7 +6,7 @@
 /*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 18:00:00 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/10/21 17:30:28 by jcohen           ###   ########.fr       */
+/*   Updated: 2024/10/22 17:39:47 by jcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ static int	shell_loop(t_env **env, int stdin_backup)
 		if (*input)
 		{
 			add_history(input);
-			tokens = tokenizer(input);
+			tokens = tokenizer(input, *env);
 			if (tokens)
 			{
 				cmd = group_tokens_into_commands(tokens, *env);
