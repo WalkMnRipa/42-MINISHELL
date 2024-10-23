@@ -1,0 +1,4 @@
+Commande : echo "abc$USERdef"
+Résultat attendu : Affiche abcjohn_doedef (expansion au milieu d'une chaîne).
+
+ctrl-\ marche mal
