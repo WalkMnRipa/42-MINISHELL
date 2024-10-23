@@ -6,7 +6,7 @@
 /*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/10 16:27:46 by jcohen            #+#    #+#             */
-/*   Updated: 2024/10/22 18:12:16 by jcohen           ###   ########.fr       */
+/*   Updated: 2024/10/23 19:09:44 by jcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,10 +50,7 @@ static int	add_argument(t_cmd *cmd, char *arg)
 	}
 	new_args[args_count] = ft_strdup(arg);
 	if (!new_args[args_count])
-	{
-		free(new_args);
-		return (0);
-	}
+		return (free(new_args), 0);
 	new_args[args_count + 1] = NULL;
 	if (cmd->args)
 		free(cmd->args);
@@ -113,14 +110,12 @@ static int	process_token(t_token **token, t_cmd **current)
 	return (1);
 }
 
-t_cmd	*group_tokens_into_commands(t_token *token_list, t_env *env)
+t_cmd	*group_tokens_into_commands(t_token *token_list)
 {
 	t_cmd	*head;
 	t_cmd	*current;
 	t_token	*token;
 
-	(void)env;
-	// Nous n'avons plus besoin de env ici car l'expansion est faite pendant la tokenization
 	head = NULL;
 	current = NULL;
 	token = token_list;

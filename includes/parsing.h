@@ -6,7 +6,7 @@
 /*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 17:46:57 by jcohen            #+#    #+#             */
-/*   Updated: 2024/10/23 16:33:28 by jcohen           ###   ########.fr       */
+/*   Updated: 2024/10/23 19:35:12 by jcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,6 +82,11 @@ int					token_handle_redirection(char *input, int i,
 int					token_handle_variable(char *input, int i, t_token **head,
 						t_env *env);
 
+// token_handlers_utils.c
+char				*get_quoted_content(char *input, int start, char quote);
+int					get_quote_end(char *input, int start, char quote);
+char				*get_quoted_content(char *input, int start, char quote);
+
 // operator_utils.c
 int					handle_here_doc(t_token *current);
 int					handle_operators(t_token **tokens);
@@ -105,12 +110,9 @@ int					check_syntax_errors(t_token *tokens);
 char				*expand_variables_in_str(char *str, t_env *env,
 						t_quote_type quote_type);
 char				*expand_quoted_word(char *word, t_env *env);
-char				*expand_variable(char *var_name, t_env *env);
-void				expand_command_variables(t_cmd *cmd, t_env *env);
 
 // command_builder.c
-t_cmd				*group_tokens_into_commands(t_token *token_list,
-						t_env *env);
+t_cmd				*group_tokens_into_commands(t_token *token_list);
 
 // cleanup.c
 void				free_tokens(t_token *tokens);

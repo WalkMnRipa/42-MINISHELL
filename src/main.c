@@ -6,7 +6,7 @@
 /*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 18:00:00 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/10/22 17:39:47 by jcohen           ###   ########.fr       */
+/*   Updated: 2024/10/23 19:22:30 by jcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ static int	shell_loop(t_env **env, int stdin_backup)
 		if (!input)
 		{
 			if (isatty(STDIN_FILENO))
-				printf("\nexit\n");
+				printf("exit\n");
 			break ;
 		}
 		if (*input)
@@ -42,7 +42,7 @@ static int	shell_loop(t_env **env, int stdin_backup)
 			tokens = tokenizer(input, *env);
 			if (tokens)
 			{
-				cmd = group_tokens_into_commands(tokens, *env);
+				cmd = group_tokens_into_commands(tokens);
 				if (cmd)
 				{
 					execute_command(cmd, env);
