@@ -6,7 +6,7 @@
 /*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 17:46:57 by jcohen            #+#    #+#             */
-/*   Updated: 2024/10/22 18:12:54 by jcohen           ###   ########.fr       */
+/*   Updated: 2024/10/23 16:33:28 by jcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,6 +96,7 @@ int					handle_redir_append(t_token *current);
 // utils.c
 int					token_handle_space(char *input, int i);
 char				*ft_strjoin_free(char *s1, char *s2);
+char				*ft_strjoinc(char *str, char c);
 
 // syntax_checker.c
 int					check_syntax_errors(t_token *tokens);
@@ -103,6 +104,7 @@ int					check_syntax_errors(t_token *tokens);
 // expansion.c
 char				*expand_variables_in_str(char *str, t_env *env,
 						t_quote_type quote_type);
+char				*expand_quoted_word(char *word, t_env *env);
 char				*expand_variable(char *var_name, t_env *env);
 void				expand_command_variables(t_cmd *cmd, t_env *env);
 

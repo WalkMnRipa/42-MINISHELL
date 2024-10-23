@@ -6,7 +6,7 @@
 /*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 18:00:39 by jcohen            #+#    #+#             */
-/*   Updated: 2024/10/22 18:20:31 by jcohen           ###   ########.fr       */
+/*   Updated: 2024/10/23 16:33:11 by jcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,19 +15,19 @@
 int	token_handle_single_quotes(char *input, int i, t_token **head)
 {
 	int		start;
+	int		end;
 	char	*value;
 	t_token	*new_token;
-	int		end;
 
+	if (!input[i + 1])
+		return (-1); // Quote non fermée
 	start = i + 1;
 	end = start;
 	while (input[end] && input[end] != '\'')
 		end++;
-	// Si pas de quote fermante, on inclut le reste de la string
-	if (!input[end])
-		value = ft_substr(input, i, ft_strlen(input) - i);
-	else
-		value = ft_substr(input, i, end + 1 - i);
+	if (!input[end]) // Quote non fermée
+		return (-1);
+	value = ft_substr(input, start, end - start);
 	if (!value)
 		return (-1);
 	new_token = create_token(value, TOKEN_WORD, QUOTE_SINGLE);
@@ -35,30 +35,30 @@ int	token_handle_single_quotes(char *input, int i, t_token **head)
 	if (!new_token)
 		return (-1);
 	add_token(head, new_token);
-	return (input[end] ? end : ft_strlen(input) - 1);
+	return (end);
 }
 
 int	token_handle_double_quotes(char *input, int i, t_token **head, t_env *env)
 {
 	int		start;
-	char	*value;
-	t_token	*new_token;
 	int		end;
+	char	*content;
 	char	*expanded;
+	t_token	*new_token;
 
+	if (!input[i + 1])
+		return (-1);
 	start = i + 1;
 	end = start;
 	while (input[end] && input[end] != '"')
 		end++;
-	// Si pas de quote fermante, on inclut le reste de la string
 	if (!input[end])
-		value = ft_substr(input, i, ft_strlen(input) - i);
-	else
-		value = ft_substr(input, i, end + 1 - i);
-	if (!value)
 		return (-1);
-	expanded = expand_variables_in_str(value, env, QUOTE_DOUBLE);
-	free(value);
+	content = ft_substr(input, start, end - start);
+	if (!content)
+		return (-1);
+	expanded = expand_variables_in_str(content, env, QUOTE_DOUBLE);
+	free(content);
 	if (!expanded)
 		return (-1);
 	new_token = create_token(expanded, TOKEN_WORD, QUOTE_DOUBLE);
@@ -66,59 +66,127 @@ int	token_handle_double_quotes(char *input, int i, t_token **head, t_env *env)
 	if (!new_token)
 		return (-1);
 	add_token(head, new_token);
-	return (input[end] ? end : ft_strlen(input) - 1);
+	return (end);
+}
+
+char	*expand_quoted_word(char *word, t_env *env)
+{
+	char	*result;
+	int		i;
+	int		start;
+	char	quote;
+	char	*segment;
+	char	*expanded;
+	char	*temp;
+
+	result = ft_strdup("");
+	if (!result)
+		return (NULL);
+	i = 0;
+	while (word[i])
+	{
+		if (word[i] == '\'' || word[i] == '"')
+		{
+			quote = word[i];
+			start = i + 1;
+			i++;
+			while (word[i] && word[i] != quote)
+				i++;
+			segment = ft_substr(word, start, i - start);
+			if (!segment)
+			{
+				free(result);
+				return (NULL);
+			}
+			// Expansion selon le type de quote
+			if (quote == '"')
+				expanded = expand_variables_in_str(segment, env, QUOTE_DOUBLE);
+			else
+				expanded = ft_strdup(segment);
+			// Pas d'expansion dans les quotes simples
+			free(segment);
+			if (!expanded)
+			{
+				free(result);
+				return (NULL);
+			}
+			temp = ft_strjoin(result, expanded);
+			free(expanded);
+			free(result);
+			if (!temp)
+				return (NULL);
+			result = temp;
+		}
+		else
+		{
+			start = i;
+			while (word[i] && word[i] != '\'' && word[i] != '"')
+				i++;
+			segment = ft_substr(word, start, i - start);
+			if (!segment)
+			{
+				free(result);
+				return (NULL);
+			}
+			expanded = expand_variables_in_str(segment, env, QUOTE_NONE);
+			free(segment);
+			if (!expanded)
+			{
+				free(result);
+				return (NULL);
+			}
+			temp = ft_strjoin(result, expanded);
+			free(expanded);
+			free(result);
+			if (!temp)
+				return (NULL);
+			result = temp;
+			continue ;
+		}
+		i++;
+	}
+	return (result);
 }
 
 int	token_handle_word(char *input, int i, t_token **head, t_env *env)
 {
-	int		start;
-	char	*value;
-	t_token	*new_token;
-	int		current;
-	char	quote;
-	char	*expanded;
+	int				start;
+	int				current;
+	char			*value;
+	char			*expanded;
+	t_token			*new_token;
+	t_quote_type	quote_type;
 
 	start = i;
 	current = i;
-	// Check if the word starts with a quote
-	if (input[i] == '\'' || input[i] == '"')
+	quote_type = QUOTE_NONE;
+	while (input[current])
 	{
-		quote = input[i];
+		if (input[current] == '\'' && quote_type == QUOTE_NONE)
+			quote_type = QUOTE_SINGLE;
+		else if (input[current] == '"' && quote_type == QUOTE_NONE)
+			quote_type = QUOTE_DOUBLE;
+		else if ((input[current] == '\'' && quote_type == QUOTE_SINGLE)
+				|| (input[current] == '"' && quote_type == QUOTE_DOUBLE))
+			quote_type = QUOTE_NONE;
+		else if (ft_isspace(input[current]) && quote_type == QUOTE_NONE)
+			break ;
 		current++;
-		// Search for closing quote
-		while (input[current] && input[current] != quote)
-			current++;
-		// If no closing quote found, treat entire input as literal
-		if (!input[current])
-		{
-			value = ft_strdup(input + i);
-			if (!value)
-				return (-1);
-			new_token = create_token(value, TOKEN_WORD, QUOTE_NONE);
-			free(value);
-			if (!new_token)
-				return (-1);
-			add_token(head, new_token);
-			return (ft_strlen(input) - 1);
-		}
 	}
-	// Normal word processing for other cases
-	while (input[current] && !ft_isspace(input[current]) && !ft_strchr("<>|",
-			input[current]))
-		current++;
+	// Si on a une quote non fermée
+	if (quote_type != QUOTE_NONE)
+		return (ft_strlen(input) - 1);
+	// Extraire la portion complète
 	value = ft_substr(input, start, current - start);
 	if (!value)
 		return (-1);
-	if (input[start] != '\'' && input[start] != '"')
-	{
-		expanded = expand_variables_in_str(value, env, QUOTE_NONE);
-		free(value);
-		value = expanded;
-	}
-	if (!value)
-		return (-1);
-	new_token = create_token(value, TOKEN_WORD, QUOTE_NONE);
+	// Expansion des variables selon le contexte
+	expanded = expand_quoted_word(value, env);
 	free(value);
+	if (!expanded)
+		return (-1);
+	new_token = create_token(expanded, TOKEN_WORD, QUOTE_NONE);
+	free(expanded);
 	if (!new_token)
 		return (-1);
 	add_token(head, new_token);
