@@ -6,7 +6,7 @@
 /*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 17:46:57 by jcohen            #+#    #+#             */
-/*   Updated: 2024/10/23 19:35:12 by jcohen           ###   ########.fr       */
+/*   Updated: 2024/10/24 01:27:13 by jcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@
 # include <termios.h>
 # include <unistd.h>
 
-# define ERR_UNEXPECTED_NEWLINE "bash: syntax error near unexpected token `newline'"
+# define ERR_UNEXPECTED_NL "bash: syntax error near unexpected token `newline'"
 # define ERR_UNEXPECTED_PIPE "bash: syntax error near unexpected token `|'"
 # define ERR_UNEXPECTED_TOKEN "bash: syntax error near unexpected token"
 # define ERR_MALLOC_FAILED "malloc failed"

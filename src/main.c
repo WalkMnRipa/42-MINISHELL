@@ -6,7 +6,7 @@
 /*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 18:00:00 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/10/23 19:22:30 by jcohen           ###   ########.fr       */
+/*   Updated: 2024/10/24 01:26:01 by jcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,11 +17,31 @@
 
 int				g_signal_received = 0;
 
+static int	handle_input(char *input, t_env **env, int *exit_status)
+{
+	t_token	*tokens;
+	t_cmd	*cmd;
+
+	if (!*input)
+		return (0);
+	add_history(input);
+	tokens = tokenizer(input, *env);
+	if (!tokens)
+		return (0);
+	cmd = group_tokens_into_commands(tokens);
+	if (cmd)
+	{
+		execute_command(cmd, env);
+		*exit_status = cmd->exit_status;
+		free_cmd_list(cmd);
+	}
+	free_tokens(tokens);
+	return (0);
+}
+
 static int	shell_loop(t_env **env, int stdin_backup)
 {
 	char	*input;
-	t_token	*tokens;
-	t_cmd	*cmd;
 	int		exit_status;
 
 	exit_status = 0;
@@ -33,25 +53,10 @@ static int	shell_loop(t_env **env, int stdin_backup)
 		if (!input)
 		{
 			if (isatty(STDIN_FILENO))
-				printf("exit\n");
+				ft_printf("exit\n");
 			break ;
 		}
-		if (*input)
-		{
-			add_history(input);
-			tokens = tokenizer(input, *env);
-			if (tokens)
-			{
-				cmd = group_tokens_into_commands(tokens);
-				if (cmd)
-				{
-					execute_command(cmd, env);
-					exit_status = cmd->exit_status;
-					free_cmd_list(cmd);
-				}
-				free_tokens(tokens);
-			}
-		}
+		handle_input(input, env, &exit_status);
 		free(input);
 	}
 	return (exit_status);

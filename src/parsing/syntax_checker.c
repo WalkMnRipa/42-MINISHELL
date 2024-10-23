@@ -6,7 +6,7 @@
 /*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/17 18:47:50 by jcohen            #+#    #+#             */
-/*   Updated: 2024/10/18 17:00:46 by jcohen           ###   ########.fr       */
+/*   Updated: 2024/10/24 01:15:37 by jcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,7 +103,7 @@ int	check_syntax_errors(t_token *tokens)
 	}
 	if (prev && is_redirection(prev->type))
 	{
-		ft_putendl_fd(ERR_UNEXPECTED_NEWLINE, 2);
+		ft_putendl_fd(ERR_UNEXPECTED_NL, 2);
 		return (1);
 	}
 	return (0);

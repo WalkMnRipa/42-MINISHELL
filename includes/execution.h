@@ -6,7 +6,7 @@
 /*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 19:06:34 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/10/21 15:03:45 by jcohen           ###   ########.fr       */
+/*   Updated: 2024/10/24 01:27:23 by jcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@ extern int			g_signal_received;
 #ifndef EXECUTION_H
 # define EXECUTION_H
 
-# include "../libft/get_next_line.h"
 # include "../libft/libft.h"
 # include <dirent.h>
 # include <errno.h>

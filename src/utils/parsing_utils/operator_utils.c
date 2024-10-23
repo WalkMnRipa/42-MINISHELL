@@ -6,7 +6,7 @@
 /*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/10 16:27:47 by jcohen            #+#    #+#             */
-/*   Updated: 2024/10/22 18:11:09 by jcohen           ###   ########.fr       */
+/*   Updated: 2024/10/24 01:16:07 by jcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ int	handle_here_doc(t_token *current)
 {
 	if (!current->next)
 	{
-		ft_putendl_fd(ERR_UNEXPECTED_NEWLINE, 2);
+		ft_putendl_fd(ERR_UNEXPECTED_NL, 2);
 		return (1);
 	}
 	return (modify_token_type(current, TOKEN_HERE_DOC));

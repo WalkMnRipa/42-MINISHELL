@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   operators.c                                        :+:      :+:    :+:   */
+/*   operators_handlers.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/10 16:00:54 by jcohen            #+#    #+#             */
-/*   Updated: 2024/10/11 22:24:33 by jcohen           ###   ########.fr       */
+/*   Updated: 2024/10/24 01:14:59 by jcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ int	handle_redir_input(t_token *current)
 {
 	if (!current->next)
 	{
-		ft_putendl_fd(ERR_UNEXPECTED_NEWLINE, 2);
+		ft_putendl_fd(ERR_UNEXPECTED_NL, 2);
 		return (1);
 	}
 	return (modify_token_type(current, TOKEN_REDIR_INPUT));
@@ -44,7 +44,7 @@ int	handle_redir_output(t_token *current)
 {
 	if (!current->next)
 	{
-		ft_putendl_fd(ERR_UNEXPECTED_NEWLINE, 2);
+		ft_putendl_fd(ERR_UNEXPECTED_NL, 2);
 		return (1);
 	}
 	return (modify_token_type(current, TOKEN_REDIR_OUTPUT));
@@ -54,7 +54,7 @@ int	handle_redir_append(t_token *current)
 {
 	if (!current->next)
 	{
-		ft_putendl_fd(ERR_UNEXPECTED_NEWLINE, 2);
+		ft_putendl_fd(ERR_UNEXPECTED_NL, 2);
 		return (1);
 	}
 	return (modify_token_type(current, TOKEN_REDIR_APPEND));
