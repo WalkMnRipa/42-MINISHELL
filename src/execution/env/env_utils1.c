@@ -6,7 +6,7 @@
 /*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/11 16:25:09 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/10/17 16:12:41 by jcohen           ###   ########.fr       */
+/*   Updated: 2024/10/25 18:06:50 by jcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,11 @@ int	is_valid_env_name(const char *name)
 {
 	int	i;
 
-	if (!name || !*name || ft_isdigit(*name))
+	if (!name || !*name)
+		return (0);
+	if (!ft_isalpha(name[0]) && name[0] != '_')
+		return (0);
+	if (name[0] == '=')
 		return (0);
 	i = 0;
 	while (name[i])
@@ -27,7 +31,6 @@ int	is_valid_env_name(const char *name)
 	}
 	return (1);
 }
-
 int	is_readonly_var(const char *name)
 {
 	if (ft_strcmp(name, "PWD") == 0)
