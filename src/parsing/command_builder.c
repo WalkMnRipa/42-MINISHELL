@@ -6,7 +6,7 @@
 /*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/10 16:27:46 by jcohen            #+#    #+#             */
-/*   Updated: 2024/10/23 19:09:44 by jcohen           ###   ########.fr       */
+/*   Updated: 2024/10/25 16:55:37 by jcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,13 @@ static int	add_argument(t_cmd *cmd, char *arg)
 
 static int	handle_redirection(t_token **token, t_cmd *cmd)
 {
-	if ((*token)->type == TOKEN_REDIR_INPUT)
+	if ((*token)->type == TOKEN_HERE_DOC)
+	{
+		handle_heredoc(cmd, (*token)->next->value);
+		*token = (*token)->next;
+		return (1);
+	}
+	else if ((*token)->type == TOKEN_REDIR_INPUT)
 	{
 		cmd->input_file = ft_strdup((*token)->next->value);
 		if (!cmd->input_file)
@@ -83,7 +89,7 @@ static int	handle_redirection(t_token **token, t_cmd *cmd)
 	else
 		return (0);
 	*token = (*token)->next;
-	return (cmd->input_file || cmd->output_file);
+	return (1);
 }
 
 static int	process_token(t_token **token, t_cmd **current)
@@ -102,7 +108,8 @@ static int	process_token(t_token **token, t_cmd **current)
 	}
 	else if ((*token)->type == TOKEN_REDIR_INPUT
 		|| (*token)->type == TOKEN_REDIR_OUTPUT
-		|| (*token)->type == TOKEN_REDIR_APPEND)
+		|| (*token)->type == TOKEN_REDIR_APPEND
+		|| (*token)->type == TOKEN_HERE_DOC)
 	{
 		if (!handle_redirection(token, *current))
 			return (0);

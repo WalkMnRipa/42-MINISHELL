@@ -6,16 +6,11 @@
 /*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 16:38:41 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/10/25 16:46:00 by jcohen           ###   ########.fr       */
+/*   Updated: 2024/10/25 16:57:22 by jcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/execution.h"
-
-static void	cleanup_heredoc(void)
-{
-	unlink(HEREDOC_TMP);
-}
 
 static void	write_heredoc(int tmp_fd, char *delimiter)
 {
@@ -25,8 +20,8 @@ static void	write_heredoc(int tmp_fd, char *delimiter)
 	delim_len = ft_strlen(delimiter);
 	while (1)
 	{
-		ft_putstr_fd(HEREDOC_PROMPT, 1);
-		line = get_next_line(0);
+		ft_putstr_fd("> ", STDERR_FILENO);
+		line = get_next_line(STDIN_FILENO);
 		if (!line)
 			break ;
 		if (ft_strncmp(line, delimiter, delim_len) == 0
@@ -35,36 +30,31 @@ static void	write_heredoc(int tmp_fd, char *delimiter)
 			free(line);
 			break ;
 		}
-		ft_putstr_fd(line, tmp_fd);
+		write(tmp_fd, line, ft_strlen(line));
 		free(line);
 	}
 }
 
 void	handle_heredoc(t_cmd *cmd, char *delimiter)
 {
-	int	tmp_fd;
+	int	pipe_fd[2];
 
 	if (!cmd || !delimiter)
 		return ;
-	cleanup_heredoc();
-	tmp_fd = open(HEREDOC_TMP, O_CREAT | O_WRONLY | O_TRUNC, 0644);
-	if (tmp_fd < 0)
+	if (pipe(pipe_fd) == -1)
 	{
-		ft_putendl_fd(ERR_HEREDOC_CREATING, 2);
+		perror("minishell: pipe");
 		cmd->exit_status = 1;
 		return ;
 	}
-	write_heredoc(tmp_fd, delimiter);
-	close(tmp_fd);
-	cmd->input_fd = open(HEREDOC_TMP, O_RDONLY);
-	if (cmd->input_fd < 0)
-	{
-		ft_putendl_fd(ERR_HEREDOC_OPEN, 2);
-		cleanup_heredoc();
-		cmd->exit_status = 1;
-		return ;
-	}
+	write_heredoc(pipe_fd[1], delimiter);
+	close(pipe_fd[1]);
+	if (cmd->input_fd != STDIN_FILENO)
+		close(cmd->input_fd);
+	cmd->input_fd = pipe_fd[0];
 	if (cmd->input_file)
+	{
 		free(cmd->input_file);
-	cmd->input_file = ft_strdup(HEREDOC_TMP);
+		cmd->input_file = NULL;
+	}
 }
