@@ -6,7 +6,7 @@
 /*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 17:46:57 by jcohen            #+#    #+#             */
-/*   Updated: 2024/10/25 16:47:30 by jcohen           ###   ########.fr       */
+/*   Updated: 2024/10/25 16:50:30 by jcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,5 +118,5 @@ t_cmd				*group_tokens_into_commands(t_token *token_list);
 void				free_tokens(t_token *tokens);
 void				free_cmd_list(t_cmd *head);
 void				free_string_array(char **array, int count);
-void				free_cmd(t_cmd *cmd);
+
 #endif

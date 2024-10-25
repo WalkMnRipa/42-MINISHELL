@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execution_cleanup.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 20:11:10 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/10/17 13:42:53 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/10/25 16:50:55 by jcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,11 @@ void	free_cmd(t_cmd *cmd)
 		}
 		free(cmd->args);
 		if (cmd->input_file)
+		{
+			if (ft_strcmp(cmd->input_file, HEREDOC_TMP) == 0)
+				unlink(HEREDOC_TMP);
 			free(cmd->input_file);
+		}
 		if (cmd->output_file)
 			free(cmd->output_file);
 		if (cmd->input_fd != STDIN_FILENO)
