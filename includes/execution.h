@@ -6,7 +6,7 @@
 /*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 19:06:34 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/10/25 16:45:31 by jcohen           ###   ########.fr       */
+/*   Updated: 2024/10/25 23:03:13 by jcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,8 @@ extern int			g_signal_received;
 # include <stdio.h>
 # include <stdlib.h>
 # include <string.h>
+# include <sys/signal.h>
+# include <sys/stat.h>
 # include <sys/wait.h>
 # include <unistd.h>
 
@@ -92,8 +94,7 @@ void				cleanup(t_env *env, t_cmd *cmd);
 void				error_exit_message(t_env *env, t_cmd *cmd, char *message);
 
 // Heredoc function
-void				handle_heredoc(t_cmd *cmd, char *delimiter);
-
+int					handle_heredoc(t_cmd *cmd, char *delimiter, t_env *env);
 // Update PWD function
 void				update_pwd(t_env *env, char *old_pwd, char *new_pwd);
 char				*ft_strtok(char *str, const char *delim);

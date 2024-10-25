@@ -6,7 +6,7 @@
 /*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 17:46:57 by jcohen            #+#    #+#             */
-/*   Updated: 2024/10/25 16:50:30 by jcohen           ###   ########.fr       */
+/*   Updated: 2024/10/25 23:06:11 by jcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,7 +112,8 @@ char				*expand_variables_in_str(char *str, t_env *env,
 char				*expand_quoted_word(char *word, t_env *env);
 
 // command_builder.c
-t_cmd				*group_tokens_into_commands(t_token *token_list);
+t_cmd				*group_tokens_into_commands(t_token *token_list,
+						t_env *env);
 
 // cleanup.c
 void				free_tokens(t_token *tokens);
