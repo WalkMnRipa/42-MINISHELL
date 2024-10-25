@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute_command.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 20:14:16 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/10/18 15:46:35 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/10/25 15:54:08 by jcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,6 +100,8 @@ void	execute_command(t_cmd *cmd, t_env **env)
 
 	stdin_backup = dup(STDIN_FILENO);
 	stdout_backup = dup(STDOUT_FILENO);
+	if (cmd->input_file && cmd->input_fd == -2)
+		handle_heredoc(cmd, cmd->input_file);
 	if (cmd->next)
 		execute_pipeline(cmd, env);
 	else if (!setup_redirections(cmd))
@@ -112,4 +114,6 @@ void	execute_command(t_cmd *cmd, t_env **env)
 	dup2(stdout_backup, STDOUT_FILENO);
 	close(stdin_backup);
 	close(stdout_backup);
+	if (access(HEREDOC_TMP, F_OK) == 0)
+		unlink(HEREDOC_TMP);
 }

@@ -6,7 +6,7 @@
 /*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/10 16:27:46 by jcohen            #+#    #+#             */
-/*   Updated: 2024/10/23 19:09:44 by jcohen           ###   ########.fr       */
+/*   Updated: 2024/10/25 15:59:27 by jcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,6 +80,12 @@ static int	handle_redirection(t_token **token, t_cmd *cmd)
 			return (0);
 		cmd->append_output = 1;
 	}
+	else if ((*token)->type == TOKEN_HERE_DOC)
+	{
+
+		if (!handle_heredoc_token(*token, cmd))
+			return (0);
+	}
 	else
 		return (0);
 	*token = (*token)->next;
@@ -106,6 +112,12 @@ static int	process_token(t_token **token, t_cmd **current)
 	{
 		if (!handle_redirection(token, *current))
 			return (0);
+	}
+	else if ((*token)->type == TOKEN_HERE_DOC)
+	{
+		if (!handle_heredoc_token(*token, *current))
+			return (0);
+		*token = (*token)->next;
 	}
 	return (1);
 }

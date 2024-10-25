@@ -6,7 +6,7 @@
 /*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 17:46:57 by jcohen            #+#    #+#             */
-/*   Updated: 2024/10/24 01:27:13 by jcohen           ###   ########.fr       */
+/*   Updated: 2024/10/25 15:57:20 by jcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,9 +33,12 @@
 # define ERR_UNEXPECTED_NL "bash: syntax error near unexpected token `newline'"
 # define ERR_UNEXPECTED_PIPE "bash: syntax error near unexpected token `|'"
 # define ERR_UNEXPECTED_TOKEN "bash: syntax error near unexpected token"
+# define ERR_CREATING_HERE_DOC "minishell: error creating heredoc temporary file"
 # define ERR_MALLOC_FAILED "malloc failed"
 # define ERR_INVALID_TOKEN "invalid token"
 # define ERR_VARIABLE_NOT_FOUND ": variable not found"
+
+# define HEREDOC_PROMPT "> "
 
 typedef enum e_token_type
 {
@@ -113,6 +116,12 @@ char				*expand_quoted_word(char *word, t_env *env);
 
 // command_builder.c
 t_cmd				*group_tokens_into_commands(t_token *token_list);
+
+// heredoc handling
+int					validate_heredoc_syntax(t_token *token);
+int					handle_heredoc_token(t_token *token, t_cmd *cmd);
+char				*get_heredoc_content(const char *delimiter);
+int					write_heredoc_to_file(char *content);
 
 // cleanup.c
 void				free_tokens(t_token *tokens);
