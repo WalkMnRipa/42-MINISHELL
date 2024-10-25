@@ -6,7 +6,7 @@
 /*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 20:14:16 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/10/25 15:54:08 by jcohen           ###   ########.fr       */
+/*   Updated: 2024/10/25 18:18:34 by jcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,17 +43,88 @@ char	*find_command_path(const char *command, t_env *env)
 
 static void	handle_command_not_found(t_cmd *cmd)
 {
+	struct stat	st;
+
 	ft_putstr_fd("minishell: ", 2);
 	ft_putstr_fd(cmd->args[0], 2);
-	ft_putendl_fd(": command not found", 2);
-	cmd->exit_status = 127;
+	if (stat(cmd->args[0], &st) == 0)
+	{
+		if (S_ISDIR(st.st_mode))
+		{
+			ft_putendl_fd(": Is a directory", 2);
+			cmd->exit_status = 126;
+		}
+		else if (access(cmd->args[0], X_OK) != 0)
+		{
+			ft_putendl_fd(": Permission denied", 2);
+			cmd->exit_status = 126;
+		}
+		else
+		{
+			ft_putendl_fd(": command not found", 2);
+			cmd->exit_status = 127;
+		}
+	}
+	else
+	{
+		if (cmd->args[0][0] == '/' || (cmd->args[0][0] == '.'
+				&& cmd->args[0][1] == '/'))
+		{
+			ft_putendl_fd(": No such file or directory", 2);
+		}
+		else
+		{
+			ft_putendl_fd(": command not found", 2);
+		}
+		cmd->exit_status = 127;
+	}
 }
 
 void	execute_external_command(t_cmd *cmd, t_env **env)
 {
-	char	*command_path;
+	char		*command_path;
+	struct stat	st;
 
-	command_path = find_command_path(cmd->args[0], *env);
+	if (!cmd->args[0])
+		return ;
+	// Cas spécial pour les variables d'environnement vides
+	if (cmd->args[0][0] == '\0')
+	{
+		cmd->exit_status = 127;
+		return ;
+	}
+	// Si c'est un chemin direct
+	if (cmd->args[0][0] == '/' || (cmd->args[0][0] == '.'
+			&& cmd->args[0][1] == '/'))
+	{
+		if (stat(cmd->args[0], &st) == 0)
+		{
+			if (S_ISDIR(st.st_mode))
+			{
+				ft_putstr_fd("minishell: ", 2);
+				ft_putstr_fd(cmd->args[0], 2);
+				ft_putendl_fd(": Is a directory", 2);
+				cmd->exit_status = 126;
+				return ;
+			}
+			if (access(cmd->args[0], X_OK) != 0)
+			{
+				ft_putstr_fd("minishell: ", 2);
+				ft_putstr_fd(cmd->args[0], 2);
+				ft_putendl_fd(": Permission denied", 2);
+				cmd->exit_status = 126;
+				return ;
+			}
+		}
+		else
+		{
+			handle_command_not_found(cmd);
+			return ;
+		}
+		command_path = ft_strdup(cmd->args[0]);
+	}
+	else
+		command_path = find_command_path(cmd->args[0], *env);
 	if (!command_path)
 	{
 		handle_command_not_found(cmd);
@@ -61,9 +132,9 @@ void	execute_external_command(t_cmd *cmd, t_env **env)
 	}
 	reset_signals();
 	execve(command_path, cmd->args, NULL);
-	perror("minishell: execve");
 	free(command_path);
-	exit(EXIT_FAILURE);
+	cmd->exit_status = 127;
+	exit(cmd->exit_status);
 }
 
 static void	execute_non_builtin(t_cmd *cmd, t_env **env)

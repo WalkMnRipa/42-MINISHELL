@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cd.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 20:00:59 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/10/10 17:25:55 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/10/25 18:17:25 by jcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,16 +39,16 @@ static int	change_directory(t_env *env, const char *path)
 		return (0);
 	if (chdir(path) != 0)
 	{
-		ft_putstr_fd("cd: ", 2);
+		ft_putstr_fd("minishell: cd: ", 2);
 		ft_putstr_fd((char *)path, 2);
-		ft_putendl_fd(": No such file or directory", 2);
+		perror(" ");
 		free(old_pwd);
 		return (0);
 	}
 	new_pwd = getcwd(NULL, 0);
 	if (!new_pwd)
 	{
-		ft_putendl_fd("cd: Error getting new directory", 2);
+		ft_putendl_fd("minishell: cd: error getting new directory", 2);
 		free(old_pwd);
 		return (0);
 	}
@@ -60,7 +60,18 @@ void	builtin_cd(t_env *env, char **args)
 {
 	char	*path;
 	char	*expanded_path;
+	int		arg_count;
+	int		cd_result;
 
+	arg_count = 0;
+	while (args[arg_count])
+		arg_count++;
+	if (arg_count > 2)
+	{
+		ft_putendl_fd("minishell: cd: too many arguments", 2);
+		env->last_exit_status = 1;
+		return ;
+	}
 	if (!args || !args[1] || ft_strcmp(args[1], "~") == 0)
 		path = get_env_value(env, "HOME");
 	else if (ft_strcmp(args[1], "-") == 0)
@@ -69,15 +80,18 @@ void	builtin_cd(t_env *env, char **args)
 		path = args[1];
 	if (!path)
 	{
-		ft_putendl_fd("cd: HOME not set", 2);
+		ft_putendl_fd("minishell: cd: HOME not set", 2);
+		env->last_exit_status = 1;
 		return ;
 	}
 	expanded_path = expand_tilde(env, path);
 	if (!expanded_path)
 	{
-		ft_putendl_fd("cd: Memory allocation error", 2);
+		ft_putendl_fd("minishell: cd: memory allocation error", 2);
+		env->last_exit_status = 1;
 		return ;
 	}
-	change_directory(env, expanded_path);
+	cd_result = change_directory(env, expanded_path);
 	free(expanded_path);
+	env->last_exit_status = cd_result ? 0 : 1;
 }
