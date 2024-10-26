@@ -6,7 +6,7 @@
 /*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 17:24:52 by jcohen            #+#    #+#             */
-/*   Updated: 2024/10/23 19:18:46 by jcohen           ###   ########.fr       */
+/*   Updated: 2024/10/26 16:13:44 by jcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,20 +23,34 @@ static int	handle_empty_var_return(t_token **head, int i)
 	return (i);
 }
 
-static int	handle_exit_status_return(t_token **head, t_env *env, int start)
+static int	handle_exit_status_return(t_token **head, t_env *env, int start,
+		char *input)
 {
 	char	*value;
 	t_token	*new_token;
+	int		i;
+	char	*tmp;
 
 	value = ft_itoa(env->last_exit_status);
 	if (!value)
 		return (-1);
+	i = start;
+	while (input[i] && !ft_isspace(input[i]) && input[i] != '"'
+		&& input[i] != '\'')
+		i++;
+	if (i > start + 1)
+	{
+		tmp = value;
+		value = ft_strjoin(value, input + start + 1);
+		free(tmp);
+		if (!value)
+			return (-1);
+	}
 	new_token = create_token(value, TOKEN_WORD, QUOTE_NONE);
 	free(value);
 	if (!new_token)
 		return (-1);
-	add_token(head, new_token);
-	return (start);
+	return (add_token(head, new_token), i - 1);
 }
 
 static int	handle_pid_return(t_token **head, int start)
@@ -93,7 +107,7 @@ int	token_handle_variable(char *input, int i, t_token **head, t_env *env)
 	if (!input[start] || ft_isspace(input[start]))
 		return (handle_empty_var_return(head, i));
 	if (input[start] == '?')
-		return (handle_exit_status_return(head, env, start));
+		return (handle_exit_status_return(head, env, start, input));
 	if (input[start] == '$')
 		return (handle_pid_return(head, start));
 	return (handle_env_var_return(input, head, start, env));

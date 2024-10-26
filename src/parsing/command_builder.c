@@ -6,7 +6,7 @@
 /*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/10 16:27:46 by jcohen            #+#    #+#             */
-/*   Updated: 2024/10/25 23:14:18 by jcohen           ###   ########.fr       */
+/*   Updated: 2024/10/26 16:27:20 by jcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,8 +80,6 @@ static int	handle_redirection(t_token **token, t_cmd *cmd)
 			return (0);
 		cmd->append_output = 1;
 	}
-	else
-		return (0);
 	*token = (*token)->next;
 	return (1);
 }
@@ -89,29 +87,23 @@ static int	handle_redirection(t_token **token, t_cmd *cmd)
 static int	process_token(t_token **token, t_cmd **current, t_env *env)
 {
 	if ((*token)->type == TOKEN_WORD)
-	{
-		if (!add_argument(*current, (*token)->value))
-			return (0);
-	}
-	else if ((*token)->type == TOKEN_PIPE)
+		return (add_argument(*current, (*token)->value));
+	if ((*token)->type == TOKEN_PIPE)
 	{
 		(*current)->next = create_new_command();
 		if (!(*current)->next)
 			return (0);
 		*current = (*current)->next;
+		return (1);
 	}
-	else if ((*token)->type == TOKEN_REDIR_INPUT
+	if ((*token)->type == TOKEN_REDIR_INPUT
 		|| (*token)->type == TOKEN_REDIR_OUTPUT
 		|| (*token)->type == TOKEN_REDIR_APPEND)
+		return (handle_redirection(token, *current));
+	if ((*token)->type == TOKEN_HERE_DOC)
 	{
-		if (!handle_redirection(token, *current))
-			return (0);
-	}
-	else if ((*token)->type == TOKEN_HERE_DOC)
-	{
-		if (!(*token)->next)
-			return (0);
-		if (handle_heredoc(*current, (*token)->next->value, env) != 0)
+		if (!(*token)->next || handle_heredoc(*current, (*token)->next->value,
+				env) != 0)
 			return (0);
 		*token = (*token)->next;
 	}
