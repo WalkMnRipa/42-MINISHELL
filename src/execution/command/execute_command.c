@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 20:14:16 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/10/18 15:46:35 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/10/26 15:25:19 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,7 +105,11 @@ void	execute_command(t_cmd *cmd, t_env **env)
 	else if (!setup_redirections(cmd))
 		cmd->exit_status = 1;
 	else if (is_builtin(cmd->args[0]))
+	{
 		execute_builtin(cmd, env);
+		(*env)->last_exit_status = cmd->exit_status;
+		// Update environment exit status
+	}
 	else
 		execute_non_builtin(cmd, env);
 	dup2(stdin_backup, STDIN_FILENO);

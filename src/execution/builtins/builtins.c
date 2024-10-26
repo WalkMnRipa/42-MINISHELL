@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/17 16:08:52 by jcohen            #+#    #+#             */
-/*   Updated: 2024/10/18 17:29:15 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/10/26 15:24:46 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@ void	execute_builtin(t_cmd *cmd, t_env **env)
 {
 	if (!cmd || !cmd->args || !cmd->args[0])
 		return ;
+	cmd->exit_status = 0; // Initialize exit status
 	if (ft_strcmp(cmd->args[0], "echo") == 0)
 		builtin_echo(cmd->args);
 	else if (ft_strcmp(cmd->args[0], "cd") == 0)
@@ -37,5 +38,5 @@ void	execute_builtin(t_cmd *cmd, t_env **env)
 	else if (ft_strcmp(cmd->args[0], "env") == 0)
 		builtin_env(*env);
 	else if (ft_strcmp(cmd->args[0], "exit") == 0)
-		builtin_exit(cmd->args, &(cmd->exit_status));
+		builtin_exit(cmd, cmd->args);
 }
