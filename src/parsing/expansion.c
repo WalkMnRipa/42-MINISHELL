@@ -6,7 +6,7 @@
 /*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 00:37:28 by jcohen            #+#    #+#             */
-/*   Updated: 2024/10/24 01:16:43 by jcohen           ###   ########.fr       */
+/*   Updated: 2024/10/26 16:11:42 by jcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,11 +51,16 @@ static int	handle_var_expansion(char **result, const char *str, int *i,
 	int		start;
 
 	(*i)++;
+	if (!str[*i] || ft_isspace(str[*i]))
+	{
+		*result = join_and_free(*result, "$", 0);
+		(*i)--;
+		return (*result == NULL);
+	}
 	if (str[*i] == '?' || str[*i] == '$')
 	{
 		tmp = handle_special_var(env, str[*i]);
 		*result = join_and_free(*result, tmp, 1);
-		(*i)++;
 		return (*result == NULL);
 	}
 	start = *i;
