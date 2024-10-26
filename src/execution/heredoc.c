@@ -3,18 +3,18 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
+/*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 16:38:41 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/10/25 23:23:10 by jcohen           ###   ########.fr       */
+/*   Updated: 2024/10/26 14:13:40 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/execution.h"
 #include "../../includes/parsing.h"
-#include <signal.h>
-#include <sys/signal.h>
 #include <sys/types.h>
+
+// modif add new heredoc function
 
 static void	handle_heredoc_signal(int sig)
 {

@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 19:57:03 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/10/17 01:09:26 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/10/26 14:32:10 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ void	builtin_echo(char **args)
 	while (args[i])
 	{
 		ft_putstr_fd(args[i], 1);
+		// Only add space if there's a next argument and we're not at the last one
 		if (args[i + 1])
 			ft_putchar_fd(' ', 1);
 		i++;

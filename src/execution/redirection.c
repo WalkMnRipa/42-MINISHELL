@@ -3,14 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   redirection.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
+/*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/15 17:39:24 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/10/25 16:55:05 by jcohen           ###   ########.fr       */
+/*   Updated: 2024/10/26 14:09:33 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/execution.h"
+
+// modif sur setup input add premier if
 
 static int	setup_input_redirection(t_cmd *cmd)
 {
