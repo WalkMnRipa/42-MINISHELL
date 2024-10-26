@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 19:06:34 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/10/26 15:26:34 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/10/26 15:40:48 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,11 +74,11 @@ void				execute_pipeline(t_cmd *cmd_list, t_env **env);
 // Builtin functions
 int					is_builtin(char *cmd);
 void				execute_builtin(t_cmd *cmd, t_env **env);
-void				builtin_cd(t_env *env, char **args);
+void				builtin_cd(t_cmd *cmd, t_env *env, char **args);
 void				builtin_echo(char **args);
 void				builtin_env(t_env *env);
 void				builtin_exit(t_cmd *cmd, char **args);
-void				builtin_export(t_env **env, char **args);
+void				builtin_export(t_cmd *cmd, t_env **env, char **args);
 void				builtin_pwd(void);
 void				builtin_unset(t_env **env, char **args);
 

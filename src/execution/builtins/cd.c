@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 20:00:59 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/10/26 15:01:06 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/10/26 15:40:06 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,18 @@ static char	*expand_tilde(t_env *env, const char *path)
 
 static int	handle_directory_error(const char *path)
 {
+	struct stat	path_stat;
+
+	if (stat(path, &path_stat) == 0)
+	{
+		if (!S_ISDIR(path_stat.st_mode))
+		{
+			ft_putstr_fd("minishell: cd: ", 2);
+			ft_putstr_fd((char *)path, 2);
+			ft_putendl_fd(": Not a directory", 2);
+			return (1);
+		}
+	}
 	ft_putstr_fd("minishell: cd: ", 2);
 	ft_putstr_fd((char *)path, 2);
 	ft_putendl_fd(": No such file or directory", 2);
@@ -90,21 +102,22 @@ static char	*get_cd_path(t_env *env, char **args, int *exit_status)
 	return (expand_tilde(env, args[1]));
 }
 
-void	builtin_cd(t_env *env, char **args)
+void	builtin_cd(t_cmd *cmd, t_env *env, char **args)
 {
 	char	*path;
 
+	cmd->exit_status = 0;
 	if (!args)
 		return ;
 	if (args[1] && args[2])
 	{
 		ft_putendl_fd("minishell: cd: too many arguments", 2);
-		env->last_exit_status = 1;
+		cmd->exit_status = 1;
 		return ;
 	}
-	path = get_cd_path(env, args, &env->last_exit_status);
+	path = get_cd_path(env, args, &cmd->exit_status);
 	if (!path)
 		return ;
-	env->last_exit_status = change_directory(env, path);
+	cmd->exit_status = change_directory(env, path);
 	free(path);
 }

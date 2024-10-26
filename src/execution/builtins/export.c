@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 20:01:24 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/10/26 14:43:31 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/10/26 15:44:08 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,19 +30,35 @@ static int	check_var_name_chars(const char *name)
 			return (0);
 		i++;
 	}
-	return (1);
+	return (i > 0); // Return 1 only if we had at least one valid character
 }
 
 static int	is_valid_export_name(const char *name)
 {
+	char	*equal_sign;
+	char	*var_name;
+	int		result;
+
 	if (!name || !*name || ft_isdigit(*name))
 		return (0);
-	if (name[0] == '=')
+	if (name[0] == '=') // Handle case where string starts with '='
 		return (0);
+	equal_sign = ft_strchr(name, '=');
+	if (equal_sign)
+	{
+		if (equal_sign == name) // Handle case where string is just "="
+			return (0);
+		var_name = ft_substr(name, 0, equal_sign - name);
+		if (!var_name)
+			return (0);
+		result = check_var_name_chars(var_name);
+		free(var_name);
+		return (result);
+	}
 	return (check_var_name_chars(name));
 }
 
-static void	handle_export_arg(t_env **env, char *arg)
+static int	handle_export_arg(t_env **env, char *arg)
 {
 	char	*equal_sign;
 	char	temp;
@@ -50,8 +66,7 @@ static void	handle_export_arg(t_env **env, char *arg)
 	if (!is_valid_export_name(arg))
 	{
 		print_export_error(arg);
-		(*env)->last_exit_status = 1;
-		return ;
+		return (1);
 	}
 	equal_sign = ft_strchr(arg, '=');
 	if (equal_sign)
@@ -63,18 +78,21 @@ static void	handle_export_arg(t_env **env, char *arg)
 	}
 	else
 		custom_setenv(env, arg, "");
+	return (0);
 }
 
-void	builtin_export(t_env **env, char **args)
+void	builtin_export(t_cmd *cmd, t_env **env, char **args)
 {
 	int	i;
 
+	cmd->exit_status = 0;
 	if (!env || !*env || !args)
 		return ;
 	i = 1;
 	while (args[i])
 	{
-		handle_export_arg(env, args[i]);
+		if (handle_export_arg(env, args[i]))
+			cmd->exit_status = 1;
 		i++;
 	}
 }
