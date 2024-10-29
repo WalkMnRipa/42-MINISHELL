@@ -6,13 +6,11 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/15 17:39:24 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/10/26 14:09:33 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/10/29 15:17:07 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/execution.h"
-
-// modif sur setup input add premier if
 
 static int	setup_input_redirection(t_cmd *cmd)
 {
@@ -20,13 +18,12 @@ static int	setup_input_redirection(t_cmd *cmd)
 
 	if (cmd->input_fd != STDIN_FILENO)
 	{
-		// If we already have an input_fd (from heredoc), just use it
 		dup2(cmd->input_fd, STDIN_FILENO);
 		close(cmd->input_fd);
 		cmd->input_fd = STDIN_FILENO;
 		return (1);
 	}
-	else if (cmd->input_file)
+	if (cmd->input_file)
 	{
 		fd = open(cmd->input_file, O_RDONLY);
 		if (fd == -1)

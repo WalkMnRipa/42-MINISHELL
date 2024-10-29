@@ -3,14 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
+/*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 18:20:46 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/10/25 16:46:30 by jcohen           ###   ########.fr       */
+/*   Updated: 2024/10/29 15:11:21 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/execution.h"
+#include "../../includes/parsing.h"
 
 char	*ft_strjoin_array(char **array, char *delimiter)
 {
@@ -73,4 +74,35 @@ char	*ft_strtok(char *str, const char *delim)
 		last++;
 	}
 	return (token);
+}
+
+char	**env_to_array(t_env *env)
+{
+	t_env	*current;
+	char	**env_array;
+	int		count;
+	int		i;
+
+	count = 0;
+	current = env;
+	while (current)
+	{
+		count++;
+		current = current->next;
+	}
+	env_array = malloc(sizeof(char *) * (count + 1));
+	if (!env_array)
+		return (NULL);
+	current = env;
+	i = 0;
+	while (current)
+	{
+		env_array[i] = ft_strjoin3(current->key, "=", current->value);
+		if (!env_array[i])
+			return (free_string_array(env_array, i), NULL);
+		current = current->next;
+		i++;
+	}
+	env_array[i] = NULL;
+	return (env_array);
 }

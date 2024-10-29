@@ -6,11 +6,12 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 20:14:16 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/10/26 15:25:19 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/10/29 15:10:58 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../../includes/execution.h"
+#include "../../../includes/parsing.h"
 
 char	*find_command_path(const char *command, t_env *env)
 {
@@ -52,6 +53,7 @@ static void	handle_command_not_found(t_cmd *cmd)
 void	execute_external_command(t_cmd *cmd, t_env **env)
 {
 	char	*command_path;
+	char	**env_array;
 
 	command_path = find_command_path(cmd->args[0], *env);
 	if (!command_path)
@@ -59,11 +61,17 @@ void	execute_external_command(t_cmd *cmd, t_env **env)
 		handle_command_not_found(cmd);
 		return ;
 	}
+	env_array = env_to_array(*env);
+	if (!env_array)
+	{
+		free(command_path);
+		error_exit_message(*env, cmd, ERR_MALLOC_FAILED);
+	}
 	reset_signals();
-	execve(command_path, cmd->args, NULL);
-	perror("minishell: execve");
+	execve(command_path, cmd->args, env_array);
+	free_string_array(env_array, -1);
 	free(command_path);
-	exit(EXIT_FAILURE);
+	error_exit_message(*env, cmd, "execve failed");
 }
 
 static void	execute_non_builtin(t_cmd *cmd, t_env **env)
