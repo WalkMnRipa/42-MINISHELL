@@ -5,12 +5,10 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/01 19:06:34 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/10/29 15:10:42 by ggaribot         ###   ########.fr       */
+/*   Created: 2024/11/02 20:12:38 by ggaribot          #+#    #+#             */
+/*   Updated: 2024/11/02 20:15:50 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
-extern int			g_signal_received;
 
 #ifndef EXECUTION_H
 # define EXECUTION_H
@@ -28,7 +26,9 @@ extern int			g_signal_received;
 # include <sys/wait.h>
 # include <unistd.h>
 
-# define ERR_HEREDOC_CREATING "minishell: heredoc: Failed to create heredoc file"
+extern int			g_signal_received;
+
+# define ERR_HEREDOC_CREATING "minishell: Failed to create heredoc file"
 # define ERR_HEREDOC_OPEN "minishell: heredoc: Failed to open heredoc file"
 # define HEREDOC_TMP ".heredoc_tmp"
 # define HEREDOC_PROMPT "> "
