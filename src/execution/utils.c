@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 18:20:46 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/10/29 15:11:21 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/02 19:59:23 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,12 +76,30 @@ char	*ft_strtok(char *str, const char *delim)
 	return (token);
 }
 
+static int	fill_env_array(char **env_array, t_env *env)
+{
+	t_env	*current;
+	int		i;
+
+	i = 0;
+	current = env;
+	while (current)
+	{
+		env_array[i] = ft_strjoin3(current->key, "=", current->value);
+		if (!env_array[i])
+			return (free_string_array(env_array, i), 0);
+		current = current->next;
+		i++;
+	}
+	env_array[i] = NULL;
+	return (1);
+}
+
 char	**env_to_array(t_env *env)
 {
 	t_env	*current;
 	char	**env_array;
 	int		count;
-	int		i;
 
 	count = 0;
 	current = env;
@@ -93,16 +111,7 @@ char	**env_to_array(t_env *env)
 	env_array = malloc(sizeof(char *) * (count + 1));
 	if (!env_array)
 		return (NULL);
-	current = env;
-	i = 0;
-	while (current)
-	{
-		env_array[i] = ft_strjoin3(current->key, "=", current->value);
-		if (!env_array[i])
-			return (free_string_array(env_array, i), NULL);
-		current = current->next;
-		i++;
-	}
-	env_array[i] = NULL;
+	if (!fill_env_array(env_array, env))
+		return (NULL);
 	return (env_array);
 }

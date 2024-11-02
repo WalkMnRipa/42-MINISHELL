@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/18 15:20:19 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/10/18 15:36:07 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/02 20:10:19 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,6 @@
 #include <readline/history.h>
 #include <readline/readline.h>
 #include <signal.h>
-
-extern int	g_signal_received;
 
 void	signal_handler(int signo)
 {

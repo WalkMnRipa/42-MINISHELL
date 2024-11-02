@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 20:01:24 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/10/26 15:44:08 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/02 20:00:50 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ static int	check_var_name_chars(const char *name)
 			return (0);
 		i++;
 	}
-	return (i > 0); // Return 1 only if we had at least one valid character
+	return (i > 0);
 }
 
 static int	is_valid_export_name(const char *name)
@@ -41,12 +41,12 @@ static int	is_valid_export_name(const char *name)
 
 	if (!name || !*name || ft_isdigit(*name))
 		return (0);
-	if (name[0] == '=') // Handle case where string starts with '='
+	if (name[0] == '=')
 		return (0);
 	equal_sign = ft_strchr(name, '=');
 	if (equal_sign)
 	{
-		if (equal_sign == name) // Handle case where string is just "="
+		if (equal_sign == name)
 			return (0);
 		var_name = ft_substr(name, 0, equal_sign - name);
 		if (!var_name)

@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 18:00:00 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/10/26 15:25:03 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/02 20:01:30 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,6 @@ static int	handle_input(char *input, t_env **env, int *exit_status)
 		execute_command(cmd, env);
 		*exit_status = cmd->exit_status;
 		(*env)->last_exit_status = cmd->exit_status;
-		// Update environment exit status
 		free_cmd_list(cmd);
 	}
 	free_tokens(tokens);

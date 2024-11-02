@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 20:14:16 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/10/29 15:10:58 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/02 20:00:17 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,7 +116,6 @@ void	execute_command(t_cmd *cmd, t_env **env)
 	{
 		execute_builtin(cmd, env);
 		(*env)->last_exit_status = cmd->exit_status;
-		// Update environment exit status
 	}
 	else
 		execute_non_builtin(cmd, env);
