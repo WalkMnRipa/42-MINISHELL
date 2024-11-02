@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   signals.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/18 15:20:19 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/02 20:10:19 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/02 21:52:40 by jcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,14 +25,12 @@ void	signal_handler(int signo)
 		rl_replace_line("", 0);
 		rl_redisplay();
 	}
-	else if (signo == SIGQUIT)
-		g_signal_received = signo;
 }
 
 void	setup_signals(void)
 {
 	signal(SIGINT, signal_handler);
-	signal(SIGQUIT, signal_handler);
+	signal(SIGQUIT, SIG_IGN);
 }
 
 void	reset_signals(void)

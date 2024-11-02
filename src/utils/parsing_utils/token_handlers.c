@@ -6,7 +6,7 @@
 /*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 18:00:39 by jcohen            #+#    #+#             */
-/*   Updated: 2024/10/23 19:38:03 by jcohen           ###   ########.fr       */
+/*   Updated: 2024/11/02 22:28:17 by jcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ static int	get_word_end(char *input, int i, t_quote_type *quote_type)
 		else if (input[current] == '"' && *quote_type == QUOTE_NONE)
 			*quote_type = QUOTE_DOUBLE;
 		else if ((input[current] == '\'' && *quote_type == QUOTE_SINGLE)
-			|| (input[current] == '"' && *quote_type == QUOTE_DOUBLE))
+				|| (input[current] == '"' && *quote_type == QUOTE_DOUBLE))
 			*quote_type = QUOTE_NONE;
 		else if (ft_isspace(input[current]) && *quote_type == QUOTE_NONE)
 			break ;
@@ -101,6 +101,8 @@ int	token_handle_word(char *input, int i, t_token **head, t_env *env)
 	free(value);
 	if (!expanded)
 		return (-1);
+	if (ft_strchr(value, ';'))
+		return (free(value), ft_putendl_fd(ERR_UNEXPECTED_SEMICOL, 2), -1);
 	new_token = create_token(expanded, TOKEN_WORD, QUOTE_NONE);
 	free(expanded);
 	if (!new_token)

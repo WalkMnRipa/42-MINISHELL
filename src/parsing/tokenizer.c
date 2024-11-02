@@ -6,7 +6,7 @@
 /*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 18:30:32 by jcohen            #+#    #+#             */
-/*   Updated: 2024/10/22 18:09:51 by jcohen           ###   ########.fr       */
+/*   Updated: 2024/11/02 22:30:00 by jcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,11 @@ t_token_type	determine_token_type(char *value)
 		return (TOKEN_REDIR_APPEND);
 	else if (ft_strcmp(value, "<<") == 0)
 		return (TOKEN_HERE_DOC);
+	else if (ft_strchr(value, ';'))
+	{
+		ft_putendl_fd(ERR_UNEXPECTED_SEMICOL, 2);
+		return (TOKEN_ERROR);
+	}
 	else
 		return (TOKEN_WORD);
 }
@@ -94,18 +99,15 @@ t_token	*tokenizer(char *input, t_env *env)
 	i = 0;
 	while (input[i])
 	{
+		if (input[i] == ';')
+			return (free_tokens(head), ft_putendl_fd(ERR_UNEXPECTED_SEMICOL, 2),
+				NULL);
 		new_i = handle_token(input, i, &head, env);
 		if (new_i < 0)
-		{
-			free_tokens(head);
-			return (NULL);
-		}
+			return (free_tokens(head), NULL);
 		i = new_i + 1;
 	}
 	if (check_syntax_errors(head))
-	{
-		free_tokens(head);
-		return (NULL);
-	}
+		return (free_tokens(head), NULL);
 	return (head);
 }

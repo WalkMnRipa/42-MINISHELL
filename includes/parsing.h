@@ -6,7 +6,7 @@
 /*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 17:46:57 by jcohen            #+#    #+#             */
-/*   Updated: 2024/10/26 16:25:55 by jcohen           ###   ########.fr       */
+/*   Updated: 2024/11/02 22:26:42 by jcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@
 
 # define ERR_UNEXPECTED_NL "bash: syntax error near unexpected token `newline'"
 # define ERR_UNEXPECTED_PIPE "bash: syntax error near unexpected token `|'"
+# define ERR_UNEXPECTED_SEMICOL "minishell: syntax error near unexpected token ';'"
 # define ERR_UNEXPECTED_TOKEN "bash: syntax error near unexpected token"
 # define ERR_MALLOC_FAILED "malloc failed"
 # define ERR_INVALID_TOKEN "invalid token"
@@ -46,6 +47,7 @@ typedef enum e_token_type
 	TOKEN_REDIR_APPEND,
 	TOKEN_HERE_DOC,
 	TOKEN_VARIABLE,
+	TOKEN_ERROR,
 }					t_token_type;
 
 typedef enum e_quote_type
