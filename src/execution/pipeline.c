@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 16:37:14 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/10/26 15:48:33 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/10 23:13:02 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,7 @@ void	execute_pipeline(t_cmd *cmd, t_env **env)
 {
 	int	fd[2];
 	int	input_fd;
+	int	status;
 
 	input_fd = dup(STDIN_FILENO);
 	while (cmd)
@@ -70,8 +71,11 @@ void	execute_pipeline(t_cmd *cmd, t_env **env)
 	}
 	dup2(input_fd, STDIN_FILENO);
 	close(input_fd);
-	while (wait(NULL) > 0)
-		;
+	while (wait(&status) > 0)
+	{
+		if (WIFSIGNALED(status) && WTERMSIG(status) == SIGQUIT)
+			ft_putendl_fd("Quit (core dumped)", STDERR_FILENO);
+	}
 }
 
 void	execute_single_command(t_cmd *cmd, t_env **env)
