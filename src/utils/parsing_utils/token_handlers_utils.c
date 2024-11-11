@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/23 19:26:44 by jcohen            #+#    #+#             */
-/*   Updated: 2024/11/11 18:44:57 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/11 19:07:07 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ char	*get_quoted_content(char *input, int start, char quote)
 	end = start;
 	while (input[end] && input[end] != quote)
 		end++;
-	if (!input[end]) // No closing quote found
+	if (!input[end])
 		return (NULL);
 	content = ft_substr(input, start, end - start);
 	return (content);

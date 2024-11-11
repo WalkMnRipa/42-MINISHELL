@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 18:00:39 by jcohen            #+#    #+#             */
-/*   Updated: 2024/11/11 18:55:46 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/11 19:17:09 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,12 +53,10 @@ int	token_handle_double_quotes(char *input, int i, t_token **head, t_env *env)
 	free(content);
 	if (!expanded)
 		return (-1);
-	// Create token with the expanded content
 	new_token = create_token(expanded, TOKEN_WORD, QUOTE_DOUBLE);
 	free(expanded);
 	if (!new_token)
 		return (-1);
-	// Add the token to the list
 	add_token(head, new_token);
 	return (get_quote_end(input, i + 1, '"'));
 }
@@ -75,7 +73,7 @@ static int	get_word_end(char *input, int i, t_quote_type *quote_type)
 		else if (input[current] == '"' && *quote_type == QUOTE_NONE)
 			*quote_type = QUOTE_DOUBLE;
 		else if ((input[current] == '\'' && *quote_type == QUOTE_SINGLE)
-				|| (input[current] == '"' && *quote_type == QUOTE_DOUBLE))
+			|| (input[current] == '"' && *quote_type == QUOTE_DOUBLE))
 			*quote_type = QUOTE_NONE;
 		else if (ft_isspace(input[current]) && *quote_type == QUOTE_NONE)
 			break ;

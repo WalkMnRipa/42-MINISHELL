@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 20:14:16 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/10 23:12:34 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/11 19:13:17 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,31 +74,31 @@ void	execute_external_command(t_cmd *cmd, t_env **env)
 	error_exit_message(*env, cmd, "execve failed");
 }
 
-static void execute_non_builtin(t_cmd *cmd, t_env **env)
+static void	execute_non_builtin(t_cmd *cmd, t_env **env)
 {
-    pid_t   pid;
-    int     status;
+	pid_t	pid;
+	int		status;
 
-    pid = fork();
-    if (pid == 0)
-    {
-        execute_external_command(cmd, env);
-        exit(cmd->exit_status);
-    }
-    else if (pid > 0)
-    {
-        waitpid(pid, &status, 0);
-        if (WIFEXITED(status))
-            cmd->exit_status = WEXITSTATUS(status);
-        else if (WIFSIGNALED(status))
-        {
-            cmd->exit_status = 128 + WTERMSIG(status);
-            if (WTERMSIG(status) == SIGQUIT)   
-                ft_putendl_fd("Quit (core dumped)", STDERR_FILENO);
-        }
-    }
-    else
-        cmd->exit_status = (perror("fork"), 1);
+	pid = fork();
+	if (pid == 0)
+	{
+		execute_external_command(cmd, env);
+		exit(cmd->exit_status);
+	}
+	else if (pid > 0)
+	{
+		waitpid(pid, &status, 0);
+		if (WIFEXITED(status))
+			cmd->exit_status = WEXITSTATUS(status);
+		else if (WIFSIGNALED(status))
+		{
+			cmd->exit_status = 128 + WTERMSIG(status);
+			if (WTERMSIG(status) == SIGQUIT)
+				ft_putendl_fd("Quit (core dumped)", STDERR_FILENO);
+		}
+	}
+	else
+		cmd->exit_status = (perror("fork"), 1);
 }
 
 void	execute_command(t_cmd *cmd, t_env **env)
