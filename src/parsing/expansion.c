@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 00:37:28 by jcohen            #+#    #+#             */
-/*   Updated: 2024/11/11 18:47:28 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/11 19:04:12 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ static char	*handle_special_var(t_env *env, char special_char)
 		return (ft_itoa(env->last_exit_status));
 	return (ft_itoa(getpid()));
 }
-/*
+
 static int	expand_char(char **result, char c)
 {
 	char	*new_result;
@@ -53,74 +53,34 @@ static int	process_var_name(char **result, const char *str, int *i, t_env *env)
 	(*i)--;
 	return (*result == NULL);
 }
-*/
 
 static int	handle_var_expansion(char **result, const char *str, int *i,
 		t_env *env)
 {
-	char	*var_name;
-	char	*env_val;
-	int		start;
-	char	*temp;
-	char	*special;
+	char	*tmp;
 
 	(*i)++;
 	if (!str[*i] || ft_isspace(str[*i]))
 	{
-		temp = ft_strjoin(*result, "$");
-		if (!temp)
-			return (1);
-		free(*result);
-		*result = temp;
+		*result = ft_strjoin(*result, "$");
 		(*i)--;
-		return (0);
+		return (*result == NULL);
 	}
 	if (str[*i] == '?' || str[*i] == '$')
 	{
-		special = handle_special_var(env, str[*i]);
-		if (!special)
+		tmp = handle_special_var(env, str[*i]);
+		if (!tmp)
 			return (1);
-		temp = ft_strjoin(*result, special);
-		free(special);
-		if (!temp)
-			return (1);
-		free(*result);
-		*result = temp;
-		return (0);
+		*result = ft_strjoin_free(*result, tmp);
+		free(tmp);
+		return (*result == NULL);
 	}
-	start = *i;
-	while (str[*i] && (ft_isalnum(str[*i]) || str[*i] == '_'))
-		(*i)++;
-	if (start == *i)
-	{
-		temp = ft_strjoin(*result, "$");
-		if (!temp)
-			return (1);
-		free(*result);
-		*result = temp;
-		return (0);
-	}
-	var_name = ft_substr(str, start, *i - start);
-	if (!var_name)
-		return (1);
-	env_val = get_env_value(env, var_name);
-	free(var_name);
-	if (env_val)
-	{
-		temp = ft_strjoin(*result, env_val);
-		if (!temp)
-			return (1);
-		free(*result);
-		*result = temp;
-	}
-	(*i)--;
-	return (0);
+	return (process_var_name(result, str, i, env));
 }
 
 char	*expand_variables_in_str(char *str, t_env *env, t_quote_type quote_type)
 {
 	char	*result;
-	char	*temp;
 	int		i;
 
 	if (!str)
@@ -128,29 +88,17 @@ char	*expand_variables_in_str(char *str, t_env *env, t_quote_type quote_type)
 	result = ft_strdup("");
 	if (!result)
 		return (NULL);
-	i = 0;
-	while (str[i])
+	i = -1;
+	while (str[++i])
 	{
 		if (str[i] == '$' && quote_type != QUOTE_SINGLE)
 		{
 			if (handle_var_expansion(&result, str, &i, env))
-			{
-				free(result);
-				return (NULL);
-			}
+				return (free(result), NULL);
+			continue ;
 		}
-		else
-		{
-			temp = ft_strjoinc(result, str[i]);
-			if (!temp)
-			{
-				free(result);
-				return (NULL);
-			}
-			free(result);
-			result = temp;
-		}
-		i++;
+		if (expand_char(&result, str[i]))
+			return (free(result), NULL);
 	}
 	return (result);
 }
