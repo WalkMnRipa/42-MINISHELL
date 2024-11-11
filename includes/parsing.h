@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
+/*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 17:46:57 by jcohen            #+#    #+#             */
-/*   Updated: 2024/11/02 22:26:42 by jcohen           ###   ########.fr       */
+/*   Updated: 2024/11/11 18:55:23 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,5 +121,7 @@ t_cmd				*group_tokens_into_commands(t_token *token_list,
 void				free_tokens(t_token *tokens);
 void				free_cmd_list(t_cmd *head);
 void				free_string_array(char **array, int count);
+void				join_adjacent_word_tokens(t_token **head);
+void				join_quoted_word_tokens(t_token **head);
 
 #endif

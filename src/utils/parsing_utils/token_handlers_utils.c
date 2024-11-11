@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   token_handlers_utils.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
+/*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/23 19:26:44 by jcohen            #+#    #+#             */
-/*   Updated: 2024/10/23 19:33:31 by jcohen           ###   ########.fr       */
+/*   Updated: 2024/11/11 18:44:57 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,14 +14,18 @@
 
 char	*get_quoted_content(char *input, int start, char quote)
 {
-	int	end;
+	int		end;
+	char	*content;
 
+	if (!input)
+		return (NULL);
 	end = start;
 	while (input[end] && input[end] != quote)
 		end++;
-	if (!input[end])
+	if (!input[end]) // No closing quote found
 		return (NULL);
-	return (ft_substr(input, start, end - start));
+	content = ft_substr(input, start, end - start);
+	return (content);
 }
 
 int	get_quote_end(char *input, int start, char quote)

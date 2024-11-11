@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokenizer.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
+/*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 18:30:32 by jcohen            #+#    #+#             */
-/*   Updated: 2024/11/02 22:30:00 by jcohen           ###   ########.fr       */
+/*   Updated: 2024/11/11 19:00:01 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,6 +107,7 @@ t_token	*tokenizer(char *input, t_env *env)
 			return (free_tokens(head), NULL);
 		i = new_i + 1;
 	}
+	join_quoted_word_tokens(&head);
 	if (check_syntax_errors(head))
 		return (free_tokens(head), NULL);
 	return (head);
