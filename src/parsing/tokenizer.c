@@ -6,11 +6,12 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 18:30:32 by jcohen            #+#    #+#             */
-/*   Updated: 2024/11/11 19:00:01 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/13 16:21:19 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/parsing.h"
+#include "../../includes/token_utils.h"
 
 t_token	*create_token(char *value, t_token_type type, t_quote_type quote_type)
 {
@@ -87,28 +88,137 @@ int	handle_token(char *input, int i, t_token **head, t_env *env)
 		return (token_handle_word(input, i, head, env));
 }
 
-t_token	*tokenizer(char *input, t_env *env)
+static int handle_operator(char *input, int i, t_token **head)
 {
-	t_token	*head;
-	int		i;
-	int		new_i;
+    char *value;
+    int len = 1;
+    
+    // Check for double operators (>> or <<)
+    if ((input[i] == '>' || input[i] == '<') && input[i] == input[i + 1])
+        len = 2;
+        
+    value = ft_substr(input, i, len);
+    if (!value)
+        return (-1);
+        
+    t_token_type type = determine_token_type(value);
+    if (type == TOKEN_ERROR)
+    {
+        free(value);
+        return (-1);
+    }
+    
+    t_token *token = create_token(value, type, QUOTE_NONE);
+    free(value);
+    
+    if (!token)
+        return (-1);
+        
+    add_token(head, token);
+    return (i + len - 1);
+}
 
-	if (!input)
-		return (NULL);
-	head = NULL;
-	i = 0;
-	while (input[i])
-	{
-		if (input[i] == ';')
-			return (free_tokens(head), ft_putendl_fd(ERR_UNEXPECTED_SEMICOL, 2),
-				NULL);
-		new_i = handle_token(input, i, &head, env);
-		if (new_i < 0)
-			return (free_tokens(head), NULL);
-		i = new_i + 1;
-	}
-	join_quoted_word_tokens(&head);
-	if (check_syntax_errors(head))
-		return (free_tokens(head), NULL);
-	return (head);
+static int handle_word(char *input, int start, t_token **head, t_env *env)
+{
+    int end = start;
+    
+    // Find end of word
+    while (input[end] && !is_token_delimiter(input[end]))
+        end++;
+        
+    char *word = ft_substr(input, start, end - start);
+    if (!word)
+        return (-1);
+        
+    // Handle empty words
+    if (!*word)
+    {
+        free(word);
+        return (end - 1);
+    }
+    
+    // Handle variable expansion
+    char *expanded = expand_variables_in_str(word, env, QUOTE_NONE);
+    free(word);
+    
+    if (!expanded)
+        return (-1);
+        
+    // Create token if expanded word is not empty
+    if (*expanded)
+    {
+        t_token *token = create_token(expanded, TOKEN_WORD, QUOTE_NONE);
+        free(expanded);
+        
+        if (!token)
+            return (-1);
+            
+        add_token(head, token);
+    }
+    else
+        free(expanded);
+        
+    return (end - 1);
+}
+
+t_token *tokenizer(char *input, t_env *env)
+{
+    t_token *head = NULL;
+    t_token_state state;
+    
+    if (!input)
+        return (NULL);
+        
+    init_token_state(&state);
+    
+    while (input[state.i])
+    {
+        // Skip whitespace
+        if (ft_isspace(input[state.i]))
+        {
+            state.i++;
+            continue;
+        }
+        
+        // Handle quotes
+        if (input[state.i] == '"' || input[state.i] == '\'')
+        {
+            if (handle_quotes(input, &state, &head, env) < 0)
+            {
+                free_tokens(head);
+                return (NULL);
+            }
+        }
+        // Handle operators
+        else if (ft_strchr("|<>", input[state.i]))
+        {
+            int new_i = handle_operator(input, state.i, &head);
+            if (new_i < 0)
+            {
+                free_tokens(head);
+                return (NULL);
+            }
+            state.i = new_i;
+        }
+        // Handle words and variables
+        else
+        {
+            int new_i = handle_word(input, state.i, &head, env);
+            if (new_i < 0)
+            {
+                free_tokens(head);
+                return (NULL);
+            }
+            state.i = new_i;
+        }
+        
+        state.i++;
+    }
+    
+    // Debug print tokens
+    #ifdef DEBUG
+    debug_print_token_list(head);
+    #endif
+    
+    return (head);
 }

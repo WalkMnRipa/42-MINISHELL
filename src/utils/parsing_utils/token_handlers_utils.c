@@ -6,98 +6,107 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/23 19:26:44 by jcohen            #+#    #+#             */
-/*   Updated: 2024/11/11 19:07:07 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/13 12:37:22 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../../includes/parsing.h"
 
-char	*get_quoted_content(char *input, int start, char quote)
+int get_quote_end(char *input, int start, char quote)
 {
-	int		end;
-	char	*content;
+    int i;
 
-	if (!input)
-		return (NULL);
-	end = start;
-	while (input[end] && input[end] != quote)
-		end++;
-	if (!input[end])
-		return (NULL);
-	content = ft_substr(input, start, end - start);
-	return (content);
+    i = start;
+    while (input[i] && input[i] != quote)
+        i++;
+    
+    if (!input[i])  // No closing quote found
+        return (-1);
+    
+    return (i);
 }
 
-int	get_quote_end(char *input, int start, char quote)
+void init_quote_state(t_quote_state *state)
 {
-	int	end;
-
-	end = start;
-	while (input[end] && input[end] != quote)
-		end++;
-	return (end);
+    state->current = QUOTE_NONE;
+    state->previous = QUOTE_NONE;
+    state->nested_level = 0;
 }
 
-static char	*process_quoted_segment(char *word, int *i, t_env *env)
+int is_quote_char(char c)
 {
-	char	quote;
-	int		start;
-	char	*segment;
-	char	*expanded;
-
-	quote = word[*i];
-	start = ++(*i);
-	while (word[*i] && word[*i] != quote)
-		(*i)++;
-	segment = ft_substr(word, start, *i - start);
-	if (!segment)
-		return (NULL);
-	if (quote == '"')
-		expanded = expand_variables_in_str(segment, env, QUOTE_DOUBLE);
-	else
-		expanded = ft_strdup(segment);
-	free(segment);
-	return (expanded);
+    return (c == '\'' || c == '"');
 }
 
-static char	*process_unquoted_segment(char *word, int *i, t_env *env)
+int update_quote_state(t_quote_state *state, char quote_char)
 {
-	int		start;
-	char	*segment;
-
-	start = *i;
-	while (word[*i] && word[*i] != '\'' && word[*i] != '"')
-		(*i)++;
-	segment = ft_substr(word, start, *i - start);
-	if (!segment)
-		return (NULL);
-	return (expand_variables_in_str(segment, env, QUOTE_NONE));
+    if (state->current == QUOTE_NONE)
+    {
+        state->previous = state->current;
+        state->current = (quote_char == '\'') ? QUOTE_SINGLE : QUOTE_DOUBLE;
+        state->nested_level++;
+        return (1);
+    }
+    else if ((state->current == QUOTE_SINGLE && quote_char == '\'') ||
+             (state->current == QUOTE_DOUBLE && quote_char == '"'))
+    {
+        state->previous = state->current;
+        state->current = QUOTE_NONE;
+        state->nested_level--;
+        return (1);
+    }
+    return (0);
 }
 
-char	*expand_quoted_word(char *word, t_env *env)
+char *get_quoted_content(char *input, int start, char quote)
 {
-	char	*result;
-	char	*segment;
-	char	*temp;
-	int		i;
+    int     i;
+    char    *content;
 
-	result = ft_strdup("");
-	if (!result)
-		return (NULL);
-	i = 0;
-	while (word[i])
-	{
-		if (word[i] == '\'' || word[i] == '"')
-			segment = process_quoted_segment(word, &i, env);
-		else
-			segment = process_unquoted_segment(word, &i, env);
-		if (!segment)
-			return (free(result), NULL);
-		temp = ft_strjoin(result, segment);
-		free(result);
-		free(segment);
-		result = temp;
-		i += (word[i] != '\0');
-	}
-	return (result);
+    i = start;
+    while (input[i] && input[i] != quote)
+        i++;
+        
+    if (!input[i])  // No closing quote found
+        return (NULL);
+        
+    content = ft_substr(input, start, i - start);
+    return (content);
+}
+
+char *expand_quoted_word(char *word, t_env *env)
+{
+    char    *result;
+    char    *temp;
+    int     i;
+
+    result = ft_strdup("");
+    if (!result)
+        return (NULL);
+
+    i = 0;
+    while (word[i])
+    {
+        if (word[i] == '$')
+        {
+            temp = result;
+            result = expand_variables_in_str(word + i, env, QUOTE_NONE);
+            free(temp);
+            if (!result)
+                return (NULL);
+            while (word[i] && !ft_isspace(word[i]))
+                i++;
+            i--;
+        }
+        else
+        {
+            temp = ft_strjoinc(result, word[i]);
+            free(result);
+            result = temp;
+            if (!result)
+                return (NULL);
+        }
+        i++;
+    }
+    return (result);
 }

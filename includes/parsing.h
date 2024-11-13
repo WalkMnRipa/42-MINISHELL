@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 17:46:57 by jcohen            #+#    #+#             */
-/*   Updated: 2024/11/11 18:55:23 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/13 12:30:14 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,12 @@ typedef enum e_quote_type
 	QUOTE_SINGLE,
 	QUOTE_DOUBLE,
 }					t_quote_type;
+
+typedef struct s_quote_state {
+    t_quote_type current;
+    t_quote_type previous;
+    int nested_level;
+} t_quote_state;
 
 typedef struct s_token
 {
@@ -123,5 +129,8 @@ void				free_cmd_list(t_cmd *head);
 void				free_string_array(char **array, int count);
 void				join_adjacent_word_tokens(t_token **head);
 void				join_quoted_word_tokens(t_token **head);
+void    init_quote_state(t_quote_state *state);
+int     is_quote_char(char c);
+int     update_quote_state(t_quote_state *state, char quote_char);
 
 #endif
