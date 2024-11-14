@@ -6,22 +6,30 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 19:57:43 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/10/01 19:57:54 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/14 15:36:51 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../../includes/execution.h"
 
-void	builtin_pwd(void)
+int	builtin_pwd(void)
 {
 	char	*pwd;
 
 	pwd = getcwd(NULL, 0);
-	if (pwd)
+	if (!pwd)
 	{
-		ft_putendl_fd(pwd, 1);
-		free(pwd);
+		if (errno == EACCES)
+			ft_putendl_fd("minishell: pwd: permission denied", STDERR_FILENO);
+		else if (errno == ENOMEM)
+			ft_putendl_fd("minishell: pwd: memory allocation failed",
+				STDERR_FILENO);
+		else
+			ft_putendl_fd("minishell: pwd: error retrieving current directory",
+				STDERR_FILENO);
+		return (1);
 	}
-	else
-		ft_putendl_fd("Error: Unable to get current directory", 2);
+	ft_putendl_fd(pwd, STDOUT_FILENO);
+	free(pwd);
+	return (0);
 }

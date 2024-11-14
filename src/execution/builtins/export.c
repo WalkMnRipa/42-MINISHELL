@@ -6,62 +6,24 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 20:01:24 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/02 20:00:50 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/14 16:44:25 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../../includes/execution.h"
 
-static void	print_export_error(const char *arg)
+void	print_export_error(const char *arg)
 {
 	ft_putstr_fd("minishell: export: `", 2);
 	ft_putstr_fd((char *)arg, 2);
 	ft_putendl_fd("': not a valid identifier", 2);
 }
 
-static int	check_var_name_chars(const char *name)
-{
-	int	i;
-
-	i = 0;
-	while (name[i] && name[i] != '=')
-	{
-		if (!ft_isalnum(name[i]) && name[i] != '_')
-			return (0);
-		i++;
-	}
-	return (i > 0);
-}
-
-static int	is_valid_export_name(const char *name)
-{
-	char	*equal_sign;
-	char	*var_name;
-	int		result;
-
-	if (!name || !*name || ft_isdigit(*name))
-		return (0);
-	if (name[0] == '=')
-		return (0);
-	equal_sign = ft_strchr(name, '=');
-	if (equal_sign)
-	{
-		if (equal_sign == name)
-			return (0);
-		var_name = ft_substr(name, 0, equal_sign - name);
-		if (!var_name)
-			return (0);
-		result = check_var_name_chars(var_name);
-		free(var_name);
-		return (result);
-	}
-	return (check_var_name_chars(name));
-}
-
 static int	handle_export_arg(t_env **env, char *arg)
 {
 	char	*equal_sign;
-	char	temp;
+	char	*name;
+	char	*value;
 
 	if (!is_valid_export_name(arg))
 	{
@@ -69,30 +31,37 @@ static int	handle_export_arg(t_env **env, char *arg)
 		return (1);
 	}
 	equal_sign = ft_strchr(arg, '=');
-	if (equal_sign)
+	if (!equal_sign)
+		return (export_without_value(env, arg));
+	name = get_var_name(arg, equal_sign);
+	value = equal_sign + 1;
+	if (!name)
+		return (1);
+	if (export_with_value(env, name, value))
 	{
-		temp = *equal_sign;
-		*equal_sign = '\0';
-		custom_setenv(env, arg, equal_sign + 1);
-		*equal_sign = temp;
+		free(name);
+		return (1);
 	}
-	else
-		custom_setenv(env, arg, "");
+	free(name);
 	return (0);
 }
 
-void	builtin_export(t_cmd *cmd, t_env **env, char **args)
+int	builtin_export(t_cmd *cmd, t_env **env, char **args)
 {
 	int	i;
+	int	exit_status;
 
-	cmd->exit_status = 0;
-	if (!env || !*env || !args)
-		return ;
+	if (!cmd || !env || !*env || !args)
+		return (1);
+	if (!args[1])
+		return (print_sorted_env(*env));
+	exit_status = 0;
 	i = 1;
 	while (args[i])
 	{
 		if (handle_export_arg(env, args[i]))
-			cmd->exit_status = 1;
+			exit_status = 1;
 		i++;
 	}
+	return (exit_status);
 }

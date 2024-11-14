@@ -6,19 +6,18 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 17:46:57 by jcohen            #+#    #+#             */
-/*   Updated: 2024/11/13 12:30:14 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/14 15:17:34 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef PARSING_H
 # define PARSING_H
 
-# include "../libft/libft.h"
-# include "execution.h"
+/*
+** System headers
+*/
 # include <dirent.h>
 # include <fcntl.h>
-# include <readline/history.h>
-# include <readline/readline.h>
 # include <signal.h>
 # include <stdio.h>
 # include <stdlib.h>
@@ -30,6 +29,21 @@
 # include <termios.h>
 # include <unistd.h>
 
+/*
+** External library headers
+*/
+# include <readline/history.h>
+# include <readline/readline.h>
+
+/*
+** Local headers
+*/
+# include "../libft/libft.h"
+# include "execution.h"
+
+/*
+** Error messages
+*/
 # define ERR_UNEXPECTED_NL "bash: syntax error near unexpected token `newline'"
 # define ERR_UNEXPECTED_PIPE "bash: syntax error near unexpected token `|'"
 # define ERR_UNEXPECTED_SEMICOL "minishell: syntax error near unexpected token ';'"
@@ -38,6 +52,9 @@
 # define ERR_INVALID_TOKEN "invalid token"
 # define ERR_VARIABLE_NOT_FOUND ": variable not found"
 
+/*
+** Token types
+*/
 typedef enum e_token_type
 {
 	TOKEN_WORD,
@@ -50,6 +67,9 @@ typedef enum e_token_type
 	TOKEN_ERROR,
 }					t_token_type;
 
+/*
+** Quote handling
+*/
 typedef enum e_quote_type
 {
 	QUOTE_NONE,
@@ -57,12 +77,16 @@ typedef enum e_quote_type
 	QUOTE_DOUBLE,
 }					t_quote_type;
 
-typedef struct s_quote_state {
-    t_quote_type current;
-    t_quote_type previous;
-    int nested_level;
-} t_quote_state;
+typedef struct s_quote_state
+{
+	t_quote_type	current;
+	t_quote_type	previous;
+	int				nested_level;
+}					t_quote_state;
 
+/*
+** Token structure
+*/
 typedef struct s_token
 {
 	t_token_type	type;
@@ -71,14 +95,18 @@ typedef struct s_token
 	struct s_token	*next;
 }					t_token;
 
-// tokenizer.c
+/*
+** Function prototypes
+*/
+
+/* Tokenizer functions */
 t_token				*create_token(char *value, t_token_type type,
 						t_quote_type quote_type);
 void				add_token(t_token **head, t_token *new_token);
 t_token_type		determine_token_type(char *value);
 t_token				*tokenizer(char *input, t_env *env);
 
-// token_handlers.c
+/* Token handling functions */
 int					token_handle_single_quotes(char *input, int i,
 						t_token **head);
 int					token_handle_double_quotes(char *input, int i,
@@ -90,47 +118,42 @@ int					token_handle_redirection(char *input, int i,
 int					token_handle_variable(char *input, int i, t_token **head,
 						t_env *env);
 
-// token_handlers_utils.c
+/* Quote handling functions */
 char				*get_quoted_content(char *input, int start, char quote);
 int					get_quote_end(char *input, int start, char quote);
-char				*get_quoted_content(char *input, int start, char quote);
+void				init_quote_state(t_quote_state *state);
+int					is_quote_char(char c);
+int					update_quote_state(t_quote_state *state, char quote_char);
 
-// operator_utils.c
+/* Operator handling functions */
 int					handle_here_doc(t_token *current);
 int					handle_operators(t_token **tokens);
-
-// operators_handlers.c
 int					modify_token_type(t_token *token, t_token_type new_type);
 int					handle_pipe(t_token *current);
 int					handle_redir_input(t_token *current);
 int					handle_redir_output(t_token *current);
 int					handle_redir_append(t_token *current);
 
-// utils.c
+/* String manipulation functions */
 int					token_handle_space(char *input, int i);
 char				*ft_strjoin_free(char *s1, char *s2);
 char				*ft_strjoinc(char *str, char c);
 
-// syntax_checker.c
+/* Syntax and expansion functions */
 int					check_syntax_errors(t_token *tokens);
-
-// expansion.c
 char				*expand_variables_in_str(char *str, t_env *env,
 						t_quote_type quote_type);
 char				*expand_quoted_word(char *word, t_env *env);
 
-// command_builder.c
+/* Command building functions */
 t_cmd				*group_tokens_into_commands(t_token *token_list,
 						t_env *env);
 
-// cleanup.c
+/* Cleanup functions */
 void				free_tokens(t_token *tokens);
 void				free_cmd_list(t_cmd *head);
 void				free_string_array(char **array, int count);
 void				join_adjacent_word_tokens(t_token **head);
 void				join_quoted_word_tokens(t_token **head);
-void    init_quote_state(t_quote_state *state);
-int     is_quote_char(char c);
-int     update_quote_state(t_quote_state *state, char quote_char);
 
 #endif

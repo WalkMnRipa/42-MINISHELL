@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 20:00:59 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/10/26 15:40:06 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/14 16:47:42 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,8 @@ static char	*expand_tilde(t_env *env, const char *path)
 		result = ft_strdup(home);
 	else
 		result = ft_strjoin(home, path + 1);
+	if (!result)
+		return (NULL);
 	return (result);
 }
 
@@ -33,20 +35,28 @@ static int	handle_directory_error(const char *path)
 {
 	struct stat	path_stat;
 
-	if (stat(path, &path_stat) == 0)
+	if (access(path, F_OK) == -1)
 	{
-		if (!S_ISDIR(path_stat.st_mode))
-		{
-			ft_putstr_fd("minishell: cd: ", 2);
-			ft_putstr_fd((char *)path, 2);
-			ft_putendl_fd(": Not a directory", 2);
-			return (1);
-		}
+		ft_putstr_fd("minishell: cd: ", STDERR_FILENO);
+		ft_putstr_fd((char *)path, STDERR_FILENO);
+		ft_putendl_fd(": No such file or directory", STDERR_FILENO);
+		return (1);
 	}
-	ft_putstr_fd("minishell: cd: ", 2);
-	ft_putstr_fd((char *)path, 2);
-	ft_putendl_fd(": No such file or directory", 2);
-	return (1);
+	if (access(path, R_OK | X_OK) == -1)
+	{
+		ft_putstr_fd("minishell: cd: ", STDERR_FILENO);
+		ft_putstr_fd((char *)path, STDERR_FILENO);
+		ft_putendl_fd(": Permission denied", STDERR_FILENO);
+		return (1);
+	}
+	if (stat(path, &path_stat) == 0 && !S_ISDIR(path_stat.st_mode))
+	{
+		ft_putstr_fd("minishell: cd: ", STDERR_FILENO);
+		ft_putstr_fd((char *)path, STDERR_FILENO);
+		ft_putendl_fd(": Not a directory", STDERR_FILENO);
+		return (1);
+	}
+	return (0);
 }
 
 static int	change_directory(t_env *env, const char *path)
@@ -54,18 +64,22 @@ static int	change_directory(t_env *env, const char *path)
 	char	*old_pwd;
 	char	*new_pwd;
 
+	if (handle_directory_error(path))
+		return (1);
 	old_pwd = getcwd(NULL, 0);
 	if (!old_pwd)
-		return (1);
-	if (chdir(path) != 0)
 	{
-		free(old_pwd);
-		return (handle_directory_error(path));
+		ft_putendl_fd("minishell: cd: error retrieving current directory",
+			STDERR_FILENO);
+		return (1);
 	}
+	if (chdir(path) != 0)
+		return (free(old_pwd), 1);
 	new_pwd = getcwd(NULL, 0);
 	if (!new_pwd)
 	{
-		ft_putendl_fd("cd: Error getting new directory", 2);
+		ft_putendl_fd("minishell: cd: error retrieving new directory",
+			STDERR_FILENO);
 		free(old_pwd);
 		return (1);
 	}
@@ -73,7 +87,7 @@ static int	change_directory(t_env *env, const char *path)
 	return (0);
 }
 
-static char	*get_cd_path(t_env *env, char **args, int *exit_status)
+static char	*get_cd_path(t_env *env, char **args)
 {
 	char	*path;
 
@@ -82,8 +96,7 @@ static char	*get_cd_path(t_env *env, char **args, int *exit_status)
 		path = get_env_value(env, "HOME");
 		if (!path)
 		{
-			ft_putendl_fd("cd: HOME not set", 2);
-			*exit_status = 1;
+			ft_putendl_fd("minishell: cd: HOME not set", STDERR_FILENO);
 			return (NULL);
 		}
 		return (ft_strdup(path));
@@ -93,8 +106,7 @@ static char	*get_cd_path(t_env *env, char **args, int *exit_status)
 		path = get_env_value(env, "OLDPWD");
 		if (!path)
 		{
-			ft_putendl_fd("cd: OLDPWD not set", 2);
-			*exit_status = 1;
+			ft_putendl_fd("minishell: cd: OLDPWD not set", STDERR_FILENO);
 			return (NULL);
 		}
 		return (ft_strdup(path));
@@ -102,22 +114,21 @@ static char	*get_cd_path(t_env *env, char **args, int *exit_status)
 	return (expand_tilde(env, args[1]));
 }
 
-void	builtin_cd(t_cmd *cmd, t_env *env, char **args)
+int	builtin_cd(t_cmd *cmd, t_env *env, char **args)
 {
 	char	*path;
 
-	cmd->exit_status = 0;
 	if (!args)
-		return ;
+		return (1);
 	if (args[1] && args[2])
 	{
-		ft_putendl_fd("minishell: cd: too many arguments", 2);
-		cmd->exit_status = 1;
-		return ;
+		ft_putendl_fd("minishell: cd: too many arguments", STDERR_FILENO);
+		return (1);
 	}
-	path = get_cd_path(env, args, &cmd->exit_status);
+	path = get_cd_path(env, args);
 	if (!path)
-		return ;
+		return (1);
 	cmd->exit_status = change_directory(env, path);
 	free(path);
+	return (cmd->exit_status);
 }

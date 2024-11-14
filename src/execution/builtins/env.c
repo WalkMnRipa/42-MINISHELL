@@ -6,17 +6,47 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 19:58:03 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/10/08 16:43:41 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/14 15:59:10 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../../includes/execution.h"
 
-void	builtin_env(t_env *env)
+static int	write_env_var(const char *key, const char *value)
 {
-	while (env)
+	if (write(STDOUT_FILENO, key, ft_strlen(key)) == -1)
+		return (1);
+	if (write(STDOUT_FILENO, "=", 1) == -1)
+		return (1);
+	if (write(STDOUT_FILENO, value, ft_strlen(value)) == -1)
+		return (1);
+	if (write(STDOUT_FILENO, "\n", 1) == -1)
+		return (1);
+	return (0);
+}
+
+int	builtin_env(t_env *env)
+{
+	t_env	*current;
+
+	if (!env)
 	{
-		printf("%s=%s\n", env->key, env->value);
-		env = env->next;
+		ft_putendl_fd("minishell: env: environment not available",
+			STDERR_FILENO);
+		return (1);
 	}
+	current = env;
+	while (current)
+	{
+		if (current->value && current->key)
+		{
+			if (write_env_var(current->key, current->value))
+			{
+				ft_putendl_fd("minishell: env: write error", STDERR_FILENO);
+				return (1);
+			}
+		}
+		current = current->next;
+	}
+	return (0);
 }
