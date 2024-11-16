@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/02 20:12:38 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/14 16:46:07 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/16 17:18:06 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,13 +60,12 @@ extern int			g_signal_received;
 */
 
 /* Pipeline state structure */
-typedef struct s_pipeline_state
+typedef struct s_pipe_info
 {
-	int				input_fd;
-	int				*pids;
+	int				index;
+	int				current_pipe;
 	int				cmd_count;
-	int				current_cmd;
-}					t_pipeline_state;
+}					t_pipe_info;
 
 /* Environment structure */
 typedef struct s_env
@@ -94,12 +93,23 @@ typedef struct s_cmd
 ** Function prototypes
 */
 
-/* Pipeline execution functions */
+/* Pipeline functions */
 void				execute_pipeline(t_cmd *cmd, t_env **env);
-void				execute_command(t_cmd *cmd, t_env **env);
-void				execute_single_command(t_cmd *cmd, t_env **env);
-void				execute_external_command(t_cmd *cmd, t_env **env);
 void				execute_non_builtin(t_cmd *cmd, t_env **env);
+void				execute_external_command(t_cmd *cmd, t_env **env);
+void				execute_command(t_cmd *cmd, t_env **env);
+void				handle_last_process_status(int status, t_env **env);
+void				setup_child_pipes(int pipe_fds[2][2], int i,
+						int current_pipe, int has_next);
+int					handle_pipe_creation(t_cmd *cmd, int pipe_fds[2][2],
+						int current_pipe);
+void				handle_parent_pipes(int pipe_fds[2][2], int i,
+						int current_pipe);
+void				cleanup_pipeline(pid_t *pids, int pipe_fds[2][2], int i);
+void				run_pipeline_loop(t_cmd *cmd, pid_t *pids,
+						t_pipe_info *info, t_env **env);
+pid_t				create_process(t_cmd *cmd, t_env **env, int pipe_fds[2][2],
+						t_pipe_info *info);
 
 /* Exit status handling */
 void				update_exit_status(t_cmd *cmd, int status);
@@ -158,6 +168,7 @@ void				update_pwd(t_env *env, char *old_pwd, char *new_pwd);
 void				setup_signals(void);
 void				reset_signals(void);
 void				signal_handler(int signo);
+void				setup_parent_signals(void);
 
 /* Utility functions */
 char				*ft_strjoin3(const char *s1, const char *s2,

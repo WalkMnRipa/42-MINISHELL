@@ -6,11 +6,11 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 16:37:14 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/16 14:07:07 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/16 16:34:12 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/execution.h"
+/*#include "../../includes/execution.h"
 
 void	execute_pipeline(t_cmd *cmd, t_env **env)
 {
@@ -105,4 +105,4 @@ void	execute_pipeline(t_cmd *cmd, t_env **env)
 		}
 	}
 	free(pids);
-}
+}*/
