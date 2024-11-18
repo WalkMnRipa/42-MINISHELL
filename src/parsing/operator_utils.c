@@ -6,11 +6,11 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/10 16:27:47 by jcohen            #+#    #+#             */
-/*   Updated: 2024/11/18 15:31:35 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/18 23:41:42 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../../includes/parsing.h"
+#include "../../includes/parsing.h"
 
 int	handle_here_doc(t_token *current)
 {

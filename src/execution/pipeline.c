@@ -6,11 +6,11 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/16 16:28:40 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/18 15:10:00 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/18 23:40:32 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../../includes/execution.h"
+#include "../../includes/execution.h"
 
 static void	wait_for_processes(pid_t *pids, int cmd_count, t_env **env)
 {

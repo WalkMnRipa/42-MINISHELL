@@ -6,11 +6,11 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 18:00:39 by jcohen            #+#    #+#             */
-/*   Updated: 2024/11/18 15:31:16 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/18 23:42:01 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../../includes/parsing.h"
+#include "../../includes/parsing.h"
 
 static int	is_special_char(char c)
 {

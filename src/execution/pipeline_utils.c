@@ -6,11 +6,11 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/16 16:48:24 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/18 15:33:17 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/18 23:40:33 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../../includes/execution.h"
+#include "../../includes/execution.h"
 
 void	setup_child_pipes(int pipe_fds[2][2], int i, int current_pipe,
 		int has_next)

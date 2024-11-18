@@ -6,11 +6,11 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 20:13:29 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/18 15:33:22 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/18 23:40:12 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../../includes/execution.h"
+#include "../../includes/execution.h"
 
 t_env	*create_env_node(char *envp)
 {

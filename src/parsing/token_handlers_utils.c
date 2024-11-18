@@ -6,11 +6,11 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/23 19:26:44 by jcohen            #+#    #+#             */
-/*   Updated: 2024/11/18 15:31:32 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/18 23:41:57 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../../includes/parsing.h"
+#include "../../includes/parsing.h"
 
 int	get_quote_end(char *input, int start, char quote)
 {

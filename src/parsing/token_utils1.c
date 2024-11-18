@@ -6,11 +6,11 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/13 16:18:41 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/18 15:31:30 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/18 23:42:23 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/token_utils.h"
+#include "../../includes/token_utils.h"
 
 void	init_token_state(t_token_state *state)
 {

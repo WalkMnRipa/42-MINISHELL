@@ -6,11 +6,11 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/17 18:55:18 by jcohen            #+#    #+#             */
-/*   Updated: 2024/11/18 15:31:25 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/18 23:42:32 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../../includes/parsing.h"
+#include "../../includes/parsing.h"
 
 int	token_handle_space(char *input, int i)
 {

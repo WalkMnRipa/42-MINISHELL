@@ -6,11 +6,11 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/11 18:52:59 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/18 15:31:21 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/18 23:42:07 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../../includes/parsing.h"
+#include "../../includes/parsing.h"
 
 static void	free_next_token(t_token *current, t_token *next)
 {
