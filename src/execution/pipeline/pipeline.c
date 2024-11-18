@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/16 16:28:40 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/16 17:18:01 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/18 15:10:00 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ static void	wait_for_processes(pid_t *pids, int cmd_count, t_env **env)
 
 static void	execute_child_process(t_cmd *cmd, t_env **env)
 {
-	reset_signals(); // Add this line to reset signals in child process
+	reset_signals();
 	if (is_builtin(cmd->args[0]))
 		execute_builtin(cmd, env);
 	else

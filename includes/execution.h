@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/02 20:12:38 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/16 17:18:06 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/18 14:37:10 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,8 +112,8 @@ pid_t				create_process(t_cmd *cmd, t_env **env, int pipe_fds[2][2],
 						t_pipe_info *info);
 
 /* Exit status handling */
-void				update_exit_status(t_cmd *cmd, int status);
 void				set_last_exit_status(t_env *env, int status);
+void				update_exit_status(t_cmd *cmd, int status);
 
 /* Command execution utilities */
 char				*find_command_path(const char *command, t_env *env);
@@ -155,7 +155,6 @@ int					custom_setenv(t_env **env, const char *name,
 t_env				*create_env_node(char *envp);
 int					create_env_var(t_env **env, const char *name,
 						const char *value);
-void				remove_env_var(t_env **env, const char *name);
 int					is_readonly_var(const char *name);
 int					is_valid_env_name(const char *name);
 char				**env_to_array(t_env *env);

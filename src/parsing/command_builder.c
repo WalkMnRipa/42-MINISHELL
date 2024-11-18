@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/10 16:27:46 by jcohen            #+#    #+#             */
-/*   Updated: 2024/11/13 12:34:52 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/18 15:31:41 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,41 +30,36 @@ static t_cmd	*create_new_command(void)
 	return (new_cmd);
 }
 
-static int add_argument(t_cmd *cmd, char *arg)
+static int	add_argument(t_cmd *cmd, char *arg)
 {
-    int     args_count;
-    char    **new_args;
-    int     i;
+	int		args_count;
+	char	**new_args;
+	int		i;
 
-    if (!arg || !*arg)  // Skip empty arguments
-        return (1);
-
-    args_count = 0;
-    while (cmd->args && cmd->args[args_count])
-        args_count++;
-
-    new_args = malloc(sizeof(char *) * (args_count + 2));
-    if (!new_args)
-        return (0);
-
-    i = 0;
-    while (i < args_count)
-    {
-        new_args[i] = cmd->args[i];
-        i++;
-    }
-
-    new_args[args_count] = ft_strdup(arg);
-    if (!new_args[args_count])
-    {
-        free(new_args);
-        return (0);
-    }
-
-    new_args[args_count + 1] = NULL;
-    free(cmd->args);  // Free old args array but not its contents
-    cmd->args = new_args;
-    return (1);
+	if (!arg || !*arg) // Skip empty arguments
+		return (1);
+	args_count = 0;
+	while (cmd->args && cmd->args[args_count])
+		args_count++;
+	new_args = malloc(sizeof(char *) * (args_count + 2));
+	if (!new_args)
+		return (0);
+	i = 0;
+	while (i < args_count)
+	{
+		new_args[i] = cmd->args[i];
+		i++;
+	}
+	new_args[args_count] = ft_strdup(arg);
+	if (!new_args[args_count])
+	{
+		free(new_args);
+		return (0);
+	}
+	new_args[args_count + 1] = NULL;
+	free(cmd->args); // Free old args array but not its contents
+	cmd->args = new_args;
+	return (1);
 }
 
 static int	handle_redirection(t_token **token, t_cmd *cmd)
@@ -95,24 +90,22 @@ static int	handle_redirection(t_token **token, t_cmd *cmd)
 
 static int	process_token(t_token **token, t_cmd **current, t_env *env)
 {
-    if (!*token)
-        return (0);
-
-    if ((*token)->type == TOKEN_WORD)
-    {
-        if (!(*token)->value || !*(*token)->value)  // Skip empty tokens
-            return (1);
-        return (add_argument(*current, (*token)->value));
-    }
-
-    if ((*token)->type == TOKEN_PIPE)
-    {
-        (*current)->next = create_new_command();
-        if (!(*current)->next)
-            return (0);
-        *current = (*current)->next;
-        return (1);
-    }
+	if (!*token)
+		return (0);
+	if ((*token)->type == TOKEN_WORD)
+	{
+		if (!(*token)->value || !*(*token)->value) // Skip empty tokens
+			return (1);
+		return (add_argument(*current, (*token)->value));
+	}
+	if ((*token)->type == TOKEN_PIPE)
+	{
+		(*current)->next = create_new_command();
+		if (!(*current)->next)
+			return (0);
+		*current = (*current)->next;
+		return (1);
+	}
 	if ((*token)->type == TOKEN_REDIR_INPUT
 		|| (*token)->type == TOKEN_REDIR_OUTPUT
 		|| (*token)->type == TOKEN_REDIR_APPEND)

@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/11 15:38:44 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/10/11 16:48:59 by ggaribot         ###   ########.fr       */
+/*   Created: 2024/11/18 15:29:51 by ggaribot          #+#    #+#             */
+/*   Updated: 2024/11/18 15:30:35 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,4 +46,16 @@ char	*try_path(const char *dir, const char *command)
 		return (full_path);
 	free(full_path);
 	return (NULL);
+}
+
+void	update_exit_status(t_cmd *cmd, int status)
+{
+	if (WIFEXITED(status))
+		cmd->exit_status = WEXITSTATUS(status);
+	else if (WIFSIGNALED(status))
+	{
+		cmd->exit_status = 128 + WTERMSIG(status);
+		if (WTERMSIG(status) == SIGQUIT)
+			ft_putendl_fd("Quit (core dumped)", STDERR_FILENO);
+	}
 }
