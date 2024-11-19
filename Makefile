@@ -13,7 +13,8 @@ SRCS = src/main.c \
        $(wildcard src/parsing/*.c) \
        $(wildcard src/utils/parsing_utils/*.c) \
        $(wildcard src/execution/*.c) \
-       $(wildcard src/execution/*/*.c)
+       $(wildcard src/execution/*/*.c) \
+		$(wildcard src/init/*.c) \
 
 OBJS_DIR = objs
 OBJS = $(SRCS:%.c=$(OBJS_DIR)/%.o)

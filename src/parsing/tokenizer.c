@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 00:43:06 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/19 00:43:08 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/19 13:58:41 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,41 +63,36 @@ void	add_token(t_token **head, t_token *new_token)
 
 t_token	*tokenizer(char *input, t_env *env)
 {
-	t_token *head;
-	t_process_state ps;
-	char *temp;
+	t_token			*head;
+	t_process_state	ps;
+	char			*temp;
 
 	if (!input)
 		return (NULL);
 	head = NULL;
 	init_process_state(&ps, input, &head, env);
-
 	// Step 1: Process quotes
 	ps.processed_input = process_quotes(input);
 	if (!ps.processed_input)
 		return (NULL);
-
 	// Step 2: Process variables
 	temp = process_variables(ps.processed_input, env, 0);
 	free(ps.processed_input);
 	ps.processed_input = temp;
 	if (!ps.processed_input)
 		return (NULL);
-
 	// Step 3: Process operators
 	if (process_operators(&ps) < 0)
 	{
 		free(ps.processed_input);
 		return (free_tokens(head), NULL);
 	}
-
 	// Step 4: Process words
 	if (process_words(&ps) < 0)
 	{
 		free(ps.processed_input);
 		return (free_tokens(head), NULL);
 	}
-
 	free(ps.processed_input);
 	return (head);
 }

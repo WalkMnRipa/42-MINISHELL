@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 00:48:44 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/19 00:48:46 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/19 14:43:40 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,6 @@ static char	*handle_special_var(t_env *env, char special_char)
 {
 	if (special_char == '?')
 		return (ft_itoa(env->last_exit_status));
-	else if (special_char == '$')
-		return (ft_itoa(getpid()));
 	return (ft_strdup(""));
 }
 
@@ -83,7 +81,7 @@ char	*process_variables(char *input, t_env *env, int in_quotes)
 			vp.i++;
 			if (!input[vp.i] || ft_isspace(input[vp.i]))
 				tmp = ft_strdup("$");
-			else if (input[vp.i] == '?' || input[vp.i] == '$')
+			else if (input[vp.i] == '?')
 				tmp = handle_special_var(env, input[vp.i]);
 			else
 				tmp = get_env_var_value(&vp, vp.i);

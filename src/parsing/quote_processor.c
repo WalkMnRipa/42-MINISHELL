@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 00:47:24 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/19 00:48:31 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/19 14:33:54 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,8 @@ int	is_quote(char c)
 {
 	return (c == '\'' || c == '"');
 }
-
+// if = starting quote
+// else if = ending quote
 static int	handle_quote_state(t_quote_processor *qp, char current_char)
 {
 	if (!qp->in_quotes && is_quote(current_char))

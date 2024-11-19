@@ -6,16 +6,17 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 18:00:00 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/19 00:53:24 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/19 13:56:21 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/execution.h"
+#include "../includes/init.h"
 #include "../includes/parsing.h"
 #include <readline/history.h>
 #include <readline/readline.h>
 
-int				g_signal_received = 0;
+int			g_signal_received = 0;
 
 static int	handle_input(char *input, t_env **env, int *exit_status)
 {
@@ -25,7 +26,6 @@ static int	handle_input(char *input, t_env **env, int *exit_status)
 	if (!*input)
 		return (0);
 	add_history(input);
-	// Use new tokenizer
 	tokens = tokenizer(input, *env);
 	if (!tokens)
 		return (0);
@@ -64,17 +64,6 @@ static int	shell_loop(t_env **env, int stdin_backup)
 	return (exit_status);
 }
 
-static t_env	*initialize_shell(char **envp)
-{
-	t_env	*env;
-
-	env = init_env(envp);
-	if (!env)
-		return (NULL);
-	setup_signals();
-	return (env);
-}
-
 int	main(int argc, char **argv, char **envp)
 {
 	t_env	*env;
@@ -87,6 +76,12 @@ int	main(int argc, char **argv, char **envp)
 	if (!env)
 		return (1);
 	stdin_backup = dup(STDIN_FILENO);
+	if (stdin_backup == -1)
+	{
+		perror("minishell: dup failed");
+		cleanup(env, NULL);
+		return (1);
+	}
 	exit_status = shell_loop(&env, stdin_backup);
 	close(stdin_backup);
 	cleanup(env, NULL);

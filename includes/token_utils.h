@@ -6,13 +6,16 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/13 16:17:28 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/19 00:57:28 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/19 13:49:18 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef TOKEN_UTILS_H
 # define TOKEN_UTILS_H
 
+# include "execution.h"
+# include "init.h"
+# include "minishell_types.h"
 # include "parsing.h"
 
 /*
