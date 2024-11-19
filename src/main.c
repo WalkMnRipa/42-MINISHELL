@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 18:00:00 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/18 23:43:05 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/19 00:53:24 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@ static int	handle_input(char *input, t_env **env, int *exit_status)
 	if (!*input)
 		return (0);
 	add_history(input);
+	// Use new tokenizer
 	tokens = tokenizer(input, *env);
 	if (!tokens)
 		return (0);
