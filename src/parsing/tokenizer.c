@@ -5,94 +5,128 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/19 00:43:06 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/19 13:58:41 by ggaribot         ###   ########.fr       */
+/*   Created: 2024/11/19 18:57:57 by ggaribot          #+#    #+#             */
+/*   Updated: 2024/11/19 19:03:49 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/parsing.h"
 
-void	init_process_state(t_process_state *ps, char *input, t_token **head,
-		t_env *env)
+static char *extract_word(char **input, t_env *env)
 {
-	ps->input = input;
-	ps->head = head;
-	ps->env = env;
-	ps->processed_input = NULL;
-	ps->in_quotes = 0;
-	ps->quote_char = 0;
+    char        *start;
+    int         len;
+    char        *word;
+    t_quote_state quote_state;
+    
+    start = *input;
+    len = 0;
+    quote_state = STATE_NORMAL;
+    
+    while ((*input)[len] && (quote_state != STATE_NORMAL || 
+           (!is_whitespace((*input)[len]) && !is_operator((*input)[len]))))
+    {
+        if (is_quote((*input)[len]))
+            quote_state = get_quote_state((*input)[len], quote_state);
+        len++;
+    }
+    
+    word = ft_substr(start, 0, len);
+    if (!word)
+        return (NULL);
+    
+    *input += len;
+    return (handle_quotes(word, env));
 }
 
-t_token	*create_token(char *value, t_token_type type, t_quote_type quote_type)
+static t_token_type get_operator_type(char *str)
 {
-	t_token	*token;
-
-	if (!value)
-		return (NULL);
-	token = (t_token *)malloc(sizeof(t_token));
-	if (!token)
-		return (NULL);
-	token->value = ft_strdup(value);
-	if (!token->value)
-	{
-		free(token);
-		return (NULL);
-	}
-	token->type = type;
-	token->quote_type = quote_type;
-	token->next = NULL;
-	return (token);
+    if (str[0] == '|')
+        return (TOKEN_PIPE);
+    else if (str[0] == '<')
+    {
+        if (str[1] == '<')
+            return (TOKEN_HEREDOC);
+        return (TOKEN_REDIR_IN);
+    }
+    else if (str[0] == '>')
+    {
+        if (str[1] == '>')
+            return (TOKEN_REDIR_APPEND);
+        return (TOKEN_REDIR_OUT);
+    }
+    return (TOKEN_OPERATOR);
 }
 
-void	add_token(t_token **head, t_token *new_token)
+static t_token *handle_operator(char **input)
 {
-	t_token	*current;
-
-	if (!head || !new_token)
-		return ;
-	if (!*head)
-	{
-		*head = new_token;
-		return ;
-	}
-	current = *head;
-	while (current->next)
-		current = current->next;
-	current->next = new_token;
+    t_token_type    type;
+    char            *value;
+    int             len;
+    
+    len = 1;
+    if ((*input)[0] == (*input)[1] && ((*input)[0] == '<' || (*input)[0] == '>'))
+        len = 2;
+    
+    value = ft_substr(*input, 0, len);
+    if (!value)
+        return (NULL);
+    
+    type = get_operator_type(*input);
+    *input += len;
+    
+    return (create_token(type, value));
 }
 
-t_token	*tokenizer(char *input, t_env *env)
+t_token *get_next_token(char **input, t_env *env)
 {
-	t_token			*head;
-	t_process_state	ps;
-	char			*temp;
+    while (**input && is_whitespace(**input))
+        (*input)++;
+    
+    if (!**input)
+        return (create_token(TOKEN_EOF, NULL));
+    
+    if (is_operator(**input))
+        return (handle_operator(input));
+    
+    return (create_token(TOKEN_WORD, extract_word(input, env)));
+}
 
-	if (!input)
-		return (NULL);
-	head = NULL;
-	init_process_state(&ps, input, &head, env);
-	// Step 1: Process quotes
-	ps.processed_input = process_quotes(input);
-	if (!ps.processed_input)
-		return (NULL);
-	// Step 2: Process variables
-	temp = process_variables(ps.processed_input, env, 0);
-	free(ps.processed_input);
-	ps.processed_input = temp;
-	if (!ps.processed_input)
-		return (NULL);
-	// Step 3: Process operators
-	if (process_operators(&ps) < 0)
-	{
-		free(ps.processed_input);
-		return (free_tokens(head), NULL);
-	}
-	// Step 4: Process words
-	if (process_words(&ps) < 0)
-	{
-		free(ps.processed_input);
-		return (free_tokens(head), NULL);
-	}
-	free(ps.processed_input);
-	return (head);
+t_token *tokenizer(char *input, t_env *env)
+{
+    t_token *head;
+    t_token *new_token;
+    char    *current;
+    
+    if (!input || !*input)
+        return (NULL);
+    
+    head = NULL;
+    current = input;
+    
+    while (*current)
+    {
+        new_token = get_next_token(&current, env);
+        if (!new_token)
+        {
+            free_tokens(head);
+            return (NULL);
+        }
+        
+        if (new_token->type == TOKEN_EOF)
+        {
+            free_tokens(new_token);
+            break;
+        }
+        
+        add_token(&head, new_token);
+    }
+    
+    if (!check_syntax_errors(head))
+    {
+        free_tokens(head);
+        return (NULL);
+    }
+    
+    return (head);
 }

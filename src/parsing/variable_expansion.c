@@ -5,80 +5,105 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/19 00:59:39 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/19 00:59:46 by ggaribot         ###   ########.fr       */
+/*   Created: 2024/11/19 18:59:44 by ggaribot          #+#    #+#             */
+/*   Updated: 2024/11/20 00:57:52 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/parsing.h"
 
-static char	*get_var_content(t_env *env, const char *var_name)
+static char *extract_var_name(char *str, int *i)
 {
-	if (!var_name)
-		return (NULL);
-	if (ft_strcmp(var_name, "?") == 0)
-		return (ft_itoa(env->last_exit_status));
-	return (ft_strdup(get_env_value(env, var_name)));
+    int     start;
+    int     len;
+    char    *name;
+
+    start = *i + 1;
+    len = 0;
+    if (str[start] == '?')
+    {
+        *i += 1;
+        return (ft_strdup("?"));
+    }
+    while (str[start + len] && (ft_isalnum(str[start + len]) || 
+           str[start + len] == '_'))
+        len++;
+    if (len == 0)
+        return (NULL);
+    name = ft_substr(str, start, len);
+    *i += len;
+    return (name);
 }
 
-static char	*handle_dollar(char *str, int *i, t_env *env,
-		t_quote_type quote_type)
+static char *handle_exit_status(t_env *env)
 {
-	char	*var_name;
-	char	*var_content;
-	int		j;
-
-	if (str[*i + 1] == '?')
-	{
-		(*i)++;
-		return (ft_itoa(env->last_exit_status));
-	}
-	j = *i + 1;
-	while (str[j] && (ft_isalnum(str[j]) || str[j] == '_'))
-		j++;
-	var_name = ft_substr(str, *i + 1, j - (*i + 1));
-	if (!var_name)
-		return (NULL);
-	var_content = get_var_content(env, var_name);
-	free(var_name);
-	*i = j - 1;
-	if (!var_content && quote_type == QUOTE_NONE)
-		return (ft_strdup(""));
-	return (var_content);
+    return (ft_itoa(env->last_exit_status));
 }
 
-char	*expand_variables_in_str(char *str, t_env *env, t_quote_type quote_type)
+static char *expand_single_var(char *str, int *i, t_env *env)
 {
-	char	*result;
-	char	*tmp;
-	char	*var_content;
-	int		i;
+    char    *var_name;
+    char    *var_value;
+    char    *before;
+    char    *after;
+    char    *temp;
+    char    *result;
 
-	result = ft_strdup("");
-	if (!result)
-		return (NULL);
-	i = 0;
-	while (str[i])
-	{
-		if (str[i] == '$' && (quote_type != QUOTE_SINGLE))
-		{
-			var_content = handle_dollar(str, &i, env, quote_type);
-			tmp = result;
-			result = ft_strjoin(result, var_content);
-			free(tmp);
-			free(var_content);
-			if (!result)
-				return (NULL);
-		}
-		else
-		{
-			tmp = result;
-			result = ft_strjoinc(result, str[i]);
-			free(tmp);
-			if (!result)
-				return (NULL);
-		}
-		i++;
-	}
-	return (result);
+    var_name = extract_var_name(str, i);
+    if (!var_name)
+        return (str);
+
+    before = ft_substr(str, 0, *i - ft_strlen(var_name));
+    after = ft_strdup(str + *i + 1);
+    if (!before || !after)
+    {
+        free(var_name);
+        free(before);
+        free(after);
+        return (NULL);
+    }
+
+    if (ft_strcmp(var_name, "?") == 0)
+        var_value = handle_exit_status(env);
+    else
+        var_value = ft_strdup(get_env_value(env, var_name));
+
+    if (!var_value)
+        var_value = ft_strdup("");
+
+    temp = ft_strjoin(before, var_value);
+    result = ft_strjoin(temp, after);
+
+    free(var_name);
+    free(var_value);
+    free(before);
+    free(after);
+    free(temp);
+    free(str);
+
+    *i = ft_strlen(before) + ft_strlen(var_value) - 1;
+    return (result);
+}
+
+char *expand_variables_in_str(char *str, t_env *env, t_quote_state state)
+{
+    int     i;
+    char    *result;
+
+    if (!str)
+        return (NULL);
+
+    result = str;
+    i = 0;
+    while (result[i])
+    {
+        if (result[i] == '$' && state != STATE_SINGLE_QUOTE)
+        {
+            result = expand_single_var(result, &i, env);
+            if (!result)
+                return (NULL);
+        }
+        i++;
+    }
+    return (result);
 }

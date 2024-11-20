@@ -5,70 +5,41 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/19 13:46:36 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/19 13:47:08 by ggaribot         ###   ########.fr       */
+/*   Created: 2024/11/19 18:56:30 by ggaribot          #+#    #+#             */
+/*   Updated: 2024/11/19 18:57:14 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_TYPES_H
 # define MINISHELL_TYPES_H
 
-/* Token types and structures */
-typedef enum e_token_type
-{
-	TOKEN_WORD,
-	TOKEN_PIPE,
-	TOKEN_REDIR_INPUT,
-	TOKEN_REDIR_OUTPUT,
-	TOKEN_REDIR_APPEND,
-	TOKEN_HERE_DOC,
-	TOKEN_VARIABLE,
-	TOKEN_ERROR
-}					t_token_type;
+# include <unistd.h>
 
-typedef enum e_quote_type
-{
-	QUOTE_NONE,
-	QUOTE_SINGLE,
-	QUOTE_DOUBLE
-}					t_quote_type;
-
-typedef struct s_token
-{
-	t_token_type	type;
-	char			*value;
-	t_quote_type	quote_type;
-	struct s_token	*next;
-}					t_token;
-
-/* Environment structure */
-typedef struct s_env
-{
-	char			*key;
-	char			*value;
-	int				last_exit_status;
-	struct s_env	*next;
-}					t_env;
+/* Environment variable structure */
+typedef struct s_env {
+    char            *key;
+    char            *value;
+    int             last_exit_status;
+    struct s_env    *next;
+}   t_env;
 
 /* Command structure */
-typedef struct s_cmd
-{
-	char			**args;
-	char			*input_file;
-	char			*output_file;
-	int				append_output;
-	int				input_fd;
-	int				output_fd;
-	int				exit_status;
-	struct s_cmd	*next;
-}					t_cmd;
+typedef struct s_cmd {
+    char            **args;          // Command and its arguments
+    char            *input_file;     // Input redirection file
+    char            *output_file;    // Output redirection file
+    int             input_fd;        // Input file descriptor
+    int             output_fd;       // Output file descriptor
+    int             append_output;   // Flag for append mode
+    int             exit_status;     // Command exit status
+    struct s_cmd    *next;          // Next command in pipeline
+}   t_cmd;
 
-/* Pipeline state structure */
-typedef struct s_pipe_info
-{
-	int				index;
-	int				current_pipe;
-	int				cmd_count;
-}					t_pipe_info;
+/* Pipeline information structure */
+typedef struct s_pipe_info {
+    int     cmd_count;      // Total number of commands in pipeline
+    int     index;          // Current command index
+    int     current_pipe;   // Current pipe index (0 or 1)
+}   t_pipe_info;
 
 #endif
