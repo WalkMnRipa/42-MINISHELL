@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 19:00:03 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/19 19:00:11 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/20 14:12:59 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,28 +62,26 @@ static int add_argument(t_cmd *cmd, char *arg)
 
 static int handle_redirection(t_cmd *cmd, t_token *token, t_token *next)
 {
+    char *old_file;
+
     if (!next || next->type != TOKEN_WORD)
     {
         print_syntax_error("newline");
         return (0);
     }
 
-    if (token->type == TOKEN_REDIR_IN)
+    if (token->type == TOKEN_REDIR_OUT || token->type == TOKEN_REDIR_APPEND)
     {
-        free(cmd->input_file);
-        cmd->input_file = ft_strdup(next->value);
-    }
-    else if (token->type == TOKEN_REDIR_OUT || token->type == TOKEN_REDIR_APPEND)
-    {
-        free(cmd->output_file);
+        old_file = cmd->output_file;
         cmd->output_file = ft_strdup(next->value);
         cmd->append_output = (token->type == TOKEN_REDIR_APPEND);
+        free(old_file);
     }
-    else if (token->type == TOKEN_HEREDOC)
+    else if (token->type == TOKEN_REDIR_IN)
     {
-        free(cmd->input_file);
+        old_file = cmd->input_file;
         cmd->input_file = ft_strdup(next->value);
-        // Handle heredoc in execution phase
+        free(old_file);
     }
 
     return (1);
