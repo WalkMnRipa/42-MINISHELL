@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 20:14:16 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/20 01:10:25 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/20 14:30:06 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ char    *find_command_path(const char *command, t_env *env)
     free(path_copy);
     return (NULL);
 }
-
+/*
 static void handle_command_not_found(t_cmd *cmd)
 {
     ft_putstr_fd("minishell: ", 2);
@@ -46,37 +46,83 @@ static void handle_command_not_found(t_cmd *cmd)
     ft_putendl_fd(": command not found", 2);
     cmd->exit_status = 127;
 }
-
-void    execute_external_command(t_cmd *cmd, t_env **env)
+*/
+void execute_external_command(t_cmd *cmd, t_env **env)
 {
     char    *command_path;
     char    **env_array;
+    struct stat path_stat;
+
+    // Handle empty command
+    if (!cmd->args[0] || !cmd->args[0][0])
+    {
+        cmd->exit_status = 127;
+        ft_putendl_fd("minishell: : command not found", 2);
+        return;
+    }
+
+    // Check if command is a directory
+    if (stat(cmd->args[0], &path_stat) == 0)
+    {
+        if (S_ISDIR(path_stat.st_mode))
+        {
+            ft_putstr_fd("minishell: ", 2);
+            ft_putstr_fd(cmd->args[0], 2);
+            ft_putendl_fd(": Is a directory", 2);
+            cmd->exit_status = 126;
+            return;
+        }
+        // Check execute permission for direct paths
+        if (access(cmd->args[0], X_OK) == -1)
+        {
+            ft_putstr_fd("minishell: ", 2);
+            ft_putstr_fd(cmd->args[0], 2);
+            ft_putendl_fd(": Permission denied", 2);
+            cmd->exit_status = 126;
+            return;
+        }
+    }
 
     command_path = find_command_path(cmd->args[0], *env);
     if (!command_path)
     {
-        handle_command_not_found(cmd);
+        ft_putstr_fd("minishell: ", 2);
+        ft_putstr_fd(cmd->args[0], 2);
+        ft_putendl_fd(": command not found", 2);
         cmd->exit_status = 127;
-        return ;
+        return;
     }
+
     env_array = env_to_array(*env);
     if (!env_array)
     {
         free(command_path);
         error_exit_message(*env, cmd, "malloc failed");
     }
+
     reset_signals();
     if (execve(command_path, cmd->args, env_array) == -1)
     {
         if (errno == ENOENT)
+        {
+            ft_putstr_fd("minishell: ", 2);
+            ft_putstr_fd(cmd->args[0], 2);
+            ft_putendl_fd(": No such file or directory", 2);
             cmd->exit_status = 127;
+        }
         else if (errno == EACCES)
+        {
+            ft_putstr_fd("minishell: ", 2);
+            ft_putstr_fd(cmd->args[0], 2);
+            ft_putendl_fd(": Permission denied", 2);
             cmd->exit_status = 126;
+        }
         else
             cmd->exit_status = 1;
+        
         free(command_path);
         free_string_array(env_array, -1);
-        error_exit_message(*env, cmd, strerror(errno));
+        error_exit_message(*env, cmd, NULL);
     }
 }
 

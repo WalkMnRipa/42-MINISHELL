@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 18:59:44 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/20 12:32:04 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/20 14:28:13 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,16 +63,48 @@ static char *expand_single_var(char *str, int *i, t_env *env)
         return (NULL);
     }
 
+    // Special handling for $?
     if (ft_strcmp(var_name, "?") == 0)
         var_value = handle_exit_status(env);
     else
-        var_value = ft_strdup(get_env_value(env, var_name));
+    {
+        var_value = get_env_value(env, var_name);
+        // Handle empty or non-existent variables
+        if (!var_value)
+            var_value = ft_strdup("");
+        else
+            var_value = ft_strdup(var_value);
+    }
 
     if (!var_value)
-        var_value = ft_strdup("");
+    {
+        free(var_name);
+        free(before);
+        free(after);
+        return (NULL);
+    }
 
+    // Combine the parts
     temp = ft_strjoin(before, var_value);
+    if (!temp)
+    {
+        free(var_name);
+        free(var_value);
+        free(before);
+        free(after);
+        return (NULL);
+    }
+
     result = ft_strjoin(temp, after);
+    if (!result)
+    {
+        free(var_name);
+        free(var_value);
+        free(before);
+        free(after);
+        free(temp);
+        return (NULL);
+    }
 
     free(var_name);
     free(var_value);
