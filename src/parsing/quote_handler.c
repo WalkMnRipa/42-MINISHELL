@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 18:58:27 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/20 11:15:56 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/20 12:29:20 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,28 +28,6 @@ t_quote_state get_quote_state(char c, t_quote_state current)
     return (current);
 }
 
-static int should_preserve_quote(char quote_char, t_quote_state outer_state)
-{
-    // Preserve quotes if they're inside the other type of quotes
-    if (outer_state == STATE_SINGLE_QUOTE && quote_char == '"')
-        return (1);
-    if (outer_state == STATE_DOUBLE_QUOTE && quote_char == '\'')
-        return (1);
-    return (0);
-}
-
-static char *process_backslash(char *str, int *i, t_quote_state quote_state)
-{
-    if (quote_state == STATE_DOUBLE_QUOTE)
-    {
-        if (str[*i + 1] == '"' || str[*i + 1] == '\\' || str[*i + 1] == '$')
-            ft_memmove(&str[*i], &str[*i + 1], ft_strlen(&str[*i]));
-    }
-    else if (quote_state == STATE_NORMAL)
-        ft_memmove(&str[*i], &str[*i + 1], ft_strlen(&str[*i]));
-    return (str);
-}
-
 char *handle_quotes(char *str, t_env *env)
 {
     int             i;
@@ -67,24 +45,20 @@ char *handle_quotes(char *str, t_env *env)
     quote_state = STATE_NORMAL;
     while (result[i])
     {
-        if (result[i] == '\\')
-            result = process_backslash(result, &i, quote_state);
-        else if (result[i] == '\'' || result[i] == '"')
+        if (result[i] == '\'' || result[i] == '"')
         {
-            if (should_preserve_quote(result[i], quote_state))
-            {
-                i++; // Keep the quote and move on
-                continue;
-            }
             quote_state = get_quote_state(result[i], quote_state);
-            ft_memmove(&result[i], &result[i + 1], ft_strlen(&result[i]));
+            i++;
             continue;
         }
-        else if (result[i] == '$' && quote_state != STATE_SINGLE_QUOTE)
+        
+        if (result[i] == '$' && quote_state != STATE_SINGLE_QUOTE)
         {
             result = expand_variables_in_str(result, env, quote_state);
             if (!result)
                 return (NULL);
+            // Skip to next character after handling $
+            i++;
             continue;
         }
         i++;
@@ -112,6 +86,5 @@ int is_quote_closed(char *str)
             state = get_quote_state(str[i], state);
         i++;
     }
-    
     return (state == STATE_NORMAL);
 }
