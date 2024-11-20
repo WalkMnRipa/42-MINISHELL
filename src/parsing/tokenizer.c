@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 18:57:57 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/20 12:25:20 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/20 12:34:05 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,27 +23,16 @@ static char *extract_word(char **input, t_env *env)
     len = 0;
     quote_state = STATE_NORMAL;
     
-    ft_printf("DEBUG: extract_word starting with: '%s'\n", *input);
-    
     while ((*input)[len])
     {
-        ft_printf("DEBUG: Processing char '%c' at pos %d, quote_state: %d\n", 
-                 (*input)[len], len, quote_state);
-        
         if (is_quote((*input)[len]))
-        {
             quote_state = get_quote_state((*input)[len], quote_state);
-            ft_printf("DEBUG: Quote found, new state: %d\n", quote_state);
-        }
             
         if (quote_state == STATE_NORMAL && !is_quote((*input)[len]))
         {
             if (is_whitespace((*input)[len]) || 
                 (is_operator((*input)[len]) && len == 0))
-            {
-                ft_printf("DEBUG: Breaking on char '%c'\n", (*input)[len]);
                 break;
-            }
         }
         len++;
     }
@@ -51,8 +40,6 @@ static char *extract_word(char **input, t_env *env)
     word = ft_substr(start, 0, len);
     if (!word)
         return (NULL);
-    
-    ft_printf("DEBUG: Extracted word before quotes: '%s'\n", word);
     
     *input += len;
     return (handle_quotes(word, env));

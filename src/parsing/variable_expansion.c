@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 18:59:44 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/20 12:28:59 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/20 12:32:04 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,7 +99,6 @@ char *expand_variables_in_str(char *str, t_env *env, t_quote_state state)
     {
         if (result[i] == '$' && state != STATE_SINGLE_QUOTE)
         {
-            // Skip $ if it's followed by a special character or end of string
             if (!result[i + 1] || result[i + 1] == ' ' || 
                 result[i + 1] == '"' || result[i + 1] == '\'' || 
                 result[i + 1] == '\\' || result[i + 1] == '<' || 
@@ -110,8 +109,8 @@ char *expand_variables_in_str(char *str, t_env *env, t_quote_state state)
                 continue;
             }
 
-            // Only try to expand if next char is alphanumeric or underscore
-            if (ft_isalnum(result[i + 1]) || result[i + 1] == '_' || result[i + 1] == '?')
+            if (ft_isalnum(result[i + 1]) || result[i + 1] == '_' || 
+                result[i + 1] == '?')
             {
                 result = expand_single_var(result, &i, env);
                 if (!result)

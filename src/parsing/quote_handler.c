@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 18:58:27 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/20 12:29:20 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/20 12:49:20 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,45 @@ t_quote_state get_quote_state(char c, t_quote_state current)
     else if (current == STATE_DOUBLE_QUOTE && c == '"')
         return (STATE_NORMAL);
     return (current);
+}
+
+static char *remove_quotes(char *str)
+{
+    int     i;
+    int     j;
+    char    *result;
+    t_quote_state state;
+    char    current_quote;
+
+    result = malloc(ft_strlen(str) + 1);
+    if (!result)
+        return (NULL);
+    
+    i = 0;
+    j = 0;
+    state = STATE_NORMAL;
+    current_quote = 0;
+    
+    while (str[i])
+    {
+        if ((str[i] == '\'' || str[i] == '"') && 
+            (state == STATE_NORMAL || str[i] == current_quote))
+        {
+            if (state == STATE_NORMAL)
+            {
+                state = (str[i] == '\'') ? STATE_SINGLE_QUOTE : STATE_DOUBLE_QUOTE;
+                current_quote = str[i];
+            }
+            else
+                state = STATE_NORMAL;
+            i++;
+            continue;
+        }
+        result[j++] = str[i++];
+    }
+    result[j] = '\0';
+    free(str);
+    return (result);
 }
 
 char *handle_quotes(char *str, t_env *env)
@@ -57,15 +96,13 @@ char *handle_quotes(char *str, t_env *env)
             result = expand_variables_in_str(result, env, quote_state);
             if (!result)
                 return (NULL);
-            // Skip to next character after handling $
             i++;
             continue;
         }
         i++;
     }
     
-    free(str);
-    return (result);
+    return (remove_quotes(result));
 }
 
 int is_quote(char c)
@@ -87,4 +124,4 @@ int is_quote_closed(char *str)
         i++;
     }
     return (state == STATE_NORMAL);
-}
+}    
