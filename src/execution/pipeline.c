@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/16 16:28:40 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/18 23:40:32 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/20 14:07:49 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,24 +46,27 @@ static void	execute_child_process(t_cmd *cmd, t_env **env)
 	exit(cmd->exit_status);
 }
 
-pid_t	create_process(t_cmd *cmd, t_env **env, int pipe_fds[2][2],
-		t_pipe_info *info)
+pid_t create_process(t_cmd *cmd, t_env **env, int pipe_fds[2][2], t_pipe_info *info)
 {
-	pid_t	pid;
+    pid_t pid;
 
-	pid = fork();
-	if (pid == -1)
-	{
-		perror("fork");
-		return (-1);
-	}
-	if (pid == 0)
-	{
-		setup_child_pipes(pipe_fds, info->index, info->current_pipe,
-			cmd->next != NULL);
-		execute_child_process(cmd, env);
-	}
-	return (pid);
+    pid = fork();
+    if (pid == -1)
+    {
+        perror("fork");
+        return (-1);
+    }
+    if (pid == 0)
+    {
+        // First handle redirections
+        if (!setup_redirections(cmd))
+            exit(1);
+        // Then set up pipes
+        setup_child_pipes(pipe_fds, info->index, info->current_pipe,
+            cmd->next != NULL);
+        execute_child_process(cmd, env);
+    }
+    return (pid);
 }
 
 static int	init_pipeline(t_cmd *cmd, pid_t **pids, t_pipe_info *info)
