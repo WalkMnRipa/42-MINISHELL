@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/02 20:12:38 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/25 16:18:34 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/25 16:39:32 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -138,5 +138,10 @@ void		free_cmd(t_cmd *cmd);
 void		free_cmd_list(t_cmd *head);
 void		error_exit_message(t_env *env, t_cmd *cmd, char *message);
 char		*ft_strtok(char *str, const char *delim);
+
+void		cleanup_fds(int prev_in_fd, int prev_out_fd);
+int			check_input_permissions(t_cmd *cmd, int *prev_fds);
+int			check_output_permissions(t_cmd *cmd, int *prev_fds);
+int			setup_output_fd(t_cmd *cmd, int flags, int *prev_fds);
 
 #endif
