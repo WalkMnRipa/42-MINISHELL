@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 18:58:27 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/25 04:49:16 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/25 17:29:20 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,94 +28,50 @@ t_quote_state	get_quote_state(char c, t_quote_state current)
 	return (current);
 }
 
-static char	*remove_quotes(char *str)
+static void	handle_quote_removal(t_quote_data *data)
 {
-	int				i;
-	int				j;
-	char			*result;
-	t_quote_state	state;
-	char			current_quote;
-
-	result = malloc(ft_strlen(str) + 1);
-	if (!result)
-		return (NULL);
-	i = 0;
-	j = 0;
-	state = STATE_NORMAL;
-	current_quote = 0;
-	while (str[i])
+	if (data->state == STATE_NORMAL)
 	{
-		if ((str[i] == '\'' || str[i] == '"') && (state == STATE_NORMAL
-				|| str[i] == current_quote))
-		{
-			if (state == STATE_NORMAL)
-			{
-				state = (str[i] == '\'') ? STATE_SINGLE_QUOTE : STATE_DOUBLE_QUOTE;
-				current_quote = str[i];
-			}
-			else
-				state = STATE_NORMAL;
-			i++;
-			continue ;
-		}
-		result[j++] = str[i++];
+		if (data->str[data->i] == '\'')
+			data->state = STATE_SINGLE_QUOTE;
+		else
+			data->state = STATE_DOUBLE_QUOTE;
+		data->current_quote = data->str[data->i];
 	}
-	result[j] = '\0';
-	free(str);
-	return (result);
+	else
+		data->state = STATE_NORMAL;
 }
 
-char	*handle_quotes(char *str, t_env *env)
+char	*copy_without_quotes(char *str)
 {
-	int				i;
-	t_quote_state	quote_state;
-	char			*result;
+	t_quote_data	data;
 
-	if (!str)
+	data.result = malloc(ft_strlen(str) + 1);
+	if (!data.result)
 		return (NULL);
-	result = ft_strdup(str);
-	if (!result)
-		return (NULL);
-	i = 0;
-	quote_state = STATE_NORMAL;
-	while (result[i])
+	data.i = 0;
+	data.j = 0;
+	data.state = STATE_NORMAL;
+	data.current_quote = 0;
+	data.str = str;
+	while (str[data.i])
 	{
-		if (result[i] == '\'' || result[i] == '"')
+		if ((str[data.i] == '\'' || str[data.i] == '"')
+			&& (data.state == STATE_NORMAL
+				|| str[data.i] == data.current_quote))
 		{
-			quote_state = get_quote_state(result[i], quote_state);
-			i++;
+			handle_quote_removal(&data);
+			data.i++;
 			continue ;
 		}
-		if (result[i] == '$' && quote_state != STATE_SINGLE_QUOTE)
-		{
-			result = expand_variables_in_str(result, env, quote_state);
-			if (!result)
-				return (NULL);
-			i++;
-			continue ;
-		}
-		i++;
+		data.result[data.j++] = str[data.i++];
 	}
-	return (remove_quotes(result));
+	data.result[data.j] = '\0';
+	free(str);
+	return (data.result);
 }
 
 int	is_quote(char c)
 {
 	return (c == '\'' || c == '"');
-}
-
-int	is_quote_closed(char *str)
-{
-	t_quote_state	state;
-	int				i;
-
-	state = STATE_NORMAL;
-	i = 0;
-	while (str[i])
-	{
-		if (is_quote(str[i]))
-			state = get_quote_state(str[i], state);
-		i++;
-	}
-	return (state == STATE_NORMAL);
 }

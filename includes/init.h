@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 13:19:12 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/25 04:27:35 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/25 17:24:19 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 # include "../libft/libft.h"
 # include "execution.h"
+# include "minishell_types.h"
 # include "parsing.h"
 
 t_env	*init_env(char **envp);

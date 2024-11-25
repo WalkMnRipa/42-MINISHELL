@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 18:55:53 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/25 16:57:32 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/25 17:23:14 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,8 @@
 # define PARSING_H
 
 # include "../libft/libft.h"
-# include "minishell_types.h"
 # include "execution.h"
+# include "minishell_types.h"
 # include <stdio.h>
 # include <stdlib.h>
 
@@ -49,6 +49,16 @@ typedef struct s_token
 	struct s_token	*next;
 }					t_token;
 
+typedef struct s_quote_data
+{
+	char			*result;
+	char			*str;
+	int				i;
+	int				j;
+	t_quote_state	state;
+	char			current_quote;
+}					t_quote_data;
+
 /* Main parsing functions */
 t_token				*tokenizer(char *input, t_env *env);
 
@@ -81,11 +91,19 @@ void				print_syntax_error(char *token);
 int					check_syntax_errors(t_token *tokens);
 
 /* Command parsing functions */
-t_cmd   *group_tokens_into_commands(t_token *tokens, t_env *env);
+t_cmd				*group_tokens_into_commands(t_token *tokens, t_env *env);
 
 /* Command parser utility functions */
-t_cmd   *create_command(void);
-int     add_argument(t_cmd *cmd, char *arg);
-int     handle_redirection(t_cmd *cmd, t_token *token, t_token *next);
+t_cmd				*create_command(void);
+int					add_argument(t_cmd *cmd, char *arg);
+int					handle_redirection(t_cmd *cmd, t_token *token,
+						t_token *next);
+
+/* Quote handling functions */
+t_quote_state		get_quote_state(char c, t_quote_state current);
+char				*copy_without_quotes(char *str);
+char				*handle_quotes(char *str, t_env *env);
+int					is_quote(char c);
+int					is_quote_closed(char *str);
 
 #endif
