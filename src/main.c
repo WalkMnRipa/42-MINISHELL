@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 18:00:00 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/21 16:05:19 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/25 03:12:38 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,21 +45,40 @@ static int shell_loop(t_env **env, int stdin_backup)
 {
     char *input;
     int exit_status;
+    int stdin_current;
 
     exit_status = 0;
     while (1)
     {
         g_signal_received = 0;
-        dup2(stdin_backup, STDIN_FILENO);
+        stdin_current = dup(STDIN_FILENO);
+        if (stdin_current == -1)
+            break;
+        
+        if (dup2(stdin_backup, STDIN_FILENO) == -1)
+        {
+            close(stdin_current);
+            break;
+        }
+        
         input = readline("minishell> ");
         if (!input)
         {
+            close(stdin_current);
             if (isatty(STDIN_FILENO))
-                ft_printf("exit\n");
+                ft_putendl_fd("exit", STDOUT_FILENO);
             break;
         }
+        
         handle_input(input, env, &exit_status);
         free(input);
+        
+        if (dup2(stdin_current, STDIN_FILENO) == -1)
+        {
+            close(stdin_current);
+            break;
+        }
+        close(stdin_current);
     }
     return (exit_status);
 }

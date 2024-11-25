@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/18 15:20:19 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/21 16:55:06 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/25 03:12:46 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,17 +20,15 @@ static void signal_handler(int signo)
     if (signo == SIGINT)
     {
         g_signal_received = signo;
-        if (isatty(STDIN_FILENO)) // Interactive mode
+        if (isatty(STDIN_FILENO))
         {
-            ft_putchar_fd('\n', STDERR_FILENO); // Ensure newline
+            ft_putchar_fd('\n', STDERR_FILENO);
             rl_on_new_line();
             rl_replace_line("", 0);
             rl_redisplay();
         }
         else
-        {
-            ft_putchar_fd('\n', STDERR_FILENO); // Explicit newline for commands like cat
-        }
+            ft_putchar_fd('\n', STDERR_FILENO);
     }
 }
 

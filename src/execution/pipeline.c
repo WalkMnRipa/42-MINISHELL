@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/16 16:28:40 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/20 14:30:25 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/25 03:13:02 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,7 +93,7 @@ void execute_pipeline(t_cmd *cmd, t_env **env)
     t_pipe_info  info;
     pid_t        *pids;
     t_cmd        *first_cmd;
-    int          pipe_fds[2][2];  // Moved outside of struct
+    int          pipe_fds[2][2] = {{-1, -1}, {-1, -1}};
     int          pipe_status;
 
     first_cmd = cmd;
@@ -104,38 +104,33 @@ void execute_pipeline(t_cmd *cmd, t_env **env)
     }
 
     setup_parent_signals();
-
-    // Execute pipeline commands
     while (cmd && info.index < info.cmd_count)
     {
-        // Create pipe for all but the last command
         if (cmd->next)
         {
             pipe_status = handle_pipe_creation(cmd, pipe_fds, info.current_pipe);
             if (!pipe_status)
             {
-                ft_putendl_fd("minishell: pipe creation failed", 2);
                 cleanup_pipeline(pids, pipe_fds, info.index);
                 (*env)->last_exit_status = 1;
                 return;
             }
         }
 
-        // Create process for current command
         pids[info.index] = create_process(cmd, env, pipe_fds, &info);
         if (pids[info.index] == -1)
         {
-            ft_putendl_fd("minishell: fork failed", 2);
             cleanup_pipeline(pids, pipe_fds, info.index);
             (*env)->last_exit_status = 1;
             return;
         }
 
-        // Handle parent pipes
         if (info.index > 0)
         {
             close(pipe_fds[!info.current_pipe][0]);
             close(pipe_fds[!info.current_pipe][1]);
+            pipe_fds[!info.current_pipe][0] = -1;
+            pipe_fds[!info.current_pipe][1] = -1;
         }
 
         info.current_pipe = !info.current_pipe;
@@ -143,7 +138,6 @@ void execute_pipeline(t_cmd *cmd, t_env **env)
         info.index++;
     }
 
-    // Wait for all processes to complete
     if (info.index == info.cmd_count)
     {
         int status;
@@ -156,6 +150,12 @@ void execute_pipeline(t_cmd *cmd, t_env **env)
                 first_cmd->exit_status = (*env)->last_exit_status;
             }
         }
+    }
+
+    for (int i = 0; i < 2; i++)
+    {
+        if (pipe_fds[i][0] != -1) close(pipe_fds[i][0]);
+        if (pipe_fds[i][1] != -1) close(pipe_fds[i][1]);
     }
 
     setup_signals();
