@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 18:55:53 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/25 04:23:42 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/25 04:29:51 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,8 @@
 # define PARSING_H
 
 # include "../libft/libft.h"
-# include "execution.h"
 # include "minishell_types.h"
+# include "execution.h"
 # include <stdio.h>
 # include <stdlib.h>
 
