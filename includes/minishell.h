@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 18:06:21 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/25 21:28:03 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/26 00:14:30 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -169,52 +169,61 @@ void				print_syntax_error(char *token);
 int					check_syntax_errors(t_token *tokens);
 
 /* Quote handling functions */
-t_quote_state       get_quote_state(char c, t_quote_state current);
-char                *copy_without_quotes(char *str);      // Add this line
-char                *handle_quotes(char *str, t_env *env);
-int                 is_quote(char c);
-int                 is_quote_closed(char *str);
+t_quote_state		get_quote_state(char c, t_quote_state current);
+char	*copy_without_quotes(char *str); // Add this line
+char				*handle_quotes(char *str, t_env *env);
+int					is_quote(char c);
+int					is_quote_closed(char *str);
 
 /* Variable expansion functions */
-char                *expand_variables_in_str(char *str, t_env *env, t_quote_state state);
-char                *expand_single_var(char *str, int *i, t_env *env);
-char                *join_expanded_var(char *before, char *var_value, char *after, int *i);
-char                *handle_exit_status(t_env *env);
+char				*expand_variables_in_str(char *str, t_env *env,
+						t_quote_state state);
+char				*expand_single_var(char *str, int *i, t_env *env);
+char				*join_expanded_var(char *before, char *var_value,
+						char *after, int *i);
+char				*handle_exit_status(t_env *env);
 
 /* Command parsing functions */
-t_cmd               *create_command(void);
-int                 add_argument(t_cmd *cmd, char *arg);
-int                 handle_redirection(t_cmd *cmd, t_token *token, t_token *next);
+t_cmd				*create_command(void);
+int					add_argument(t_cmd *cmd, char *arg);
+int					handle_redirection(t_cmd *cmd, t_token *token,
+						t_token *next);
 
 /* Token handling functions */
-t_token             *create_token(t_token_type type, char *value);
-void                add_token(t_token **head, t_token *new_token);
-t_token             *get_next_token(char **input, t_env *env);
-t_token             *handle_operator(char **input);          // Add this line
-t_token             *handle_syntax_check(t_token *head);     // Add this line
-void                free_tokens(t_token *head);
-void                free_token(t_token *token);
-int                 is_operator(char c);
-int                 is_whitespace(char c);
-int                 is_special_char(char c);
+t_token				*create_token(t_token_type type, char *value);
+void				add_token(t_token **head, t_token *new_token);
+t_token				*get_next_token(char **input, t_env *env);
+t_token	*handle_operator(char **input);      // Add this line
+t_token	*handle_syntax_check(t_token *head); // Add this line
+void				free_tokens(t_token *head);
+void				free_token(t_token *token);
+int					is_operator(char c);
+int					is_whitespace(char c);
+int					is_special_char(char c);
 
 /* Command execution functions */
-void                execute_pipeline(t_cmd *cmd, t_env **env);
-void                execute_command(t_cmd *cmd, t_env **env);
-void                execute_non_builtin(t_cmd *cmd, t_env **env);
-void                execute_external_command(t_cmd *cmd, t_env **env);
-char                *find_command_path(const char *command, t_env *env);
-int                 setup_redirections(t_cmd *cmd);
-void                update_exit_status(t_cmd *cmd, int status);   // Add this line
+void				execute_pipeline(t_cmd *cmd, t_env **env);
+void				execute_command(t_cmd *cmd, t_env **env);
+void				execute_non_builtin(t_cmd *cmd, t_env **env);
+void				execute_external_command(t_cmd *cmd, t_env **env);
+char				*find_command_path(const char *command, t_env *env);
+int					setup_redirections(t_cmd *cmd);
+void	update_exit_status(t_cmd *cmd, int status); // Add this line
 
 /* Pipeline utilities */
-void                setup_child_pipes(int pipe_fds[2][2], int i, int current_pipe, int has_next);
-int                 handle_pipe_creation(t_cmd *cmd, int pipe_fds[2][2], int current_pipe);
-void                handle_parent_pipes(int pipe_fds[2][2], int i, int current_pipe);
-void                cleanup_pipeline(pid_t *pids, int pipe_fds[2][2], int i);
-pid_t               create_process(t_cmd *cmd, t_env **env, int pipe_fds[2][2], t_pipe_info *info);
-void                handle_last_process_status(int status, t_env **env);    // Add this line
-void                run_pipeline_loop(t_cmd *cmd, pid_t *pids, t_pipe_info *info, t_env **env);    // Add this line
+void				setup_child_pipes(int pipe_fds[2][2], int i,
+						int current_pipe, int has_next);
+int					handle_pipe_creation(t_cmd *cmd, int pipe_fds[2][2],
+						int current_pipe);
+void				handle_parent_pipes(int pipe_fds[2][2], int i,
+						int current_pipe);
+void				cleanup_pipeline(pid_t *pids, int pipe_fds[2][2], int i);
+pid_t				create_process(t_cmd *cmd, t_env **env, int pipe_fds[2][2],
+						t_pipe_info *info);
+void	handle_last_process_status(int status,
+								t_env **env); // Add this line
+void	run_pipeline_loop(t_cmd *cmd, pid_t *pids, t_pipe_info *info,
+						t_env **env); // Add this line
 
 /* Builtin commands */
 int					is_builtin(char *cmd);
@@ -228,13 +237,16 @@ int					builtin_env(t_env *env);
 int					builtin_exit(t_cmd *cmd, char **args);
 
 /* Export utilities */
-void                print_export_error(const char *arg);
-int                 check_var_name_chars(const char *name);
-int                 is_valid_export_name(const char *name);
-char                *get_var_name(const char *arg, const char *equal_sign);
-int                 print_sorted_env(t_env *env);
-int                 export_without_value(t_env **env, const char *arg);     // Add this line
-int                 export_with_value(t_env **env, const char *name, const char *value);   // Add this line
+void				print_export_error(const char *arg);
+int					check_var_name_chars(const char *name);
+int					is_valid_export_name(const char *name);
+char				*get_var_name(const char *arg, const char *equal_sign);
+int					print_sorted_env(t_env *env);
+int					export_without_value(t_env **env, const char *arg);
+// Add this line
+int					export_with_value(t_env **env, const char *name,
+						const char *value);
+// Add this line
 
 /* Signal handling */
 void				setup_signals(void);

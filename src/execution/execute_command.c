@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 20:14:16 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/25 18:09:17 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/26 00:14:38 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,33 +78,6 @@ void	execute_external_command(t_cmd *cmd, t_env **env)
 	free(command_path);
 	free_string_array(env_array, -1);
 	exit(1);
-}
-
-void	execute_non_builtin(t_cmd *cmd, t_env **env)
-{
-	pid_t	pid;
-	int		status;
-
-	pid = fork();
-	if (pid == 0)
-	{
-		reset_signals();
-		execute_external_command(cmd, env);
-	}
-	else if (pid > 0)
-	{
-		setup_parent_signals();
-		waitpid(pid, &status, 0);
-		if (WIFSIGNALED(status) && WTERMSIG(status) == SIGINT)
-			ft_putchar_fd('\n', STDERR_FILENO);
-		setup_signals();
-		update_exit_status(cmd, status);
-	}
-	else
-	{
-		perror("fork");
-		cmd->exit_status = 1;
-	}
 }
 
 void	execute_command(t_cmd *cmd, t_env **env)

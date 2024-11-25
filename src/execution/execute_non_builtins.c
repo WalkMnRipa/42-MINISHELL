@@ -1,0 +1,58 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   execute_non_builtins.c                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/26 00:12:22 by ggaribot          #+#    #+#             */
+/*   Updated: 2024/11/26 00:14:32 by ggaribot         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../../includes/minishell.h"
+
+static void	handle_child_process(t_cmd *cmd, t_env **env)
+{
+	reset_signals();
+	execute_external_command(cmd, env);
+	exit(cmd->exit_status);
+}
+
+static void	handle_parent_process(t_cmd *cmd, pid_t pid)
+{
+	int	status;
+	int	has_exited;
+
+	setup_parent_signals();
+	status = 0;
+	has_exited = 0;
+	while (!has_exited)
+	{
+		waitpid(pid, &status, WUNTRACED);
+		if (WIFEXITED(status) || WIFSIGNALED(status))
+			has_exited = 1;
+	}
+	if (WIFSIGNALED(status) && WTERMSIG(status) == SIGINT)
+		ft_putchar_fd('\n', STDERR_FILENO);
+	setup_signals();
+	update_exit_status(cmd, status);
+	if (cmd->exit_status == 127)
+		usleep(10);
+}
+
+void	execute_non_builtin(t_cmd *cmd, t_env **env)
+{
+	pid_t	pid;
+
+	pid = fork();
+	if (pid == 0)
+		handle_child_process(cmd, env);
+	else if (pid > 0)
+		handle_parent_process(cmd, pid);
+	else
+	{
+		perror("fork");
+		cmd->exit_status = 1;
+	}
+}
