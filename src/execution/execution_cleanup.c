@@ -6,11 +6,11 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 20:11:10 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/18 15:33:14 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/25 18:09:21 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/execution.h"
+#include "../../includes/minishell.h"
 
 void	free_cmd(t_cmd *cmd)
 {

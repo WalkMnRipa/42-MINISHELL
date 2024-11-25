@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   update_pwd.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jcohen <jcohen@student.42.fr>              +#+  +:+       +#+        */
+/*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/02 17:54:26 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/10/17 16:09:59 by jcohen           ###   ########.fr       */
+/*   Updated: 2024/11/25 18:08:54 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../../includes/execution.h"
+#include "../../../includes/minishell.h"
 
 void	update_pwd(t_env *env, char *old_pwd, char *new_pwd)
 {

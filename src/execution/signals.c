@@ -6,22 +6,26 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/18 15:20:19 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/18 15:34:03 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/26 00:14:55 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/execution.h"
-#include "../../includes/parsing.h"
+#include "../../includes/minishell.h"
 
-void	signal_handler(int signo)
+static void	signal_handler(int signo)
 {
 	if (signo == SIGINT)
 	{
 		g_signal_received = signo;
-		ft_putchar_fd('\n', STDERR_FILENO);
-		rl_on_new_line();
-		rl_replace_line("", 0);
-		rl_redisplay();
+		if (isatty(STDIN_FILENO))
+		{
+			ft_putchar_fd('\n', STDERR_FILENO);
+			rl_on_new_line();
+			rl_replace_line("", 0);
+			rl_redisplay();
+		}
+		else
+			ft_putchar_fd('\n', STDERR_FILENO);
 	}
 }
 

@@ -6,11 +6,11 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/14 16:32:11 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/14 16:32:41 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/25 18:08:41 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../../includes/execution.h"
+#include "../../../includes/minishell.h"
 
 int	check_var_name_chars(const char *name)
 {

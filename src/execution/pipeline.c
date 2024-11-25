@@ -6,65 +6,11 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/16 16:28:40 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/18 23:40:32 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/26 00:03:46 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/execution.h"
-
-static void	wait_for_processes(pid_t *pids, int cmd_count, t_env **env)
-{
-	int	i;
-	int	status;
-
-	i = -1;
-	while (++i < cmd_count)
-	{
-		status = 0;
-		waitpid(pids[i], &status, 0);
-		if (i == cmd_count - 1)
-		{
-			if (WIFSIGNALED(status))
-			{
-				(*env)->last_exit_status = 128 + WTERMSIG(status);
-				if (WTERMSIG(status) == SIGQUIT)
-					ft_putendl_fd("Quit (core dumped)", STDERR_FILENO);
-			}
-			else if (WIFEXITED(status))
-				(*env)->last_exit_status = WEXITSTATUS(status);
-		}
-	}
-}
-
-static void	execute_child_process(t_cmd *cmd, t_env **env)
-{
-	reset_signals();
-	if (is_builtin(cmd->args[0]))
-		execute_builtin(cmd, env);
-	else
-		execute_external_command(cmd, env);
-	exit(cmd->exit_status);
-}
-
-pid_t	create_process(t_cmd *cmd, t_env **env, int pipe_fds[2][2],
-		t_pipe_info *info)
-{
-	pid_t	pid;
-
-	pid = fork();
-	if (pid == -1)
-	{
-		perror("fork");
-		return (-1);
-	}
-	if (pid == 0)
-	{
-		setup_child_pipes(pipe_fds, info->index, info->current_pipe,
-			cmd->next != NULL);
-		execute_child_process(cmd, env);
-	}
-	return (pid);
-}
+#include "../../includes/minishell.h"
 
 static int	init_pipeline(t_cmd *cmd, pid_t **pids, t_pipe_info *info)
 {
@@ -85,22 +31,59 @@ static int	init_pipeline(t_cmd *cmd, pid_t **pids, t_pipe_info *info)
 	return (1);
 }
 
+static void	wait_for_children(pid_t *pids, int cmd_count, t_env **env,
+		t_cmd *first_cmd)
+{
+	int	i;
+	int	status;
+
+	i = 0;
+	while (i < cmd_count)
+	{
+		waitpid(pids[i], &status, 0);
+		if (i == cmd_count - 1)
+		{
+			handle_last_process_status(status, env);
+			first_cmd->exit_status = (*env)->last_exit_status;
+		}
+		i++;
+	}
+}
+
+static void	close_pipe_fds(int pipe_fds[2][2])
+{
+	int	i;
+
+	i = 0;
+	while (i < 2)
+	{
+		if (pipe_fds[i][0] != -1)
+			close(pipe_fds[i][0]);
+		if (pipe_fds[i][1] != -1)
+			close(pipe_fds[i][1]);
+		i++;
+	}
+}
+
 void	execute_pipeline(t_cmd *cmd, t_env **env)
 {
 	t_pipe_info	info;
 	pid_t		*pids;
 	t_cmd		*first_cmd;
+	int			pipe_fds[2][2];
 
 	first_cmd = cmd;
+	ft_memset(pipe_fds, -1, sizeof(pipe_fds));
 	if (!init_pipeline(cmd, &pids, &info))
+	{
+		ft_putendl_fd("minishell: memory allocation failed", 2);
 		return ;
+	}
 	setup_parent_signals();
 	run_pipeline_loop(cmd, pids, &info, env);
 	if (info.index == info.cmd_count)
-	{
-		wait_for_processes(pids, info.cmd_count, env);
-		first_cmd->exit_status = (*env)->last_exit_status;
-	}
+		wait_for_children(pids, info.cmd_count, env, first_cmd);
+	close_pipe_fds(pipe_fds);
 	setup_signals();
 	free(pids);
 }

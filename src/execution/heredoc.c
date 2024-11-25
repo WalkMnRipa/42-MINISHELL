@@ -6,13 +6,11 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 16:38:41 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/18 15:20:23 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/25 18:09:59 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/execution.h"
-#include "../../includes/parsing.h"
-#include <sys/types.h>
+#include "../../includes/minishell.h"
 
 static void	handle_heredoc_signal(int sig)
 {
@@ -43,7 +41,7 @@ static int	write_heredoc(int fd, char *delimiter, t_env *env, int expand_vars)
 			&& line[ft_strlen(delimiter)] == '\n')
 			break ;
 		if (expand_vars)
-			line = expand_variables_in_str(line, env, QUOTE_NONE);
+			line = expand_variables_in_str(line, env, STATE_NORMAL);
 		ft_putstr_fd(line, fd);
 		free(line);
 	}

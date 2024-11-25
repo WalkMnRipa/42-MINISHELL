@@ -1,31 +1,43 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   cleanup.c                                          :+:      :+:    :+:   */
+/*   memory_utils.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/01 19:54:50 by jcohen            #+#    #+#             */
-/*   Updated: 2024/11/18 23:41:33 by ggaribot         ###   ########.fr       */
+/*   Created: 2024/11/20 01:05:48 by ggaribot          #+#    #+#             */
+/*   Updated: 2024/11/25 18:11:36 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/parsing.h"
+#include "../../includes/minishell.h"
 
-void	free_tokens(t_token *tokens)
+void	free_string_array(char **array, int count)
 {
-	t_token	*current;
-	t_token	*next;
+	int	i;
 
-	current = tokens;
-	while (current)
+	if (!array)
+		return ;
+	if (count == -1)
 	{
-		next = current->next;
-		if (current->value)
-			free(current->value);
-		free(current);
-		current = next;
+		i = 0;
+		while (array[i])
+		{
+			free(array[i]);
+			i++;
+		}
 	}
+	else
+	{
+		i = 0;
+		while (i < count)
+		{
+			if (array[i])
+				free(array[i]);
+			i++;
+		}
+	}
+	free(array);
 }
 
 void	free_cmd_list(t_cmd *head)
@@ -38,20 +50,16 @@ void	free_cmd_list(t_cmd *head)
 	{
 		next = current->next;
 		if (current->args)
-			free(current->args);
-		free(current->input_file);
-		free(current->output_file);
+			free_string_array(current->args, -1);
+		if (current->input_file)
+			free(current->input_file);
+		if (current->output_file)
+			free(current->output_file);
+		if (current->input_fd != STDIN_FILENO)
+			close(current->input_fd);
+		if (current->output_fd != STDOUT_FILENO)
+			close(current->output_fd);
 		free(current);
 		current = next;
-	}
-}
-
-void	free_string_array(char **array, int count)
-{
-	if (array)
-	{
-		while (count--)
-			free(array[count]);
-		free(array);
 	}
 }

@@ -6,11 +6,11 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 20:01:24 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/14 16:44:25 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/25 18:08:44 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../../includes/execution.h"
+#include "../../../includes/minishell.h"
 
 void	print_export_error(const char *arg)
 {

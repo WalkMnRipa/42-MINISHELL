@@ -6,11 +6,11 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 20:01:56 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/14 15:56:22 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/25 18:08:35 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../../includes/execution.h"
+#include "../../../includes/minishell.h"
 
 static int	is_numeric_arg(const char *str)
 {

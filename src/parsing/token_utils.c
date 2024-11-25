@@ -5,76 +5,68 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/11 18:52:59 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/18 23:42:07 by ggaribot         ###   ########.fr       */
+/*   Created: 2024/11/19 18:59:19 by ggaribot          #+#    #+#             */
+/*   Updated: 2024/11/25 18:11:51 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/parsing.h"
+#include "../../includes/minishell.h"
 
-static void	free_next_token(t_token *current, t_token *next)
+t_token	*create_token(t_token_type type, char *value)
 {
-	current->next = next->next;
-	free(next->value);
-	free(next);
+	t_token	*new_token;
+
+	new_token = (t_token *)malloc(sizeof(t_token));
+	if (!new_token)
+		return (NULL);
+	new_token->type = type;
+	new_token->value = value;
+	new_token->quote_type = STATE_NORMAL;
+	new_token->next = NULL;
+	return (new_token);
 }
 
-static int	join_tokens(t_token *current, t_token *next)
-{
-	char	*joined;
-
-	joined = ft_strjoin(current->value, next->value);
-	if (!joined)
-		return (0);
-	free(current->value);
-	current->value = joined;
-	free_next_token(current, next);
-	return (1);
-}
-
-void	join_adjacent_word_tokens(t_token **head)
+void	add_token(t_token **head, t_token *new_token)
 {
 	t_token	*current;
-	t_token	*next;
 
-	if (!head || !*head)
-		return ;
-	current = *head;
-	while (current && current->next)
+	if (!*head)
 	{
-		next = current->next;
-		if (current->type == TOKEN_WORD && next->type == TOKEN_WORD)
-		{
-			if (!join_tokens(current, next))
-				return ;
-		}
-		else
-			current = current->next;
+		*head = new_token;
+		return ;
 	}
+	current = *head;
+	while (current->next)
+		current = current->next;
+	current->next = new_token;
 }
 
-void	join_quoted_word_tokens(t_token **head)
+void	free_token(t_token *token)
+{
+	if (!token)
+		return ;
+	if (token->value)
+	{
+		free(token->value);
+		token->value = NULL;
+	}
+	free(token);
+}
+
+void	free_tokens(t_token *head)
 {
 	t_token	*current;
 	t_token	*next;
 
-	if (!head || !*head)
+	if (!head)
 		return ;
-	current = *head;
-	if (!current->next)
-		return ;
-	current = current->next;
-	while (current && current->next)
+	current = head;
+	while (current)
 	{
 		next = current->next;
-		if (current->type == TOKEN_WORD && next->type == TOKEN_WORD
-			&& (current->quote_type == QUOTE_DOUBLE
-				|| next->quote_type == QUOTE_DOUBLE))
-		{
-			if (!join_tokens(current, next))
-				return ;
-		}
-		else
-			current = current->next;
+		if (current->value)
+			free(current->value);
+		free(current);
+		current = next;
 	}
 }
