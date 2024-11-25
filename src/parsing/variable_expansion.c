@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 18:59:44 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/20 14:28:13 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/25 03:32:06 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,19 +48,21 @@ static char *expand_single_var(char *str, int *i, t_env *env)
     char    *after;
     char    *temp;
     char    *result;
+    size_t  var_len;
 
     var_name = extract_var_name(str, i);
     if (!var_name)
         return (str);
 
-    before = ft_substr(str, 0, *i - ft_strlen(var_name));
+    var_len = ft_strlen(var_name);
+    before = ft_substr(str, 0, *i - var_len);
     after = ft_strdup(str + *i + 1);
     if (!before || !after)
     {
         free(var_name);
         free(before);
         free(after);
-        return (NULL);
+        return (str);
     }
 
     // Special handling for $?
@@ -68,12 +70,8 @@ static char *expand_single_var(char *str, int *i, t_env *env)
         var_value = handle_exit_status(env);
     else
     {
-        var_value = get_env_value(env, var_name);
-        // Handle empty or non-existent variables
-        if (!var_value)
-            var_value = ft_strdup("");
-        else
-            var_value = ft_strdup(var_value);
+        char *env_val = get_env_value(env, var_name);
+        var_value = env_val ? ft_strdup(env_val) : ft_strdup("");
     }
 
     if (!var_value)
@@ -81,8 +79,12 @@ static char *expand_single_var(char *str, int *i, t_env *env)
         free(var_name);
         free(before);
         free(after);
-        return (NULL);
+        return (str);
     }
+
+    // Store lengths before freeing
+    size_t before_len = ft_strlen(before);
+    size_t value_len = ft_strlen(var_value);
 
     // Combine the parts
     temp = ft_strjoin(before, var_value);
@@ -92,7 +94,7 @@ static char *expand_single_var(char *str, int *i, t_env *env)
         free(var_value);
         free(before);
         free(after);
-        return (NULL);
+        return (str);
     }
 
     result = ft_strjoin(temp, after);
@@ -103,9 +105,10 @@ static char *expand_single_var(char *str, int *i, t_env *env)
         free(before);
         free(after);
         free(temp);
-        return (NULL);
+        return (str);
     }
 
+    // Free everything
     free(var_name);
     free(var_value);
     free(before);
@@ -113,7 +116,7 @@ static char *expand_single_var(char *str, int *i, t_env *env)
     free(temp);
     free(str);
 
-    *i = ft_strlen(before) + ft_strlen(var_value) - 1;
+    *i = before_len + value_len - 1;
     return (result);
 }
 

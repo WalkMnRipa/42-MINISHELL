@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 18:59:19 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/19 18:59:29 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/25 03:34:24 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,11 +43,15 @@ void add_token(t_token **head, t_token *new_token)
 
 void free_token(t_token *token)
 {
-    if (token)
+    if (!token)
+        return;
+        
+    if (token->value)
     {
         free(token->value);
-        free(token);
+        token->value = NULL;
     }
+    free(token);
 }
 
 void free_tokens(t_token *head)
@@ -55,11 +59,16 @@ void free_tokens(t_token *head)
     t_token *current;
     t_token *next;
 
+    if (!head)
+        return;
+
     current = head;
     while (current)
     {
         next = current->next;
-        free_token(current);
+        if (current->value)  // Make sure value exists before freeing
+            free(current->value);
+        free(current);
         current = next;
     }
 }

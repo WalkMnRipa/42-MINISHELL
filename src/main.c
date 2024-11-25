@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 18:00:00 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/25 03:12:38 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/25 03:32:43 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,20 +21,24 @@ int g_signal_received = 0;
 static int handle_input(char *input, t_env **env, int *exit_status)
 {
     t_token *tokens;
-    t_cmd *cmd;
+    t_cmd   *cmd;
 
-    if (!*input)
+    if (!input || !*input)
         return (0);
+
     add_history(input);
     tokens = tokenizer(input, *env);
     if (!tokens)
         return (0);
+
     cmd = group_tokens_into_commands(tokens, *env);
     if (cmd)
     {
         execute_command(cmd, env);
-        *exit_status = cmd->exit_status;
-        (*env)->last_exit_status = cmd->exit_status;
+        if (exit_status)
+            *exit_status = cmd->exit_status;
+        if (env && *env)
+            (*env)->last_exit_status = cmd->exit_status;
         free_cmd_list(cmd);
     }
     free_tokens(tokens);

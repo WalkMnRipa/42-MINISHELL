@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 18:57:57 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/20 12:34:05 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/25 03:34:50 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,12 +17,17 @@ static char *extract_word(char **input, t_env *env)
     char        *start;
     int         len;
     char        *word;
+    char        *processed_word;
     t_quote_state quote_state;
+    
+    if (!input || !*input)
+        return (NULL);
     
     start = *input;
     len = 0;
     quote_state = STATE_NORMAL;
     
+    // Count length until terminating condition
     while ((*input)[len])
     {
         if (is_quote((*input)[len]))
@@ -37,12 +42,26 @@ static char *extract_word(char **input, t_env *env)
         len++;
     }
     
+    // Extract the substring
     word = ft_substr(start, 0, len);
     if (!word)
         return (NULL);
     
+    // Process quotes and variables
+    processed_word = handle_quotes(word, env);
+    if (!processed_word)
+    {
+        free(word);
+        return (NULL);
+    }
+    
+    // Only advance input pointer if everything succeeded
     *input += len;
-    return (handle_quotes(word, env));
+    
+    // Free the original word since handle_quotes returns a new string
+    free(word);
+    
+    return (processed_word);
 }
 
 static t_token_type get_operator_type(char *str)
@@ -86,6 +105,9 @@ static t_token *handle_operator(char **input)
 
 t_token *get_next_token(char **input, t_env *env)
 {
+    t_token *token;
+    char    *value;
+    
     while (**input && is_whitespace(**input))
         (*input)++;
     
@@ -95,7 +117,18 @@ t_token *get_next_token(char **input, t_env *env)
     if (is_operator(**input))
         return (handle_operator(input));
     
-    return (create_token(TOKEN_WORD, extract_word(input, env)));
+    value = extract_word(input, env);
+    if (!value)
+        return (NULL);
+        
+    token = create_token(TOKEN_WORD, value);
+    if (!token)
+    {
+        free(value);
+        return (NULL);
+    }
+    
+    return (token);
 }
 
 t_token *tokenizer(char *input, t_env *env)
@@ -115,19 +148,22 @@ t_token *tokenizer(char *input, t_env *env)
         new_token = get_next_token(&current, env);
         if (!new_token)
         {
-            free_tokens(head);
+            // If token creation fails, clean up and return
+            if (head)
+                free_tokens(head);
             return (NULL);
         }
         
         if (new_token->type == TOKEN_EOF)
         {
-            free_tokens(new_token);
+            free_token(new_token);
             break;
         }
         
         add_token(&head, new_token);
     }
     
+    // Add syntax check
     if (!check_syntax_errors(head))
     {
         free_tokens(head);
