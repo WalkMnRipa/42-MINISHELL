@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 18:00:00 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/25 04:51:48 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/25 18:04:39 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,40 +43,24 @@ static int	handle_input(char *input, t_env **env, int *exit_status)
 	return (0);
 }
 
-static int	shell_loop(t_env **env, int stdin_backup)
+int	shell_loop(t_env **env)
 {
-	char	*input;
 	int		exit_status;
-	int		stdin_current;
+	char	*input;
 
 	exit_status = 0;
 	while (1)
 	{
 		g_signal_received = 0;
-		stdin_current = dup(STDIN_FILENO);
-		if (stdin_current == -1)
-			break ;
-		if (dup2(stdin_backup, STDIN_FILENO) == -1)
-		{
-			close(stdin_current);
-			break ;
-		}
 		input = readline("minishell> ");
 		if (!input)
 		{
-			close(stdin_current);
 			if (isatty(STDIN_FILENO))
 				ft_putendl_fd("exit", STDOUT_FILENO);
 			break ;
 		}
 		handle_input(input, env, &exit_status);
 		free(input);
-		if (dup2(stdin_current, STDIN_FILENO) == -1)
-		{
-			close(stdin_current);
-			break ;
-		}
-		close(stdin_current);
 	}
 	return (exit_status);
 }
@@ -100,7 +84,7 @@ int	main(int argc, char **argv, char **envp)
 		return (1);
 	}
 	setup_signals();
-	exit_status = shell_loop(&env, stdin_backup);
+	exit_status = shell_loop(&env);
 	close(stdin_backup);
 	cleanup(env, NULL);
 	return (exit_status);
