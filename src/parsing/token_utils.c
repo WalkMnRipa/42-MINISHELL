@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 18:59:19 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/25 04:49:47 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/25 17:36:43 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,19 +69,4 @@ void	free_tokens(t_token *head)
 		free(current);
 		current = next;
 	}
-}
-
-int	is_operator(char c)
-{
-	return (c == '|' || c == '<' || c == '>');
-}
-
-int	is_whitespace(char c)
-{
-	return (c == ' ' || c == '\t' || c == '\n');
-}
-
-int	is_special_char(char c)
-{
-	return (is_operator(c) || is_whitespace(c) || c == '\'' || c == '"');
 }
