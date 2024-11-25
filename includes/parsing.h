@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 18:55:53 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/25 17:23:14 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/25 17:40:20 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,5 +105,10 @@ char				*copy_without_quotes(char *str);
 char				*handle_quotes(char *str, t_env *env);
 int					is_quote(char c);
 int					is_quote_closed(char *str);
+
+/* Tokenizer utils */
+t_token_type		get_operator_type(char *str);
+t_token				*handle_operator(char **input);
+t_token				*handle_syntax_check(t_token *head);
 
 #endif
