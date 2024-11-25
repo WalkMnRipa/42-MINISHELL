@@ -6,11 +6,11 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 19:58:03 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/25 04:24:52 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/25 18:08:33 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../../includes/execution.h"
+#include "../../../includes/minishell.h"
 
 static int	write_env_var(const char *key, const char *value)
 {

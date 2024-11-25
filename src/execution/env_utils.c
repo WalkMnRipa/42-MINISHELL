@@ -6,11 +6,11 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 20:13:29 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/25 04:30:48 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/25 18:09:09 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/execution.h"
+#include "../../includes/minishell.h"
 
 char	*get_env_value(t_env *env, const char *key)
 {

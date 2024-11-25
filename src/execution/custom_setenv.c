@@ -6,11 +6,11 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/11 16:23:05 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/25 04:30:45 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/25 18:09:06 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/execution.h"
+#include "../../includes/minishell.h"
 
 int	custom_setenv(t_env **env, const char *name, const char *value)
 {

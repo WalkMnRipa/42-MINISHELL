@@ -6,11 +6,11 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/13 16:37:35 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/25 04:46:01 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/25 18:11:04 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/execution.h"
+#include "../../includes/minishell.h"
 
 void	set_last_exit_status(t_env *env, int status)
 {

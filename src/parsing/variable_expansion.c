@@ -6,11 +6,11 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 18:59:44 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/25 17:47:50 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/25 18:12:08 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/parsing.h"
+#include "../../includes/minishell.h"
 
 static int	should_skip_char(char c)
 {

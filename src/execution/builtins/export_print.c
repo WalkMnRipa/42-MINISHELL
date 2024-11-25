@@ -6,11 +6,11 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/14 16:43:11 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/25 04:24:54 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/25 18:08:38 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../../includes/execution.h"
+#include "../../../includes/minishell.h"
 
 static void	print_env_entry(t_env *entry)
 {

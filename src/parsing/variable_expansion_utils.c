@@ -6,11 +6,11 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 17:43:17 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/25 17:52:34 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/25 18:12:04 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/parsing.h"
+#include "../../includes/minishell.h"
 
 static char	*extract_var_name(char *str, int *i)
 {

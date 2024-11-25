@@ -6,11 +6,11 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 17:39:32 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/25 17:40:09 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/25 18:11:58 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/parsing.h"
+#include "../../includes/minishell.h"
 
 t_token_type	get_operator_type(char *str)
 {

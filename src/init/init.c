@@ -6,11 +6,11 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 13:18:58 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/25 16:50:23 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/25 18:11:22 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/init.h"
+#include "../../includes/minishell.h"
 
 void	free_env(t_env *env)
 {

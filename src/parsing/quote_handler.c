@@ -6,11 +6,11 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 18:58:27 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/25 17:29:20 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/25 18:11:44 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/parsing.h"
+#include "../../includes/minishell.h"
 
 t_quote_state	get_quote_state(char c, t_quote_state current)
 {

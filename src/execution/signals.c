@@ -6,14 +6,12 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/18 15:20:19 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/25 04:45:55 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/25 18:10:59 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/execution.h"
-#include "../../includes/parsing.h"
-#include <readline/history.h>
-#include <readline/readline.h>
+#include "../../includes/minishell.h"
+
 
 static void	signal_handler(int signo)
 {

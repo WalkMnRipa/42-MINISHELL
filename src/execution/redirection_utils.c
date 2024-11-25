@@ -6,11 +6,11 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 16:36:46 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/25 16:39:04 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/25 18:10:16 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/execution.h"
+#include "../../includes/minishell.h"
 
 void	cleanup_fds(int prev_in_fd, int prev_out_fd)
 {

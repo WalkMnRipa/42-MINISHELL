@@ -6,11 +6,11 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/17 16:09:43 by jcohen            #+#    #+#             */
-/*   Updated: 2024/11/25 04:24:59 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/25 18:08:51 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../../includes/execution.h"
+#include "../../../includes/minishell.h"
 
 static int	print_invalid_identifier(char *arg)
 {

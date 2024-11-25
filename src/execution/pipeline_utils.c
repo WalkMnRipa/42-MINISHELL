@@ -6,11 +6,11 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/16 16:48:24 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/25 04:34:08 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/25 18:10:03 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/execution.h"
+#include "../../includes/minishell.h"
 
 void	setup_child_pipes(int pipe_fds[2][2], int i, int current_pipe,
 		int has_next)

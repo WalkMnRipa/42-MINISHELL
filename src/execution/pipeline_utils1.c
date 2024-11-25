@@ -6,11 +6,11 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/16 17:14:39 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/25 16:47:51 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/25 18:10:08 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/execution.h"
+#include "../../includes/minishell.h"
 
 static int	handle_pipe_process(t_cmd *cmd, t_pipe_data *data)
 {

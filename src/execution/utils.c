@@ -6,12 +6,11 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 18:20:46 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/25 04:46:08 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/25 18:11:14 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/execution.h"
-#include "../../includes/parsing.h"
+#include "../../includes/minishell.h"
 
 char	*ft_strjoin_array(char **array, char *delimiter)
 {

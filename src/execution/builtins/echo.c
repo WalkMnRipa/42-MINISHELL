@@ -6,11 +6,11 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 19:57:03 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/25 04:24:49 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/25 18:08:29 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../../includes/execution.h"
+#include "../../../includes/minishell.h"
 
 static int	write_with_check(int fd, const void *buf, size_t count)
 {

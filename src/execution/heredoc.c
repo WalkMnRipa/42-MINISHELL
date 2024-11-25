@@ -6,13 +6,11 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 16:38:41 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/25 04:34:02 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/25 18:09:59 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/execution.h"
-#include "../../includes/parsing.h"
-#include <sys/types.h>
+#include "../../includes/minishell.h"
 
 static void	handle_heredoc_signal(int sig)
 {

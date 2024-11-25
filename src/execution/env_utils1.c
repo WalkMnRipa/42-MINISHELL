@@ -6,11 +6,11 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/11 16:25:09 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/25 04:30:53 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/25 18:09:13 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/execution.h"
+#include "../../includes/minishell.h"
 
 int	is_valid_env_name(const char *name)
 {

@@ -6,15 +6,11 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 18:00:00 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/25 18:04:39 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/25 18:12:21 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/execution.h"
-#include "../includes/init.h"
-#include "../includes/parsing.h"
-#include <readline/history.h>
-#include <readline/readline.h>
+#include "../includes/minishell.h"
 
 int			g_signal_received = 0;
 

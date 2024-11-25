@@ -6,11 +6,11 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/20 01:05:48 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/25 17:00:50 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/25 18:11:36 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/execution.h"
+#include "../../includes/minishell.h"
 
 void	free_string_array(char **array, int count)
 {

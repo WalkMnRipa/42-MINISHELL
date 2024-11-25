@@ -6,11 +6,11 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 19:57:43 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/25 04:24:57 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/25 18:08:47 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../../includes/execution.h"
+#include "../../../includes/minishell.h"
 
 int	builtin_pwd(void)
 {

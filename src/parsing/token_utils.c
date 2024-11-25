@@ -6,11 +6,11 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 18:59:19 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/25 17:36:43 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/25 18:11:51 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/parsing.h"
+#include "../../includes/minishell.h"
 
 t_token	*create_token(t_token_type type, char *value)
 {

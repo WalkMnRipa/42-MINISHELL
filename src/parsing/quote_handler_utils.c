@@ -6,11 +6,11 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 17:03:21 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/25 17:26:00 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/25 18:11:40 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/parsing.h"
+#include "../../includes/minishell.h"
 
 static char	*process_quotes(char *result, int *i, t_quote_state *quote_state)
 {

@@ -6,11 +6,11 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/17 16:08:52 by jcohen            #+#    #+#             */
-/*   Updated: 2024/11/25 04:24:31 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/25 18:08:06 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../../includes/execution.h"
+#include "../../../includes/minishell.h"
 
 int	is_builtin(char *cmd)
 {

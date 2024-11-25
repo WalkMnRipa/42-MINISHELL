@@ -6,11 +6,11 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 17:36:03 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/25 17:37:01 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/25 18:11:54 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/parsing.h"
+#include "../../includes/minishell.h"
 
 int	is_operator(char c)
 {
