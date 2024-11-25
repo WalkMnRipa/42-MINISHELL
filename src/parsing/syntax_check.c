@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 19:00:26 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/25 04:49:32 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/25 17:33:58 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,10 @@ static int	check_pipe_syntax(t_token *tokens)
 		{
 			if (!tokens->next || tokens->next->type == TOKEN_PIPE)
 			{
-				print_syntax_error(tokens->next ? "|" : "newline");
+				if (tokens->next)
+					print_syntax_error("|");
+				else
+					print_syntax_error("newline");
 				return (0);
 			}
 		}
@@ -41,15 +44,25 @@ static int	check_pipe_syntax(t_token *tokens)
 	return (1);
 }
 
+static char	*get_redir_error_token(t_token *token)
+{
+	if (token->next)
+		return (token->next->value);
+	return ("newline");
+}
+
 static int	check_redirection_syntax(t_token *tokens)
 {
+	char	*error_token;
+
 	while (tokens)
 	{
 		if (tokens->type >= TOKEN_REDIR_IN && tokens->type <= TOKEN_HEREDOC)
 		{
 			if (!tokens->next || tokens->next->type != TOKEN_WORD)
 			{
-				print_syntax_error(tokens->next ? tokens->next->value : "newline");
+				error_token = get_redir_error_token(tokens);
+				print_syntax_error(error_token);
 				return (0);
 			}
 		}
