@@ -6,16 +6,13 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 18:06:21 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/26 00:14:30 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/26 00:22:36 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
-/*
-** System headers
-*/
 # include "../libft/libft.h"
 # include <dirent.h>
 # include <errno.h>
@@ -32,9 +29,6 @@
 # include <sys/wait.h>
 # include <unistd.h>
 
-/*
-** Error messages
-*/
 # define ERR_HEREDOC_CREATING "minishell: Failed to create heredoc file"
 # define ERR_HEREDOC_OPEN "minishell: heredoc: Failed to open heredoc file"
 # define ERR_PIPE_FAILED "minishell: pipe creation failed"
@@ -43,22 +37,11 @@
 # define ERR_NO_SUCH_FILE "minishell: No such file or directory"
 # define ERR_PERMISSION_DENIED "minishell: Permission denied"
 
-/*
-** File descriptors and prompts
-*/
 # define HEREDOC_TMP ".heredoc_tmp"
 # define HEREDOC_PROMPT "> "
 
-/*
-** Global variables
-*/
 extern int			g_signal_received;
 
-/*
-** Data structures
-*/
-
-/* Environment variable structure */
 typedef struct s_env
 {
 	char			*key;
@@ -67,25 +50,23 @@ typedef struct s_env
 	struct s_env	*next;
 }					t_env;
 
-/* Command structure */
 typedef struct s_cmd
 {
-	char **args;        // Command and its arguments
-	char *input_file;   // Input redirection file
-	char *output_file;  // Output redirection file
-	int input_fd;       // Input file descriptor
-	int output_fd;      // Output file descriptor
-	int append_output;  // Flag for append mode
-	int exit_status;    // Command exit status
-	struct s_cmd *next; // Next command in pipeline
+	char			**args;
+	char			*input_file;
+	char			*output_file;
+	int				input_fd;
+	int				output_fd;
+	int				append_output;
+	int				exit_status;
+	struct s_cmd	*next;
 }					t_cmd;
 
-/* Pipeline information structure */
 typedef struct s_pipe_info
 {
-	int cmd_count;    // Total number of commands in pipeline
-	int index;        // Current command index
-	int current_pipe; // Current pipe index (0 or 1)
+	int				cmd_count;
+	int				index;
+	int				current_pipe;
 }					t_pipe_info;
 
 typedef struct s_pipe_data
@@ -96,28 +77,25 @@ typedef struct s_pipe_data
 	t_env			**env;
 }					t_pipe_data;
 
-/* Token types */
 typedef enum e_token_type
 {
-	TOKEN_WORD,         // Regular word/command/argument
-	TOKEN_OPERATOR,     // Operators like |, >, <, etc.
-	TOKEN_PIPE,         // Pipeline operator |
-	TOKEN_REDIR_IN,     // Input redirection <
-	TOKEN_REDIR_OUT,    // Output redirection >
-	TOKEN_REDIR_APPEND, // Append output >>
-	TOKEN_HEREDOC,      // Here document <<
-	TOKEN_EOF           // End of input
+	TOKEN_WORD,
+	TOKEN_OPERATOR,
+	TOKEN_PIPE,
+	TOKEN_REDIR_IN,
+	TOKEN_REDIR_OUT,
+	TOKEN_REDIR_APPEND,
+	TOKEN_HEREDOC,
+	TOKEN_EOF
 }					t_token_type;
 
-/* Quote states for parsing */
 typedef enum e_quote_state
 {
-	STATE_NORMAL,       // Not in quotes
-	STATE_SINGLE_QUOTE, // Inside single quotes
-	STATE_DOUBLE_QUOTE  // Inside double quotes
+	STATE_NORMAL,
+	STATE_SINGLE_QUOTE,
+	STATE_DOUBLE_QUOTE
 }					t_quote_state;
 
-/* Token structure */
 typedef struct s_token
 {
 	t_token_type	type;
@@ -170,7 +148,7 @@ int					check_syntax_errors(t_token *tokens);
 
 /* Quote handling functions */
 t_quote_state		get_quote_state(char c, t_quote_state current);
-char	*copy_without_quotes(char *str); // Add this line
+char				*copy_without_quotes(char *str);
 char				*handle_quotes(char *str, t_env *env);
 int					is_quote(char c);
 int					is_quote_closed(char *str);
@@ -193,8 +171,8 @@ int					handle_redirection(t_cmd *cmd, t_token *token,
 t_token				*create_token(t_token_type type, char *value);
 void				add_token(t_token **head, t_token *new_token);
 t_token				*get_next_token(char **input, t_env *env);
-t_token	*handle_operator(char **input);      // Add this line
-t_token	*handle_syntax_check(t_token *head); // Add this line
+t_token				*handle_operator(char **input);
+t_token				*handle_syntax_check(t_token *head);
 void				free_tokens(t_token *head);
 void				free_token(t_token *token);
 int					is_operator(char c);
@@ -208,7 +186,7 @@ void				execute_non_builtin(t_cmd *cmd, t_env **env);
 void				execute_external_command(t_cmd *cmd, t_env **env);
 char				*find_command_path(const char *command, t_env *env);
 int					setup_redirections(t_cmd *cmd);
-void	update_exit_status(t_cmd *cmd, int status); // Add this line
+void				update_exit_status(t_cmd *cmd, int status);
 
 /* Pipeline utilities */
 void				setup_child_pipes(int pipe_fds[2][2], int i,
@@ -220,10 +198,9 @@ void				handle_parent_pipes(int pipe_fds[2][2], int i,
 void				cleanup_pipeline(pid_t *pids, int pipe_fds[2][2], int i);
 pid_t				create_process(t_cmd *cmd, t_env **env, int pipe_fds[2][2],
 						t_pipe_info *info);
-void	handle_last_process_status(int status,
-								t_env **env); // Add this line
-void	run_pipeline_loop(t_cmd *cmd, pid_t *pids, t_pipe_info *info,
-						t_env **env); // Add this line
+void				handle_last_process_status(int status, t_env **env);
+void				run_pipeline_loop(t_cmd *cmd, pid_t *pids,
+						t_pipe_info *info, t_env **env);
 
 /* Builtin commands */
 int					is_builtin(char *cmd);
@@ -243,10 +220,8 @@ int					is_valid_export_name(const char *name);
 char				*get_var_name(const char *arg, const char *equal_sign);
 int					print_sorted_env(t_env *env);
 int					export_without_value(t_env **env, const char *arg);
-// Add this line
 int					export_with_value(t_env **env, const char *name,
 						const char *value);
-// Add this line
 
 /* Signal handling */
 void				setup_signals(void);
