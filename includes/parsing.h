@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 18:55:53 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/25 04:29:51 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/25 16:57:32 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,6 @@ typedef struct s_token
 
 /* Main parsing functions */
 t_token				*tokenizer(char *input, t_env *env);
-t_cmd				*group_tokens_into_commands(t_token *tokens, t_env *env);
 
 /* Quote handling functions */
 char				*handle_quotes(char *str, t_env *env);
@@ -80,5 +79,13 @@ int					is_special_char(char c);
 /* Error handling functions */
 void				print_syntax_error(char *token);
 int					check_syntax_errors(t_token *tokens);
+
+/* Command parsing functions */
+t_cmd   *group_tokens_into_commands(t_token *tokens, t_env *env);
+
+/* Command parser utility functions */
+t_cmd   *create_command(void);
+int     add_argument(t_cmd *cmd, char *arg);
+int     handle_redirection(t_cmd *cmd, t_token *token, t_token *next);
 
 #endif
