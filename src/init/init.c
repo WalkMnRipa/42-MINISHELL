@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 13:18:58 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/25 04:46:55 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/25 16:50:23 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,8 +68,7 @@ t_env	*init_env(char **envp)
 		new_node = create_env_node(*envp);
 		if (!new_node)
 		{
-			ft_putendl_fd("minishell: env initialization failed: memory allocation error",
-				2);
+			ft_putendl_fd("minishell: env initialization failed", 2);
 			return (free_env(env), NULL);
 		}
 		if (!env)
