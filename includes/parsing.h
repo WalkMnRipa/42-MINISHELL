@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 18:55:53 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/25 17:40:20 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/25 17:47:59 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,5 +110,12 @@ int					is_quote_closed(char *str);
 t_token_type		get_operator_type(char *str);
 t_token				*handle_operator(char **input);
 t_token				*handle_syntax_check(t_token *head);
+
+/* Variable expansion functions */
+char				*expand_variables_in_str(char *str, t_env *env,
+						t_quote_state state);
+char				*expand_single_var(char *str, int *i, t_env *env);
+char				*join_expanded_var(char *before, char *var_value,
+						char *after, int *i);
 
 #endif
