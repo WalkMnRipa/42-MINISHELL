@@ -6,43 +6,11 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/16 16:28:40 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/25 04:43:51 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/25 16:27:16 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/execution.h"
-
-static void	execute_child_process(t_cmd *cmd, t_env **env)
-{
-	reset_signals();
-	if (is_builtin(cmd->args[0]))
-		execute_builtin(cmd, env);
-	else
-		execute_external_command(cmd, env);
-	exit(cmd->exit_status);
-}
-
-pid_t	create_process(t_cmd *cmd, t_env **env, int pipe_fds[2][2],
-		t_pipe_info *info)
-{
-	pid_t	pid;
-
-	pid = fork();
-	if (pid == -1)
-	{
-		perror("fork");
-		return (-1);
-	}
-	if (pid == 0)
-	{
-		setup_child_pipes(pipe_fds, info->index, info->current_pipe,
-			cmd->next != NULL);
-		if (!setup_redirections(cmd))
-			exit(1);
-		execute_child_process(cmd, env);
-	}
-	return (pid);
-}
 
 static int	init_pipeline(t_cmd *cmd, pid_t **pids, t_pipe_info *info)
 {
@@ -103,7 +71,6 @@ void	execute_pipeline(t_cmd *cmd, t_env **env)
 	pid_t		*pids;
 	t_cmd		*first_cmd;
 	int			pipe_fds[2][2];
-	int			pipe_status;
 
 	first_cmd = cmd;
 	ft_memset(pipe_fds, -1, sizeof(pipe_fds));
@@ -113,35 +80,7 @@ void	execute_pipeline(t_cmd *cmd, t_env **env)
 		return ;
 	}
 	setup_parent_signals();
-	while (cmd && info.index < info.cmd_count)
-	{
-		if (cmd->next)
-			pipe_status = handle_pipe_creation(cmd, pipe_fds,
-					info.current_pipe);
-		if (cmd->next && !pipe_status)
-		{
-			cleanup_pipeline(pids, pipe_fds, info.index);
-			(*env)->last_exit_status = 1;
-			return ;
-		}
-		pids[info.index] = create_process(cmd, env, pipe_fds, &info);
-		if (pids[info.index] == -1)
-		{
-			cleanup_pipeline(pids, pipe_fds, info.index);
-			(*env)->last_exit_status = 1;
-			return ;
-		}
-		if (info.index > 0)
-		{
-			close(pipe_fds[!info.current_pipe][0]);
-			close(pipe_fds[!info.current_pipe][1]);
-			pipe_fds[!info.current_pipe][0] = -1;
-			pipe_fds[!info.current_pipe][1] = -1;
-		}
-		info.current_pipe = !info.current_pipe;
-		cmd = cmd->next;
-		info.index++;
-	}
+	run_pipeline_loop(cmd, pids, &info, env);
 	if (info.index == info.cmd_count)
 		wait_for_children(pids, info.cmd_count, env, first_cmd);
 	close_pipe_fds(pipe_fds);

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pipelines_utils1.c                                 :+:      :+:    :+:   */
+/*   pipeline_utils1.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/16 17:14:39 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/25 04:42:14 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/25 16:27:13 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,4 +39,36 @@ void	run_pipeline_loop(t_cmd *cmd, pid_t *pids, t_pipe_info *info,
 		cmd = cmd->next;
 		info->index++;
 	}
+}
+
+static void	execute_child_process(t_cmd *cmd, t_env **env)
+{
+	reset_signals();
+	if (is_builtin(cmd->args[0]))
+		execute_builtin(cmd, env);
+	else
+		execute_external_command(cmd, env);
+	exit(cmd->exit_status);
+}
+
+pid_t	create_process(t_cmd *cmd, t_env **env, int pipe_fds[2][2],
+		t_pipe_info *info)
+{
+	pid_t	pid;
+
+	pid = fork();
+	if (pid == -1)
+	{
+		perror("fork");
+		return (-1);
+	}
+	if (pid == 0)
+	{
+		setup_child_pipes(pipe_fds, info->index, info->current_pipe,
+			cmd->next != NULL);
+		if (!setup_redirections(cmd))
+			exit(1);
+		execute_child_process(cmd, env);
+	}
+	return (pid);
 }
