@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/02 20:12:38 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/20 00:57:03 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/25 04:23:32 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,6 @@
 # include "init.h"
 # include "minishell_types.h"
 # include "parsing.h"
-
 
 /*
 ** Global variables
@@ -111,7 +110,7 @@ int			export_without_value(t_env **env, const char *arg);
 int			print_sorted_env(t_env *env);
 
 /* Environment handling functions */
-char    *get_env_value(t_env *env, const char *key);
+char		*get_env_value(t_env *env, const char *key);
 int			custom_setenv(t_env **env, const char *name, const char *value);
 int			create_env_var(t_env **env, const char *name, const char *value);
 int			is_readonly_var(const char *name);
