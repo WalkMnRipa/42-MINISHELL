@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 13:18:58 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/26 00:04:18 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/27 10:29:22 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,6 +90,5 @@ t_env	*initialize_shell(char **envp)
 	env = init_env(envp);
 	if (!env)
 		return (NULL);
-	setup_signals();
 	return (env);
 }

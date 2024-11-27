@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 19:00:03 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/25 18:11:33 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/27 11:38:33 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,13 +48,12 @@ static int	process_token(t_cmd **current, t_token **token)
 	return (1);
 }
 
-t_cmd	*group_tokens_into_commands(t_token *tokens, t_env *env)
+t_cmd	*group_tokens_into_commands(t_token *tokens)
 {
 	t_cmd	*head;
 	t_cmd	*current;
 	t_token	*token;
 
-	(void)env;
 	head = create_command();
 	if (!head)
 		return (NULL);

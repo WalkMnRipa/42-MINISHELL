@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 18:57:57 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/25 18:12:01 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/27 11:23:14 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,8 +40,6 @@ static char	*extract_word(char **input, t_env *env)
 	char			*processed_word;
 	t_quote_state	quote_state;
 
-	if (!input || !*input)
-		return (NULL);
 	start = *input;
 	quote_state = STATE_NORMAL;
 	len = get_word_length(*input, &quote_state);
@@ -88,8 +86,6 @@ t_token	*tokenizer(char *input, t_env *env)
 	t_token	*new_token;
 	char	*current;
 
-	if (!input || !*input)
-		return (NULL);
 	head = NULL;
 	current = input;
 	while (*current)

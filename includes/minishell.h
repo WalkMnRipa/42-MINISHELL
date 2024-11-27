@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 18:06:21 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/26 00:22:36 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/27 13:17:32 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -136,7 +136,7 @@ char				**env_to_array(t_env *env);
 
 /* Parsing functions */
 t_token				*tokenizer(char *input, t_env *env);
-t_cmd				*group_tokens_into_commands(t_token *tokens, t_env *env);
+t_cmd				*group_tokens_into_commands(t_token *tokens);
 char				*handle_quotes(char *str, t_env *env);
 t_quote_state		get_quote_state(char c, t_quote_state current);
 int					is_quote(char c);
@@ -159,7 +159,6 @@ char				*expand_variables_in_str(char *str, t_env *env,
 char				*expand_single_var(char *str, int *i, t_env *env);
 char				*join_expanded_var(char *before, char *var_value,
 						char *after, int *i);
-char				*handle_exit_status(t_env *env);
 
 /* Command parsing functions */
 t_cmd				*create_command(void);

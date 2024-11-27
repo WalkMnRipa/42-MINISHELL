@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 17:39:32 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/25 18:11:58 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/27 11:14:45 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,14 +37,13 @@ t_token	*handle_operator(char **input)
 	char			*value;
 	int				len;
 
+	type = get_operator_type(*input);
 	len = 1;
-	if ((*input)[0] == (*input)[1] && ((*input)[0] == '<'
-			|| (*input)[0] == '>'))
+	if (type == TOKEN_HEREDOC || type == TOKEN_REDIR_APPEND)
 		len = 2;
 	value = ft_substr(*input, 0, len);
 	if (!value)
 		return (NULL);
-	type = get_operator_type(*input);
 	*input += len;
 	return (create_token(type, value));
 }
