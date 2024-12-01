@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 16:54:27 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/25 18:11:29 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/01 13:31:46 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,7 @@ int	add_argument(t_cmd *cmd, char *arg)
 int	handle_redirection(t_cmd *cmd, t_token *token, t_token *next)
 {
 	char	*old_file;
+	int		fd;
 
 	if (!next || next->type != TOKEN_WORD)
 	{
@@ -69,6 +70,13 @@ int	handle_redirection(t_cmd *cmd, t_token *token, t_token *next)
 	}
 	if (token->type == TOKEN_REDIR_OUT || token->type == TOKEN_REDIR_APPEND)
 	{
+		// Create the old file with empty content before updating output_file
+		if (cmd->output_file)
+		{
+			fd = open(cmd->output_file, O_CREAT | O_WRONLY | O_TRUNC, 0644);
+			if (fd != -1)
+				close(fd);
+		}
 		old_file = cmd->output_file;
 		cmd->output_file = ft_strdup(next->value);
 		cmd->append_output = (token->type == TOKEN_REDIR_APPEND);

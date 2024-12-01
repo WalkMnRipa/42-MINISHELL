@@ -1,0 +1,14 @@
+includes
+libft
+Makefile
+minishell
+minishell_tester
+objs
+out1
+out2
+out3
+readline.supp
+schema.md
+src
+test_minishell.sh
+test.txt
