@@ -6,29 +6,30 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 16:38:41 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/12/01 15:20:17 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/01 22:06:52 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-static void	handle_heredoc_signal(int sig)
+void	handle_heredoc_signal(int sig)
 {
 	if (sig == SIGINT)
 	{
 		g_signal_received = 1;
-		write(STDERR_FILENO, "\n", 1);
-		close(0);
+		write(STDERR_FILENO, "\n", 1); // Just write a newline
+		close(STDIN_FILENO);
+		// Close stdin to break the get_next_line loop
 	}
 }
 
-static void	setup_heredoc_signals(void)
+void	setup_heredoc_signals(void)
 {
 	signal(SIGINT, handle_heredoc_signal);
 	signal(SIGQUIT, SIG_IGN);
 }
 
-static int	write_heredoc(int fd, char *delimiter, t_env *env, int expand_vars)
+int	write_heredoc(int fd, char *delimiter, t_env *env, int expand_vars)
 {
 	char	*line;
 	int		stdin_backup;
@@ -38,7 +39,7 @@ static int	write_heredoc(int fd, char *delimiter, t_env *env, int expand_vars)
 		return (1);
 	while (!g_signal_received)
 	{
-		ft_putstr_fd("> ", 2);
+		ft_putstr_fd(HEREDOC_PROMPT, 2);
 		line = get_next_line(0);
 		if (!line && !g_signal_received)
 		{
@@ -72,10 +73,9 @@ static int	write_heredoc(int fd, char *delimiter, t_env *env, int expand_vars)
 
 int	handle_heredoc(t_cmd *cmd, char *delimiter, t_env *env)
 {
-	int fd;
-	char *clean_delim;
-	int expand_vars;
-	int status;
+	int		fd;
+	char	*clean_delim;
+	int		expand_vars;
 
 	g_signal_received = 0;
 	expand_vars = (ft_strchr(delimiter, '\'') == NULL);
@@ -90,24 +90,23 @@ int	handle_heredoc(t_cmd *cmd, char *delimiter, t_env *env)
 		ft_putendl_fd(ERR_HEREDOC_CREATING, STDERR_FILENO);
 		return (1);
 	}
-	status = write_heredoc(fd, clean_delim, env, expand_vars);
-	close(fd);
-	free(clean_delim);
-	if (status)
+	if (write_heredoc(fd, clean_delim, env, expand_vars))
 	{
+		close(fd);
 		unlink(HEREDOC_TMP);
+		free(clean_delim);
 		g_signal_received = 0;
 		setup_signals();
 		return (1);
 	}
+	close(fd);
+	free(clean_delim);
 	cmd->input_fd = open(HEREDOC_TMP, O_RDONLY);
 	if (cmd->input_fd == -1)
 	{
 		ft_putendl_fd(ERR_HEREDOC_OPEN, STDERR_FILENO);
 		unlink(HEREDOC_TMP);
-		setup_signals();
 		return (1);
 	}
-	setup_signals();
 	return (0);
 }

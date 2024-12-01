@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/15 17:39:24 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/25 18:10:20 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/01 21:57:28 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,18 +26,22 @@ static int	setup_fd_backup(int *prev_in_fd, int *prev_out_fd)
 
 static int	handle_input_redirection(t_cmd *cmd, int *prev_fds)
 {
+	int	fd;
+
 	if (!cmd->input_file)
 		return (1);
 	if (!check_input_permissions(cmd, prev_fds))
 		return (0);
-	cmd->input_fd = open(cmd->input_file, O_RDONLY);
-	if (cmd->input_fd == -1 || dup2(cmd->input_fd, STDIN_FILENO) == -1)
+	fd = open(cmd->input_file, O_RDONLY);
+	if (fd == -1 || dup2(fd, STDIN_FILENO) == -1)
 	{
 		perror("minishell: input redirection");
 		cleanup_fds(prev_fds[0], prev_fds[1]);
+		if (fd != -1)
+			close(fd);
 		return (0);
 	}
-	close(cmd->input_fd);
+	close(fd);
 	return (1);
 }
 
@@ -65,9 +69,20 @@ int	setup_redirections(t_cmd *cmd)
 
 	if (!setup_fd_backup(&prev_fds[0], &prev_fds[1]))
 		return (0);
-	if (!handle_input_redirection(cmd, prev_fds))
+	// Handle input redirection (regular input takes precedence over heredoc)
+	ret = handle_input_redirection(cmd, prev_fds);
+	if (!ret)
+	{
+		cleanup_fds(prev_fds[0], prev_fds[1]);
 		return (0);
+	}
+	// Handle output redirection
 	ret = handle_output_redirection(cmd, prev_fds);
+	if (!ret)
+	{
+		cleanup_fds(prev_fds[0], prev_fds[1]);
+		return (0);
+	}
 	cleanup_fds(prev_fds[0], prev_fds[1]);
-	return (ret);
+	return (1);
 }

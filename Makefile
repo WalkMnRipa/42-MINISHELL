@@ -13,7 +13,7 @@ LDFLAGS = -lreadline
 SRCS = src/main.c src/init/init.c src/execution/pipeline_utils.c src/execution/env_utils.c \
 	src/execution/pipeline.c src/execution/custom_setenv.c src/execution/execution_cleanup.c \
 	src/execution/redirection.c src/execution/env_utils1.c src/execution/signals.c \
-	src/execution/heredoc.c src/execution/execute_command.c src/execution/pipeline_utils1.c \
+	src/execution/heredoc.c src/execution/heredoc_utils.c src/execution/execute_command.c src/execution/pipeline_utils1.c \
 	src/execution/utils.c src/execution/status_utils.c src/execution/redirection_utils.c \
 	src/execution/execute_non_builtins.c src/execution/command_utils.c \
 	src/execution/builtins/exit.c src/execution/builtins/export.c src/execution/builtins/cd.c \

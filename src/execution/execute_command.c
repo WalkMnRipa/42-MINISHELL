@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 20:14:16 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/26 00:14:38 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/01 22:14:24 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,8 +96,15 @@ void	execute_command(t_cmd *cmd, t_env **env)
 	else
 		execute_non_builtin(cmd, env);
 	(*env)->last_exit_status = cmd->exit_status;
+	// Restore standard fds
 	dup2(stdin_backup, STDIN_FILENO);
 	dup2(stdout_backup, STDOUT_FILENO);
 	close(stdin_backup);
 	close(stdout_backup);
+	// Cleanup heredoc temp file if it exists
+	if (cmd->input_file && ft_strncmp(cmd->input_file, ".heredoc_tmp_",
+			ft_strlen(".heredoc_tmp_")) == 0)
+	{
+		unlink(cmd->input_file);
+	}
 }

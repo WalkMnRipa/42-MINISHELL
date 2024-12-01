@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 18:06:21 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/12/01 14:09:38 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/01 22:14:33 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,14 @@
 
 extern int			g_signal_received;
 
+typedef struct s_heredoc
+{
+	char *filename;         // Temporary file name
+	char *delimiter;        // Heredoc delimiter
+	int expand_vars;        // Whether to expand variables
+	struct s_heredoc *next; // Next heredoc in list
+}					t_heredoc;
+
 typedef struct s_env
 {
 	char			*key;
@@ -59,6 +67,7 @@ typedef struct s_cmd
 	int				output_fd;
 	int				append_output;
 	int				exit_status;
+	t_heredoc		*heredocs;
 	struct s_cmd	*next;
 }					t_cmd;
 
@@ -246,5 +255,16 @@ int					check_input_permissions(t_cmd *cmd, int *prev_fds);
 int					check_output_permissions(t_cmd *cmd, int *prev_fds);
 int					setup_output_fd(t_cmd *cmd, int flags, int *prev_fds);
 int					handle_heredoc(t_cmd *cmd, char *delimiter, t_env *env);
+t_heredoc			*create_heredoc(char *delimiter);
+void				free_heredocs(t_heredoc *heredoc);
+int					handle_multiple_heredocs(t_cmd *cmd, t_env *env);
+char				*generate_heredoc_filename(int index);
+int					write_heredoc_content(t_heredoc *heredoc, t_env *env);
+int					write_heredoc(int fd, char *delimiter, t_env *env,
+						int expand_vars);
+void				handle_heredoc_signal(int sig);
+void				setup_heredoc_signals(void);
+int					handle_heredoc_with_file(t_cmd *cmd, char *delimiter,
+						t_env *env, const char *filename);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 20:11:10 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/25 18:09:21 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/01 21:46:36 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,21 +18,25 @@ void	free_cmd(t_cmd *cmd)
 
 	if (cmd)
 	{
-		args = cmd->args;
-		while (*args)
+		// Free arguments
+		if (cmd->args)
 		{
-			free(*args);
-			args++;
+			args = cmd->args;
+			while (*args)
+			{
+				free(*args);
+				args++;
+			}
+			free(cmd->args);
 		}
-		free(cmd->args);
+		// Free files and heredocs
 		if (cmd->input_file)
-		{
-			if (ft_strcmp(cmd->input_file, HEREDOC_TMP) == 0)
-				unlink(HEREDOC_TMP);
 			free(cmd->input_file);
-		}
 		if (cmd->output_file)
 			free(cmd->output_file);
+		if (cmd->heredocs)
+			free_heredocs(cmd->heredocs);
+		// Close file descriptors
 		if (cmd->input_fd != STDIN_FILENO)
 			close(cmd->input_fd);
 		if (cmd->output_fd != STDOUT_FILENO)
