@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 18:00:00 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/12/01 14:07:23 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/01 23:17:05 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ static int	handle_input(char *input, t_env **env, int *exit_status)
 	tokens = tokenizer(input, *env);
 	if (!tokens)
 		return (0);
-	cmd = group_tokens_into_commands(tokens, *env); // Pass env here
+	cmd = group_tokens_into_commands(tokens, *env);
 	if (cmd)
 	{
 		execute_command(cmd, env);

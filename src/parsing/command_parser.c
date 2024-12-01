@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 19:00:03 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/12/01 14:11:47 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/01 23:16:09 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ t_cmd	*group_tokens_into_commands(t_token *tokens, t_env *env)
 	token = tokens;
 	while (token)
 	{
-		if (!process_token(&current, &token, env)) // Modified to pass env
+		if (!process_token(&current, &token, env))
 		{
 			free_cmd_list(head);
 			return (NULL);

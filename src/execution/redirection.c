@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/15 17:39:24 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/12/01 21:57:28 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/01 23:18:23 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,14 +69,12 @@ int	setup_redirections(t_cmd *cmd)
 
 	if (!setup_fd_backup(&prev_fds[0], &prev_fds[1]))
 		return (0);
-	// Handle input redirection (regular input takes precedence over heredoc)
 	ret = handle_input_redirection(cmd, prev_fds);
 	if (!ret)
 	{
 		cleanup_fds(prev_fds[0], prev_fds[1]);
 		return (0);
 	}
-	// Handle output redirection
 	ret = handle_output_redirection(cmd, prev_fds);
 	if (!ret)
 	{

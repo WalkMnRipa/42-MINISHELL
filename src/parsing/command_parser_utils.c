@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 16:54:27 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/12/01 22:18:11 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/01 23:16:41 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ t_cmd	*create_command(void)
 	cmd->output_fd = STDOUT_FILENO;
 	cmd->append_output = 0;
 	cmd->exit_status = 0;
-	cmd->heredocs = NULL; // Initialize heredocs list
+	cmd->heredocs = NULL;
 	cmd->next = NULL;
 	return (cmd);
 }
@@ -93,19 +93,16 @@ int	handle_redirection(t_cmd *cmd, t_token *token, t_token *next, t_env *env)
 	}
 	if (token->type == TOKEN_REDIR_OUT || token->type == TOKEN_REDIR_APPEND)
 	{
-		// Create/truncate the previous output file if it exists
 		if (cmd->output_file)
 		{
 			fd = open(cmd->output_file, O_CREAT | O_WRONLY | O_TRUNC, 0644);
 			if (fd != -1)
 				close(fd);
 		}
-		// Update to new output file
 		old_file = cmd->output_file;
 		cmd->output_file = ft_strdup(next->value);
 		if (!cmd->output_file)
 			return (0);
-		// Create the new file if it's a regular redirect (not append)
 		if (token->type == TOKEN_REDIR_OUT)
 		{
 			fd = open(next->value, O_CREAT | O_WRONLY | O_TRUNC, 0644);
