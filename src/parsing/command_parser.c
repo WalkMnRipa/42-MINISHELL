@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 19:00:03 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/27 11:38:33 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/01 14:11:47 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ static int	handle_pipe(t_cmd **current, t_token *token)
 	return (1);
 }
 
-static int	process_token(t_cmd **current, t_token **token)
+static int	process_token(t_cmd **current, t_token **token, t_env *env)
 {
 	if ((*token)->type == TOKEN_WORD)
 	{
@@ -41,14 +41,14 @@ static int	process_token(t_cmd **current, t_token **token)
 	else if ((*token)->type >= TOKEN_REDIR_IN
 		&& (*token)->type <= TOKEN_HEREDOC)
 	{
-		if (!handle_redirection(*current, *token, (*token)->next))
+		if (!handle_redirection(*current, *token, (*token)->next, env))
 			return (0);
 		*token = (*token)->next;
 	}
 	return (1);
 }
 
-t_cmd	*group_tokens_into_commands(t_token *tokens)
+t_cmd	*group_tokens_into_commands(t_token *tokens, t_env *env)
 {
 	t_cmd	*head;
 	t_cmd	*current;
@@ -61,7 +61,7 @@ t_cmd	*group_tokens_into_commands(t_token *tokens)
 	token = tokens;
 	while (token)
 	{
-		if (!process_token(&current, &token))
+		if (!process_token(&current, &token, env)) // Modified to pass env
 		{
 			free_cmd_list(head);
 			return (NULL);

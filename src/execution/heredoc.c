@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 16:38:41 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/25 18:09:59 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/01 14:14:31 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,17 +61,27 @@ int	handle_heredoc(t_cmd *cmd, char *delimiter, t_env *env)
 		return (1);
 	setup_heredoc_signals();
 	fd = open(HEREDOC_TMP, O_CREAT | O_WRONLY | O_TRUNC, 0644);
-	if (fd == -1 || write_heredoc(fd, clean_delim, env, expand_vars))
+	if (fd == -1)
 	{
 		free(clean_delim);
-		if (fd != -1)
-			close(fd);
+		ft_putendl_fd(ERR_HEREDOC_CREATING, STDERR_FILENO);
+		return (1);
+	}
+	if (write_heredoc(fd, clean_delim, env, expand_vars))
+	{
+		close(fd);
 		unlink(HEREDOC_TMP);
+		free(clean_delim);
 		return (1);
 	}
 	close(fd);
-	cmd->input_fd = open(HEREDOC_TMP, O_RDONLY);
 	free(clean_delim);
-	unlink(HEREDOC_TMP);
-	return (cmd->input_fd == -1);
+	cmd->input_fd = open(HEREDOC_TMP, O_RDONLY);
+	if (cmd->input_fd == -1)
+	{
+		ft_putendl_fd(ERR_HEREDOC_OPEN, STDERR_FILENO);
+		unlink(HEREDOC_TMP);
+		return (1);
+	}
+	return (0);
 }

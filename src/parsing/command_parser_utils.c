@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 16:54:27 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/12/01 13:31:46 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/01 14:14:14 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ int	add_argument(t_cmd *cmd, char *arg)
 	return (1);
 }
 
-int	handle_redirection(t_cmd *cmd, t_token *token, t_token *next)
+int	handle_redirection(t_cmd *cmd, t_token *token, t_token *next, t_env *env)
 {
 	char	*old_file;
 	int		fd;
@@ -68,9 +68,21 @@ int	handle_redirection(t_cmd *cmd, t_token *token, t_token *next)
 		print_syntax_error("newline");
 		return (0);
 	}
+	if (token->type == TOKEN_HEREDOC)
+	{
+		old_file = cmd->input_file;
+		if (handle_heredoc(cmd, next->value, env)) // Call handle_heredoc first
+		{
+			free(old_file);
+			return (0);
+		}
+		cmd->input_file = ft_strdup(HEREDOC_TMP);
+		// Set input file after heredoc is created
+		free(old_file);
+		return (1);
+	}
 	if (token->type == TOKEN_REDIR_OUT || token->type == TOKEN_REDIR_APPEND)
 	{
-		// Create the old file with empty content before updating output_file
 		if (cmd->output_file)
 		{
 			fd = open(cmd->output_file, O_CREAT | O_WRONLY | O_TRUNC, 0644);

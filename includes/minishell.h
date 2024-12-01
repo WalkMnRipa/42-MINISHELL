@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 18:06:21 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/27 13:17:32 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/01 14:09:38 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -136,7 +136,7 @@ char				**env_to_array(t_env *env);
 
 /* Parsing functions */
 t_token				*tokenizer(char *input, t_env *env);
-t_cmd				*group_tokens_into_commands(t_token *tokens);
+t_cmd				*group_tokens_into_commands(t_token *tokens, t_env *env);
 char				*handle_quotes(char *str, t_env *env);
 t_quote_state		get_quote_state(char c, t_quote_state current);
 int					is_quote(char c);
@@ -164,7 +164,7 @@ char				*join_expanded_var(char *before, char *var_value,
 t_cmd				*create_command(void);
 int					add_argument(t_cmd *cmd, char *arg);
 int					handle_redirection(t_cmd *cmd, t_token *token,
-						t_token *next);
+						t_token *next, t_env *env);
 
 /* Token handling functions */
 t_token				*create_token(t_token_type type, char *value);
@@ -245,5 +245,6 @@ void				cleanup_fds(int prev_in_fd, int prev_out_fd);
 int					check_input_permissions(t_cmd *cmd, int *prev_fds);
 int					check_output_permissions(t_cmd *cmd, int *prev_fds);
 int					setup_output_fd(t_cmd *cmd, int flags, int *prev_fds);
+int					handle_heredoc(t_cmd *cmd, char *delimiter, t_env *env);
 
 #endif
