@@ -6,28 +6,11 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 16:38:41 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/12/01 22:06:52 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/01 23:43:36 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
-
-void	handle_heredoc_signal(int sig)
-{
-	if (sig == SIGINT)
-	{
-		g_signal_received = 1;
-		write(STDERR_FILENO, "\n", 1); // Just write a newline
-		close(STDIN_FILENO);
-		// Close stdin to break the get_next_line loop
-	}
-}
-
-void	setup_heredoc_signals(void)
-{
-	signal(SIGINT, handle_heredoc_signal);
-	signal(SIGQUIT, SIG_IGN);
-}
 
 int	write_heredoc(int fd, char *delimiter, t_env *env, int expand_vars)
 {
