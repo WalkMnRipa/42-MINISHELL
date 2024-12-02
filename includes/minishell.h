@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 18:06:21 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/12/01 23:49:05 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/02 10:58:00 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -171,7 +171,6 @@ char					*join_expanded_var(char *before, char *var_value,
 							char *after, int *i);
 
 /* Command parsing functions */
-/* Command parsing functions */
 t_cmd					*create_command(void);
 int						add_argument(t_cmd *cmd, char *arg);
 int						handle_redirection(t_cmd *cmd, t_token *token,
@@ -263,16 +262,17 @@ void					cleanup_fds(int prev_in_fd, int prev_out_fd);
 int						check_input_permissions(t_cmd *cmd, int *prev_fds);
 int						check_output_permissions(t_cmd *cmd, int *prev_fds);
 int						setup_output_fd(t_cmd *cmd, int flags, int *prev_fds);
-int						handle_heredoc(t_cmd *cmd, char *delimiter, t_env *env);
-t_heredoc				*create_heredoc(char *delimiter);
-void					free_heredocs(t_heredoc *heredoc);
-int						handle_multiple_heredocs(t_cmd *cmd, t_env *env);
-char					*generate_heredoc_filename(int index);
-int						write_heredoc_content(t_heredoc *heredoc, t_env *env);
+
+/* Heredoc */
 int						write_heredoc(int fd, char *delimiter, t_env *env,
 							int expand_vars);
+void					free_heredocs(t_heredoc *heredoc);
+t_heredoc				*create_heredoc(char *delimiter);
+char					*generate_heredoc_filename(void);
 void					handle_heredoc_signal(int sig);
 void					setup_heredoc_signals(void);
+int						write_heredoc_content(t_heredoc *heredoc, t_env *env);
+int						handle_multiple_heredocs(t_cmd *cmd, t_env *env);
 int						handle_heredoc_with_file(t_cmd *cmd, char *delimiter,
 							t_env *env, const char *filename);
 

@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 20:14:16 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/12/01 23:18:45 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/02 11:15:18 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,6 +80,15 @@ void	execute_external_command(t_cmd *cmd, t_env **env)
 	exit(1);
 }
 
+static int	prepare_command_execution(t_cmd *cmd, t_env **env)
+{
+	if (cmd->heredocs && handle_multiple_heredocs(cmd, *env))
+		return (0);
+	if (!setup_redirections(cmd))
+		return (0);
+	return (1);
+}
+
 void	execute_command(t_cmd *cmd, t_env **env)
 {
 	int	stdin_backup;
@@ -89,7 +98,7 @@ void	execute_command(t_cmd *cmd, t_env **env)
 	stdout_backup = dup(STDOUT_FILENO);
 	if (cmd->next)
 		execute_pipeline(cmd, env);
-	else if (!setup_redirections(cmd))
+	else if (!prepare_command_execution(cmd, env))
 		cmd->exit_status = 1;
 	else if (is_builtin(cmd->args[0]))
 		execute_builtin(cmd, env);
@@ -100,9 +109,4 @@ void	execute_command(t_cmd *cmd, t_env **env)
 	dup2(stdout_backup, STDOUT_FILENO);
 	close(stdin_backup);
 	close(stdout_backup);
-	if (cmd->input_file && ft_strncmp(cmd->input_file, ".heredoc_tmp_",
-			ft_strlen(".heredoc_tmp_")) == 0)
-	{
-		unlink(cmd->input_file);
-	}
 }

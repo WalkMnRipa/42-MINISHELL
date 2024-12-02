@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 16:54:27 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/12/01 23:47:32 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/02 11:11:24 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,38 +59,32 @@ int	add_argument(t_cmd *cmd, char *arg)
 	return (1);
 }
 
-static int	handle_heredoc_redirect(t_cmd *cmd, t_token *next, t_env *env,
-		int *heredoc_count)
+static int	handle_heredoc_redirect(t_cmd *cmd, t_token *next)
 {
-	char	*count_str;
-	char	*heredoc_file;
-	char	*old_file;
+	t_heredoc	*new_heredoc;
+	t_heredoc	*current;
 
-	count_str = ft_itoa((*heredoc_count)++);
-	if (!count_str)
+	new_heredoc = create_heredoc(next->value);
+	if (!new_heredoc)
 		return (0);
-	heredoc_file = ft_strjoin(".heredoc_tmp_", count_str);
-	free(count_str);
-	if (!heredoc_file)
-		return (0);
-	if (handle_heredoc_with_file(cmd, next->value, env, heredoc_file))
+	if (!cmd->heredocs)
+		cmd->heredocs = new_heredoc;
+	else
 	{
-		free(heredoc_file);
-		return (0);
+		current = cmd->heredocs;
+		while (current->next)
+			current = current->next;
+		current->next = new_heredoc;
 	}
-	old_file = cmd->input_file;
-	cmd->input_file = heredoc_file;
-	free(old_file);
 	return (1);
 }
 
 static int	handle_redirect_type(t_cmd *cmd, t_token *token, t_token *next,
 		t_env *env)
 {
-	static int	heredoc_count = 0;
-
+	(void)env;
 	if (token->type == TOKEN_HEREDOC)
-		return (handle_heredoc_redirect(cmd, next, env, &heredoc_count));
+		return (handle_heredoc_redirect(cmd, next));
 	if (token->type == TOKEN_REDIR_OUT || token->type == TOKEN_REDIR_APPEND)
 		return (handle_output_redirect(cmd, token, next));
 	if (token->type == TOKEN_REDIR_IN)
