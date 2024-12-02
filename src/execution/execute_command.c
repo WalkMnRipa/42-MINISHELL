@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 20:14:16 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/12/02 11:15:18 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/02 11:44:01 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,10 +82,24 @@ void	execute_external_command(t_cmd *cmd, t_env **env)
 
 static int	prepare_command_execution(t_cmd *cmd, t_env **env)
 {
-	if (cmd->heredocs && handle_multiple_heredocs(cmd, *env))
-		return (0);
+	int	status;
+
+	// Handle heredocs first
+	if (cmd->heredocs)
+	{
+		status = handle_multiple_heredocs(cmd, *env);
+		if (status != 0)
+		{
+			cmd->exit_status = 1;
+			return (0);
+		}
+	}
+	// Then setup other redirections
 	if (!setup_redirections(cmd))
+	{
+		cmd->exit_status = 1;
 		return (0);
+	}
 	return (1);
 }
 
@@ -96,14 +110,26 @@ void	execute_command(t_cmd *cmd, t_env **env)
 
 	stdin_backup = dup(STDIN_FILENO);
 	stdout_backup = dup(STDOUT_FILENO);
+	if (!prepare_command_execution(cmd, env))
+	{
+		dup2(stdin_backup, STDIN_FILENO);
+		dup2(stdout_backup, STDOUT_FILENO);
+		close(stdin_backup);
+		close(stdout_backup);
+		return ;
+	}
 	if (cmd->next)
+	{
 		execute_pipeline(cmd, env);
-	else if (!prepare_command_execution(cmd, env))
-		cmd->exit_status = 1;
+	}
 	else if (is_builtin(cmd->args[0]))
+	{
 		execute_builtin(cmd, env);
+	}
 	else
+	{
 		execute_non_builtin(cmd, env);
+	}
 	(*env)->last_exit_status = cmd->exit_status;
 	dup2(stdin_backup, STDIN_FILENO);
 	dup2(stdout_backup, STDOUT_FILENO);

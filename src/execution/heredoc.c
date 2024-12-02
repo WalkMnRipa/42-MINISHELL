@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 16:38:41 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/12/02 11:24:24 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/02 11:43:09 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,18 +16,24 @@ static void	handle_heredoc_line(char *line, int fd, t_env *env, int expand_vars)
 {
 	char	*expanded_line;
 
+	if (!line)
+		return ;
 	if (expand_vars)
 	{
 		expanded_line = expand_variables_in_str(ft_strdup(line), env,
 				STATE_NORMAL);
 		if (expanded_line)
 		{
-			ft_putstr_fd(expanded_line, fd);
+			write(fd, expanded_line, ft_strlen(expanded_line));
+			write(fd, "\n", 1);
 			free(expanded_line);
 		}
 	}
 	else
-		ft_putstr_fd(line, fd);
+	{
+		write(fd, line, ft_strlen(line));
+		write(fd, "\n", 1);
+	}
 }
 
 static int	check_delimiter(char *line, char *delimiter)
@@ -37,8 +43,9 @@ static int	check_delimiter(char *line, char *delimiter)
 	if (!line || !delimiter)
 		return (0);
 	delimiter_len = ft_strlen(delimiter);
-	return (!ft_strncmp(line, delimiter, delimiter_len)
-		&& line[delimiter_len] == '\n');
+	if (line[ft_strlen(line) - 1] == '\n')
+		line[ft_strlen(line) - 1] = '\0';
+	return (ft_strcmp(line, delimiter) == 0);
 }
 
 int	write_heredoc(int fd, char *delimiter, t_env *env, int expand_vars)
@@ -49,18 +56,22 @@ int	write_heredoc(int fd, char *delimiter, t_env *env, int expand_vars)
 	stdin_backup = dup(STDIN_FILENO);
 	if (stdin_backup == -1)
 		return (1);
+	g_signal_received = 0;
+	setup_heredoc_signals();
 	while (!g_signal_received)
 	{
 		ft_putstr_fd(HEREDOC_PROMPT, STDERR_FILENO);
 		line = get_next_line(STDIN_FILENO);
-		if (!line && !g_signal_received)
+		if (!line)
 		{
-			write(STDERR_FILENO, "\n", 1);
-			dup2(stdin_backup, STDIN_FILENO);
-			close(stdin_backup);
-			return (1);
+			if (!g_signal_received)
+			{
+				ft_putstr_fd("minishell: warning: here-document delimited by end-of-file\n",
+					STDERR_FILENO);
+			}
+			break ;
 		}
-		if (!line || check_delimiter(line, delimiter))
+		if (check_delimiter(line, delimiter))
 		{
 			free(line);
 			break ;
@@ -70,5 +81,6 @@ int	write_heredoc(int fd, char *delimiter, t_env *env, int expand_vars)
 	}
 	dup2(stdin_backup, STDIN_FILENO);
 	close(stdin_backup);
+	setup_signals(); // Restore original signal handlers
 	return (g_signal_received);
 }
