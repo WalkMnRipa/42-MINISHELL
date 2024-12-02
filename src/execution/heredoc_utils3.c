@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/02 10:48:00 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/12/02 14:01:40 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/02 14:12:10 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,9 +102,11 @@ int	handle_multiple_heredocs(t_cmd *cmd, t_env *env)
 		}
 		close(fd);
 		close(pipe_fds[0]);
+		// Move to next heredoc
 		current = current->next;
 	}
 	setup_signals();
+	// Set up last heredoc as input if no input file specified
 	if (cmd->heredocs && !cmd->input_file)
 	{
 		current = cmd->heredocs;
@@ -113,6 +115,17 @@ int	handle_multiple_heredocs(t_cmd *cmd, t_env *env)
 		cmd->input_file = ft_strdup(current->filename);
 		if (!cmd->input_file)
 			return (1);
+	}
+	// Clean up all heredoc files that are not the input file
+	current = cmd->heredocs;
+	while (current)
+	{
+		if (current->filename && (!cmd->input_file
+				|| ft_strcmp(current->filename, cmd->input_file) != 0))
+		{
+			unlink(current->filename);
+		}
+		current = current->next;
 	}
 	return (0);
 }

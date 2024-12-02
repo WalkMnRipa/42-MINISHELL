@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 20:14:16 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/12/02 11:44:01 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/02 14:16:42 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,6 @@ static int	prepare_command_execution(t_cmd *cmd, t_env **env)
 {
 	int	status;
 
-	// Handle heredocs first
 	if (cmd->heredocs)
 	{
 		status = handle_multiple_heredocs(cmd, *env);
@@ -94,7 +93,6 @@ static int	prepare_command_execution(t_cmd *cmd, t_env **env)
 			return (0);
 		}
 	}
-	// Then setup other redirections
 	if (!setup_redirections(cmd))
 	{
 		cmd->exit_status = 1;
@@ -119,17 +117,11 @@ void	execute_command(t_cmd *cmd, t_env **env)
 		return ;
 	}
 	if (cmd->next)
-	{
 		execute_pipeline(cmd, env);
-	}
 	else if (is_builtin(cmd->args[0]))
-	{
 		execute_builtin(cmd, env);
-	}
 	else
-	{
 		execute_non_builtin(cmd, env);
-	}
 	(*env)->last_exit_status = cmd->exit_status;
 	dup2(stdin_backup, STDIN_FILENO);
 	dup2(stdout_backup, STDOUT_FILENO);
