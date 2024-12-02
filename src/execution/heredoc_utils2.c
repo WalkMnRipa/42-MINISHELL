@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/01 23:27:29 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/12/02 10:55:12 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/02 14:01:28 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ int	write_heredoc_content(t_heredoc *heredoc, t_env *env)
 	int	fd;
 	int	status;
 
+	g_signal_received = 0;
 	fd = open(heredoc->filename, O_CREAT | O_WRONLY | O_TRUNC, 0644);
 	if (fd == -1)
 	{

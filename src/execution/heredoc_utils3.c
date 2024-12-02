@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/02 10:48:00 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/12/02 11:44:34 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/02 14:01:40 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,13 +50,13 @@ int	handle_multiple_heredocs(t_cmd *cmd, t_env *env)
 	int			fd;
 	char		buffer[4096];
 	ssize_t		n;
-	t_heredoc	*last;
 
 	current = cmd->heredocs;
-	while (current && !g_signal_received)
+	while (current)
 	{
 		if (pipe(pipe_fds) == -1)
 			return (1);
+		signal(SIGINT, SIG_IGN);
 		pid = fork();
 		if (pid == -1)
 		{
@@ -67,6 +67,7 @@ int	handle_multiple_heredocs(t_cmd *cmd, t_env *env)
 		if (pid == 0)
 		{
 			close(pipe_fds[0]);
+			signal(SIGINT, handle_heredoc_signal);
 			status = write_heredoc(pipe_fds[1], current->delimiter, env,
 					current->expand_vars);
 			close(pipe_fds[1]);
@@ -74,12 +75,16 @@ int	handle_multiple_heredocs(t_cmd *cmd, t_env *env)
 		}
 		close(pipe_fds[1]);
 		waitpid(pid, &status, 0);
-		if (WIFEXITED(status) && WEXITSTATUS(status) == 1)
+		if (WIFEXITED(status))
 		{
-			close(pipe_fds[0]);
-			return (1);
+			status = WEXITSTATUS(status);
+			if (status != 0)
+			{
+				close(pipe_fds[0]);
+				setup_signals();
+				return (status);
+			}
 		}
-		// Save the heredoc content to a temporary file
 		fd = open(current->filename, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 		if (fd == -1)
 		{
@@ -87,18 +92,25 @@ int	handle_multiple_heredocs(t_cmd *cmd, t_env *env)
 			return (1);
 		}
 		while ((n = read(pipe_fds[0], buffer, sizeof(buffer))) > 0)
-			write(fd, buffer, n);
+		{
+			if (write(fd, buffer, n) != n)
+			{
+				close(fd);
+				close(pipe_fds[0]);
+				return (1);
+			}
+		}
 		close(fd);
 		close(pipe_fds[0]);
 		current = current->next;
 	}
-	// Set the input file to the last heredoc if no input redirection
+	setup_signals();
 	if (cmd->heredocs && !cmd->input_file)
 	{
-		last = cmd->heredocs;
-		while (last->next)
-			last = last->next;
-		cmd->input_file = ft_strdup(last->filename);
+		current = cmd->heredocs;
+		while (current->next)
+			current = current->next;
+		cmd->input_file = ft_strdup(current->filename);
 		if (!cmd->input_file)
 			return (1);
 	}

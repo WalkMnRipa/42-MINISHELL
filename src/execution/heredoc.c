@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 16:38:41 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/12/02 11:43:09 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/02 14:01:17 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ static int	check_delimiter(char *line, char *delimiter)
 	if (!line || !delimiter)
 		return (0);
 	delimiter_len = ft_strlen(delimiter);
-	if (line[ft_strlen(line) - 1] == '\n')
+	if (ft_strlen(line) > 0 && line[ft_strlen(line) - 1] == '\n')
 		line[ft_strlen(line) - 1] = '\0';
 	return (ft_strcmp(line, delimiter) == 0);
 }
@@ -64,23 +64,24 @@ int	write_heredoc(int fd, char *delimiter, t_env *env, int expand_vars)
 		line = get_next_line(STDIN_FILENO);
 		if (!line)
 		{
-			if (!g_signal_received)
-			{
-				ft_putstr_fd("minishell: warning: here-document delimited by end-of-file\n",
+			if (!g_signal_received) // Only show EOF warning if not interrupted
+				ft_putendl_fd("minishell: warning: here-document delimited by end-of-file",
 					STDERR_FILENO);
-			}
 			break ;
 		}
 		if (check_delimiter(line, delimiter))
 		{
 			free(line);
-			break ;
+			dup2(stdin_backup, STDIN_FILENO);
+			close(stdin_backup);
+			setup_signals();
+			return (0);
 		}
 		handle_heredoc_line(line, fd, env, expand_vars);
 		free(line);
 	}
 	dup2(stdin_backup, STDIN_FILENO);
 	close(stdin_backup);
-	setup_signals(); // Restore original signal handlers
+	setup_signals();
 	return (g_signal_received);
 }
