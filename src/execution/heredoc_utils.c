@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/01 21:36:33 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/12/02 11:21:41 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/02 15:16:09 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,4 +64,27 @@ void	free_heredocs(t_heredoc *heredoc)
 		free(heredoc);
 		heredoc = next;
 	}
+}
+
+int	setup_last_heredoc(t_cmd *cmd)
+{
+	t_heredoc	*current;
+
+	if (!cmd->heredocs || cmd->input_file)
+		return (0);
+	current = cmd->heredocs;
+	while (current->next)
+		current = current->next;
+	cmd->input_file = ft_strdup(current->filename);
+	if (!cmd->input_file)
+		return (1);
+	current = cmd->heredocs;
+	while (current)
+	{
+		if (current->filename && (!cmd->input_file
+				|| ft_strcmp(current->filename, cmd->input_file) != 0))
+			unlink(current->filename);
+		current = current->next;
+	}
+	return (0);
 }

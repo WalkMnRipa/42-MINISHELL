@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 16:38:41 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/12/02 14:01:17 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/02 15:09:42 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,14 +38,22 @@ static void	handle_heredoc_line(char *line, int fd, t_env *env, int expand_vars)
 
 static int	check_delimiter(char *line, char *delimiter)
 {
-	size_t	delimiter_len;
-
 	if (!line || !delimiter)
 		return (0);
-	delimiter_len = ft_strlen(delimiter);
 	if (ft_strlen(line) > 0 && line[ft_strlen(line) - 1] == '\n')
 		line[ft_strlen(line) - 1] = '\0';
 	return (ft_strcmp(line, delimiter) == 0);
+}
+
+static int	handle_heredoc_cleanup(int stdin_backup, int show_eof)
+{
+	if (show_eof && !g_signal_received)
+		ft_putendl_fd("minishell: warning: here-document delimited by EOF",
+			STDERR_FILENO);
+	dup2(stdin_backup, STDIN_FILENO);
+	close(stdin_backup);
+	setup_signals();
+	return (g_signal_received);
 }
 
 int	write_heredoc(int fd, char *delimiter, t_env *env, int expand_vars)
@@ -60,28 +68,17 @@ int	write_heredoc(int fd, char *delimiter, t_env *env, int expand_vars)
 	setup_heredoc_signals();
 	while (!g_signal_received)
 	{
-		ft_putstr_fd(HEREDOC_PROMPT, STDERR_FILENO);
+		ft_putstr_fd("> ", STDERR_FILENO);
 		line = get_next_line(STDIN_FILENO);
 		if (!line)
-		{
-			if (!g_signal_received) // Only show EOF warning if not interrupted
-				ft_putendl_fd("minishell: warning: here-document delimited by end-of-file",
-					STDERR_FILENO);
-			break ;
-		}
+			return (handle_heredoc_cleanup(stdin_backup, 1));
 		if (check_delimiter(line, delimiter))
 		{
 			free(line);
-			dup2(stdin_backup, STDIN_FILENO);
-			close(stdin_backup);
-			setup_signals();
-			return (0);
+			return (handle_heredoc_cleanup(stdin_backup, 0));
 		}
 		handle_heredoc_line(line, fd, env, expand_vars);
 		free(line);
 	}
-	dup2(stdin_backup, STDIN_FILENO);
-	close(stdin_backup);
-	setup_signals();
-	return (g_signal_received);
+	return (handle_heredoc_cleanup(stdin_backup, 0));
 }

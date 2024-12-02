@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 18:06:21 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/12/02 10:58:00 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/02 15:16:19 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -275,5 +275,6 @@ int						write_heredoc_content(t_heredoc *heredoc, t_env *env);
 int						handle_multiple_heredocs(t_cmd *cmd, t_env *env);
 int						handle_heredoc_with_file(t_cmd *cmd, char *delimiter,
 							t_env *env, const char *filename);
+int						setup_last_heredoc(t_cmd *cmd);
 
 #endif
