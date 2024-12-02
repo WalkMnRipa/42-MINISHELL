@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 20:14:16 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/12/02 14:16:42 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/02 15:39:37 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,25 +80,17 @@ void	execute_external_command(t_cmd *cmd, t_env **env)
 	exit(1);
 }
 
-static int	prepare_command_execution(t_cmd *cmd, t_env **env)
+static void	execute_command_with_fds(t_cmd *cmd, t_env **env)
 {
-	int	status;
-
-	if (cmd->heredocs)
-	{
-		status = handle_multiple_heredocs(cmd, *env);
-		if (status != 0)
-		{
-			cmd->exit_status = 1;
-			return (0);
-		}
-	}
-	if (!setup_redirections(cmd))
-	{
-		cmd->exit_status = 1;
-		return (0);
-	}
-	return (1);
+	if (cmd->next)
+		execute_pipeline(cmd, env);
+	else if (is_builtin(cmd->args[0]))
+		execute_builtin(cmd, env);
+	else
+		execute_non_builtin(cmd, env);
+	if (cmd->input_file)
+		unlink(cmd->input_file);
+	(*env)->last_exit_status = cmd->exit_status;
 }
 
 void	execute_command(t_cmd *cmd, t_env **env)
@@ -116,13 +108,7 @@ void	execute_command(t_cmd *cmd, t_env **env)
 		close(stdout_backup);
 		return ;
 	}
-	if (cmd->next)
-		execute_pipeline(cmd, env);
-	else if (is_builtin(cmd->args[0]))
-		execute_builtin(cmd, env);
-	else
-		execute_non_builtin(cmd, env);
-	(*env)->last_exit_status = cmd->exit_status;
+	execute_command_with_fds(cmd, env);
 	dup2(stdin_backup, STDIN_FILENO);
 	dup2(stdout_backup, STDOUT_FILENO);
 	close(stdin_backup);

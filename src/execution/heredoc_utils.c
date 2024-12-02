@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/01 21:36:33 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/12/02 15:16:09 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/02 15:25:45 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,21 +69,27 @@ void	free_heredocs(t_heredoc *heredoc)
 int	setup_last_heredoc(t_cmd *cmd)
 {
 	t_heredoc	*current;
+	char		*last_filename;
 
 	if (!cmd->heredocs || cmd->input_file)
 		return (0);
 	current = cmd->heredocs;
 	while (current->next)
 		current = current->next;
-	cmd->input_file = ft_strdup(current->filename);
-	if (!cmd->input_file)
+	last_filename = ft_strdup(current->filename);
+	if (!last_filename)
 		return (1);
+	cmd->input_file = last_filename;
 	current = cmd->heredocs;
 	while (current)
 	{
-		if (current->filename && (!cmd->input_file
-				|| ft_strcmp(current->filename, cmd->input_file) != 0))
+		if (current->filename && ft_strcmp(current->filename,
+				last_filename) != 0)
+		{
 			unlink(current->filename);
+			free(current->filename);
+			current->filename = NULL;
+		}
 		current = current->next;
 	}
 	return (0);

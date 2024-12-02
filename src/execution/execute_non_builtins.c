@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/26 00:12:22 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/26 00:14:32 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/02 15:37:31 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,4 +55,25 @@ void	execute_non_builtin(t_cmd *cmd, t_env **env)
 		perror("fork");
 		cmd->exit_status = 1;
 	}
+}
+
+int	prepare_command_execution(t_cmd *cmd, t_env **env)
+{
+	int	status;
+
+	if (cmd->heredocs)
+	{
+		status = handle_multiple_heredocs(cmd, *env);
+		if (status != 0)
+		{
+			cmd->exit_status = 1;
+			return (0);
+		}
+	}
+	if (!setup_redirections(cmd))
+	{
+		cmd->exit_status = 1;
+		return (0);
+	}
+	return (1);
 }
