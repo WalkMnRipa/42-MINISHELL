@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/02 10:48:00 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/12/02 15:18:36 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/03 16:56:51 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,15 @@ static int	copy_pipe_to_file(int pipe_fd, t_heredoc *current)
 	return (0);
 }
 
+static void	run_heredoc_child(t_heredoc *current, t_env *env, int pipe_fds[2])
+{
+	close(pipe_fds[0]);
+	signal(SIGINT, handle_heredoc_signal);
+	write_heredoc(pipe_fds[1], current->delimiter, env, current->expand_vars);
+	close(pipe_fds[1]);
+	exit(0);
+}
+
 static int	handle_parent_process(pid_t pid, t_heredoc *current,
 		int pipe_fds[2])
 {
@@ -57,19 +66,13 @@ static int	handle_parent_process(pid_t pid, t_heredoc *current,
 			return (status);
 		}
 	}
+	else if (WIFSIGNALED(status))
+	{
+		close(pipe_fds[0]);
+		setup_signals();
+		return (1);
+	}
 	return (copy_pipe_to_file(pipe_fds[0], current));
-}
-
-static int	run_heredoc_child(t_heredoc *current, t_env *env, int pipe_fds[2])
-{
-	int	status;
-
-	close(pipe_fds[0]);
-	signal(SIGINT, handle_heredoc_signal);
-	status = write_heredoc(pipe_fds[1], current->delimiter, env,
-			current->expand_vars);
-	close(pipe_fds[1]);
-	exit(status);
 }
 
 static int	process_heredoc(t_heredoc *current, t_env *env)
@@ -96,17 +99,28 @@ static int	process_heredoc(t_heredoc *current, t_env *env)
 
 int	handle_multiple_heredocs(t_cmd *cmd, t_env *env)
 {
-	t_heredoc	*current;
+	t_cmd		*current_cmd;
+	t_heredoc	*current_heredoc;
 	int			status;
 
-	current = cmd->heredocs;
-	while (current)
+	current_cmd = cmd;
+	while (current_cmd)
 	{
-		status = process_heredoc(current, env);
-		if (status != 0)
-			return (status);
-		current = current->next;
+		if (current_cmd->heredocs)
+		{
+			current_heredoc = current_cmd->heredocs;
+			while (current_heredoc)
+			{
+				status = process_heredoc(current_heredoc, env);
+				if (status != 0)
+					return (g_signal_received = 1, status);
+				current_heredoc = current_heredoc->next;
+			}
+			if (setup_last_heredoc(current_cmd))
+				return (1);
+		}
+		current_cmd = current_cmd->next;
 	}
 	setup_signals();
-	return (setup_last_heredoc(cmd));
+	return (0);
 }

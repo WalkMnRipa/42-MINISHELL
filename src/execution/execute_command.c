@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 20:14:16 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/12/02 15:39:37 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/03 17:01:34 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,8 +88,7 @@ static void	execute_command_with_fds(t_cmd *cmd, t_env **env)
 		execute_builtin(cmd, env);
 	else
 		execute_non_builtin(cmd, env);
-	if (cmd->input_file)
-		unlink(cmd->input_file);
+	cleanup_heredoc_files(cmd);
 	(*env)->last_exit_status = cmd->exit_status;
 }
 
