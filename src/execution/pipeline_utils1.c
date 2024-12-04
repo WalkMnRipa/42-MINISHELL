@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/16 17:14:39 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/25 18:10:08 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/04 17:14:09 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,12 @@ pid_t	create_process(t_cmd *cmd, t_env **env, int pipe_fds[2][2],
 		setup_child_pipes(pipe_fds, info->index, info->current_pipe,
 			cmd->next != NULL);
 		if (!setup_redirections(cmd))
-			exit(1);
+		{
+			if (cmd->next)
+				exit(0);
+			else
+				exit(1);
+		}
 		execute_child_process(cmd, env);
 	}
 	return (pid);
