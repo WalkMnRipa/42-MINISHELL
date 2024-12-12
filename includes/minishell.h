@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 18:06:21 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/12/12 17:46:04 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/12 18:10:55 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -278,5 +278,15 @@ int						handle_heredoc_with_file(t_cmd *cmd, char *delimiter,
 int						setup_last_heredoc(t_cmd *cmd);
 int						prepare_command_execution(t_cmd *cmd, t_env **env);
 void					cleanup_heredoc_files(t_cmd *cmd);
+
+/* Tokenizer utils 2 */
+t_token					*handle_split_word_array(char **split_words);
+t_token					*split_expanded_word(char *word);
+int						should_split_word(const char *word, t_token *head,
+							t_token *prev_token);
+t_token					*handle_word_splitting(t_token *token);
+t_token					*process_tokenizer_token(char **input, t_env *env,
+							t_token *head, t_token *current);
+int						is_export_command(t_token *head);
 
 #endif

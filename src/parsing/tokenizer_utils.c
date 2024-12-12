@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 17:39:32 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/27 11:14:45 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/12 18:12:12 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,4 +56,9 @@ t_token	*handle_syntax_check(t_token *head)
 		return (NULL);
 	}
 	return (head);
+}
+
+int	is_export_command(t_token *head)
+{
+	return (head && head->value && ft_strcmp(head->value, "export") == 0);
 }
