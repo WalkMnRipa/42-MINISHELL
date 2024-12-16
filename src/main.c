@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 18:00:00 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/12/12 17:04:31 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/16 15:54:43 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,77 +14,78 @@
 
 int			g_signal_received = 0;
 
-static int handle_input(char *input, t_env **env, int *exit_status)
+static int	handle_input(char *input, t_env **env, int *exit_status)
 {
-    t_token *tokens;
-    t_cmd   *cmd;
-    int     cleanup_done = 0;  // Add flag to track if cleanup was done
+	t_token	*tokens;
+	t_cmd	*cmd;
+	int		cleanup_done;
 
-    if (!input || !*input)
-        return (0);
-    add_history(input);
-    tokens = tokenizer(input, *env);
-    if (!tokens)
-        return (0);
-    cmd = group_tokens_into_commands(tokens, *env);
-    free_tokens(tokens);  // Free tokens after command creation
-    if (cmd)
-    {
-        execute_command(cmd, env);
-        if (exit_status)
-            *exit_status = cmd->exit_status;
-        if (env && *env)
-            (*env)->last_exit_status = cmd->exit_status;
-        if (!cleanup_done)  // Only free if not already cleaned up
-            free_cmd_list(cmd);
-    }
-    return (0);
+	cleanup_done = 0;
+	if (!input || !*input)
+		return (0);
+	add_history(input);
+	tokens = tokenizer(input, *env);
+	if (!tokens)
+		return (0);
+	cmd = group_tokens_into_commands(tokens, *env);
+	free_tokens(tokens);
+	if (cmd)
+	{
+		execute_command(cmd, env);
+		if (exit_status)
+			*exit_status = cmd->exit_status;
+		if (env && *env)
+			(*env)->last_exit_status = cmd->exit_status;
+		if (!cleanup_done)
+			free_cmd_list(cmd);
+	}
+	return (0);
 }
 
-int shell_loop(t_env **env)
+int	shell_loop(t_env **env)
 {
-    int     exit_status;
-    char    *input;
+	int		exit_status;
+	char	*input;
 
-    exit_status = 0;
-    while (1)
-    {
-        g_signal_received = 0;
-        input = readline("minishell> ");
-        if (!input)
-        {
-            if (isatty(STDIN_FILENO))
-                ft_putendl_fd("exit", STDOUT_FILENO);
-            break;
-        }
-        handle_input(input, env, &exit_status);
-        free(input);
-    }
-    return (exit_status);
+	exit_status = 0;
+	while (1)
+	{
+		g_signal_received = 0;
+		input = readline("minishell> ");
+		if (!input)
+		{
+			if (isatty(STDIN_FILENO))
+				ft_putendl_fd("exit", STDOUT_FILENO);
+			break ;
+		}
+		handle_input(input, env, &exit_status);
+		free(input);
+	}
+	return (exit_status);
 }
 
-int main(int argc, char **argv, char **envp)
+int	main(int argc, char **argv, char **envp)
 {
-    t_env   *env;
-    int     stdin_backup;
-    int     exit_status;
+	t_env	*env;
+	int		stdin_backup;
+	int		exit_status;
 
-    (void)argc;
-    (void)argv;
-    env = initialize_shell(envp);
-    if (!env)
-        return (1);
-    stdin_backup = dup(STDIN_FILENO);
-    if (stdin_backup == -1)
-    {
-        perror("minishell: dup failed");
-        cleanup(env, NULL);
-        return (1);
-    }
-    setup_signals();
-    exit_status = shell_loop(&env);
-    close(stdin_backup);
-    cleanup(env, NULL);  // Make sure cleanup is thorough
-    rl_clear_history();  // Add this to clean readline history
-    return (exit_status);
+	(void)argc;
+	(void)argv;
+	env = initialize_shell(envp);
+	if (!env)
+		return (1);
+	stdin_backup = dup(STDIN_FILENO);
+	if (stdin_backup == -1)
+	{
+		perror("minishell: dup failed");
+		cleanup(env, NULL);
+		return (1);
+	}
+	setup_signals();
+	exit_status = shell_loop(&env);
+	close(stdin_backup);
+	cleanup(env, NULL);
+	rl_clear_history();
+	return (exit_status);
 }

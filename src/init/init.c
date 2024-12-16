@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 13:18:58 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/27 10:29:22 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/16 16:05:47 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,4 +91,23 @@ t_env	*initialize_shell(char **envp)
 	if (!env)
 		return (NULL);
 	return (env);
+}
+
+t_cmd	*create_command(void)
+{
+	t_cmd	*cmd;
+
+	cmd = (t_cmd *)malloc(sizeof(t_cmd));
+	if (!cmd)
+		return (NULL);
+	cmd->args = NULL;
+	cmd->input_file = NULL;
+	cmd->output_file = NULL;
+	cmd->input_fd = STDIN_FILENO;
+	cmd->output_fd = STDOUT_FILENO;
+	cmd->append_output = 0;
+	cmd->exit_status = 0;
+	cmd->heredocs = NULL;
+	cmd->next = NULL;
+	return (cmd);
 }

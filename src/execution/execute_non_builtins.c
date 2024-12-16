@@ -6,30 +6,29 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/26 00:12:22 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/12/02 15:37:31 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/16 15:54:26 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-static void handle_child_process(t_cmd *cmd, t_env **env)
+static void	handle_child_process(t_cmd *cmd, t_env **env)
 {
-    int exit_status;
+	int	exit_status;
 
-    reset_signals();
-    if (is_builtin(cmd->args[0]))
-    {
-        execute_builtin(cmd, env);
-        exit_status = cmd->exit_status;
-    }
-    else
-    {
-        execute_external_command(cmd, env);
-        exit_status = cmd->exit_status;
-    }
-    exit(exit_status);  
+	reset_signals();
+	if (is_builtin(cmd->args[0]))
+	{
+		execute_builtin(cmd, env);
+		exit_status = cmd->exit_status;
+	}
+	else
+	{
+		execute_external_command(cmd, env);
+		exit_status = cmd->exit_status;
+	}
+	exit(exit_status);
 }
-
 
 static void	handle_parent_process(t_cmd *cmd, pid_t pid)
 {
@@ -53,20 +52,20 @@ static void	handle_parent_process(t_cmd *cmd, pid_t pid)
 		usleep(10);
 }
 
-void execute_non_builtin(t_cmd *cmd, t_env **env)
+void	execute_non_builtin(t_cmd *cmd, t_env **env)
 {
-    pid_t pid;
+	pid_t	pid;
 
-    pid = fork();
-    if (pid == 0)
-        handle_child_process(cmd, env);
-    else if (pid > 0)
-        handle_parent_process(cmd, pid);
-    else
-    {
-        perror("fork");
-        cmd->exit_status = 1;
-    }
+	pid = fork();
+	if (pid == 0)
+		handle_child_process(cmd, env);
+	else if (pid > 0)
+		handle_parent_process(cmd, pid);
+	else
+	{
+		perror("fork");
+		cmd->exit_status = 1;
+	}
 }
 
 int	prepare_command_execution(t_cmd *cmd, t_env **env)
