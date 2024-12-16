@@ -11,7 +11,7 @@ CFLAGS = -Wall -Wextra -Werror
 LDFLAGS = -lreadline
 
 SRCS = src/main.c src/init/init.c src/execution/pipeline_utils.c src/execution/env_utils.c \
-	src/execution/pipeline.c src/execution/custom_setenv.c src/execution/execution_cleanup.c \
+	src/execution/pipeline.c src/execution/custom_setenv.c src/execution/execution_cleanup.c src/execution/execution_cleanup2.c \
 	src/execution/redirection.c src/execution/env_utils1.c src/execution/signals.c \
 	src/execution/heredoc.c src/execution/heredoc_utils.c src/execution/heredoc_utils2.c \
 	src/execution/heredoc_utils3.c src/execution/heredoc_utils4.c src/execution/execute_command.c src/execution/pipeline_utils1.c \
