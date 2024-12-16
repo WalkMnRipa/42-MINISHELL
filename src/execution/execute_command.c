@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 20:14:16 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/12/04 17:14:26 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/16 23:29:22 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,13 +39,17 @@ char	*find_command_path(const char *command, t_env *env)
 	return (NULL);
 }
 
-static void	handle_command_error(t_cmd *cmd, char *command_path)
+static int	handle_command_error(t_cmd *cmd, char *command_path, t_env **env)
 {
 	if (!cmd->args[0] || !cmd->args[0][0])
 	{
 		ft_putendl_fd("minishell: : command not found", 2);
 		cmd->exit_status = 127;
-		return ;
+		if (command_path)
+			free(command_path);
+		cleanup(*env, cmd);
+		exit(127);
+		return (1);
 	}
 	if (!command_path)
 	{
@@ -53,8 +57,11 @@ static void	handle_command_error(t_cmd *cmd, char *command_path)
 		ft_putstr_fd(cmd->args[0], 2);
 		ft_putendl_fd(": command not found", 2);
 		cmd->exit_status = 127;
-		return ;
+		cleanup(*env, cmd);
+		exit(127);
+		return (1);
 	}
+	return (0);
 }
 
 void	execute_external_command(t_cmd *cmd, t_env **env)
@@ -63,8 +70,7 @@ void	execute_external_command(t_cmd *cmd, t_env **env)
 	char	**env_array;
 
 	command_path = find_command_path(cmd->args[0], *env);
-	handle_command_error(cmd, command_path);
-	if (!command_path || cmd->exit_status == 127)
+	if (handle_command_error(cmd, command_path, env))
 		return ;
 	env_array = env_to_array(*env);
 	if (!env_array)
