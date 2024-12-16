@@ -39,45 +39,51 @@ char	*find_command_path(const char *command, t_env *env)
 	return (NULL);
 }
 
-static void	handle_command_error(t_cmd *cmd, char *command_path)
+static int handle_command_error(t_cmd *cmd, char *command_path, t_env **env)
 {
-	if (!cmd->args[0] || !cmd->args[0][0])
-	{
-		ft_putendl_fd("minishell: : command not found", 2);
-		cmd->exit_status = 127;
-		return ;
-	}
-	if (!command_path)
-	{
-		ft_putstr_fd("minishell: ", 2);
-		ft_putstr_fd(cmd->args[0], 2);
-		ft_putendl_fd(": command not found", 2);
-		cmd->exit_status = 127;
-		return ;
-	}
+    if (!cmd->args[0] || !cmd->args[0][0])
+    {
+        ft_putendl_fd("minishell: : command not found", 2);
+        cmd->exit_status = 127;
+        if (command_path)
+            free(command_path);
+        cleanup(*env, cmd);  // Add cleanup here
+        exit(127);  // Exit directly to avoid invalid read
+        return (1);
+    }
+    if (!command_path)
+    {
+        ft_putstr_fd("minishell: ", 2);
+        ft_putstr_fd(cmd->args[0], 2);
+        ft_putendl_fd(": command not found", 2);
+        cmd->exit_status = 127;
+        cleanup(*env, cmd);  // Add cleanup here
+        exit(127);  // Exit directly to avoid invalid read
+        return (1);
+    }
+    return (0);
 }
 
-void	execute_external_command(t_cmd *cmd, t_env **env)
+void execute_external_command(t_cmd *cmd, t_env **env)
 {
-	char	*command_path;
-	char	**env_array;
+    char    *command_path;
+    char    **env_array;
 
-	command_path = find_command_path(cmd->args[0], *env);
-	handle_command_error(cmd, command_path);
-	if (!command_path || cmd->exit_status == 127)
-		return ;
-	env_array = env_to_array(*env);
-	if (!env_array)
-	{
-		free(command_path);
-		error_exit_message(*env, cmd, "malloc failed");
-	}
-	reset_signals();
-	execve(command_path, cmd->args, env_array);
-	perror("execve failed");
-	free(command_path);
-	free_string_array(env_array, -1);
-	exit(1);
+    command_path = find_command_path(cmd->args[0], *env);
+    if (handle_command_error(cmd, command_path, env))
+        return;
+    env_array = env_to_array(*env);
+    if (!env_array)
+    {
+        free(command_path);
+        error_exit_message(*env, cmd, "malloc failed");
+    }
+    reset_signals();
+    execve(command_path, cmd->args, env_array);
+    perror("execve failed");
+    free(command_path);
+    free_string_array(env_array, -1);
+    exit(1);
 }
 
 static void	execute_command_with_fds(t_cmd *cmd, t_env **env)

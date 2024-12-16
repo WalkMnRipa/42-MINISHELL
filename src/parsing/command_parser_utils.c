@@ -31,32 +31,39 @@ t_cmd	*create_command(void)
 	return (cmd);
 }
 
-int	add_argument(t_cmd *cmd, char *arg)
+int add_argument(t_cmd *cmd, char *arg)
 {
-	int		i;
-	char	**new_args;
+    int     i;
+    char    **new_args;
+    char    *new_arg;
 
-	i = 0;
-	if (cmd->args)
-		while (cmd->args[i])
-			i++;
-	new_args = (char **)malloc(sizeof(char *) * (i + 2));
-	if (!new_args)
-		return (0);
-	i = 0;
-	if (cmd->args)
-	{
-		while (cmd->args[i])
-		{
-			new_args[i] = cmd->args[i];
-			i++;
-		}
-		free(cmd->args);
-	}
-	new_args[i] = ft_strdup(arg);
-	new_args[i + 1] = NULL;
-	cmd->args = new_args;
-	return (1);
+    i = 0;
+    if (cmd->args)
+        while (cmd->args[i])
+            i++;
+    new_args = (char **)malloc(sizeof(char *) * (i + 2));
+    if (!new_args)
+        return (0);
+    i = 0;
+    if (cmd->args)
+    {
+        while (cmd->args[i])
+        {
+            new_args[i] = cmd->args[i];
+            i++;
+        }
+        free(cmd->args);
+    }
+    new_arg = ft_strdup(arg);
+    if (!new_arg)
+    {
+        free(new_args);
+        return (0);
+    }
+    new_args[i] = new_arg;
+    new_args[i + 1] = NULL;
+    cmd->args = new_args;
+    return (1);
 }
 
 static int	handle_heredoc_redirect(t_cmd *cmd, t_token *next)

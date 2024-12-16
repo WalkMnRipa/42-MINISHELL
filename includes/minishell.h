@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 18:06:21 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/12/12 18:10:55 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/16 11:54:46 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,6 @@
 # define ERR_HEREDOC_OPEN "minishell: heredoc: Failed to open heredoc file"
 # define ERR_PIPE_FAILED "minishell: pipe creation failed"
 # define ERR_FORK_FAILED "minishell: fork failed"
-# define ERR_CMD_NOT_FOUND "minishell: command not found"
 # define ERR_NO_SUCH_FILE "minishell: No such file or directory"
 # define ERR_PERMISSION_DENIED "minishell: Permission denied"
 

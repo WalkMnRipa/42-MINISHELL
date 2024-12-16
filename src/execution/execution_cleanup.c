@@ -12,7 +12,7 @@
 
 #include "../../includes/minishell.h"
 
-static void	free_cmd_args(char **args)
+/*static void	free_cmd_args(char **args)
 {
 	char	**tmp;
 
@@ -25,38 +25,56 @@ static void	free_cmd_args(char **args)
 		tmp++;
 	}
 	free(args);
+}*/
+
+void free_cmd(t_cmd *cmd)
+{
+    if (!cmd)
+        return;
+    
+    if (cmd->args)
+    {
+        char **tmp = cmd->args;
+        while (*tmp)
+        {
+            free(*tmp);
+            tmp++;
+        }
+        free(cmd->args);
+    }
+    
+    if (cmd->input_file)
+        free(cmd->input_file);
+    if (cmd->output_file)
+        free(cmd->output_file);
+    if (cmd->heredocs)
+        free_heredocs(cmd->heredocs);
+    if (cmd->input_fd != STDIN_FILENO)
+        close(cmd->input_fd);
+    if (cmd->output_fd != STDOUT_FILENO)
+        close(cmd->output_fd);
+    free(cmd);
 }
 
-void	free_cmd(t_cmd *cmd)
+void cleanup(t_env *env, t_cmd *cmd)
 {
-	if (!cmd)
-		return ;
-	if (cmd->args)
-		free_cmd_args(cmd->args);
-	if (cmd->input_file)
-		free(cmd->input_file);
-	if (cmd->output_file)
-		free(cmd->output_file);
-	if (cmd->heredocs)
-		free_heredocs(cmd->heredocs);
-	if (cmd->input_fd != STDIN_FILENO)
-		close(cmd->input_fd);
-	if (cmd->output_fd != STDOUT_FILENO)
-		close(cmd->output_fd);
-	free(cmd);
-}
+    t_cmd   *next;
+    t_env   *next_env;
 
-void	cleanup(t_env *env, t_cmd *cmd)
-{
-	t_cmd	*next;
-
-	free_env(env);
-	while (cmd)
-	{
-		next = cmd->next;
-		free_cmd(cmd);
-		cmd = next;
-	}
+    while (cmd)
+    {
+        next = cmd->next;
+        free_cmd(cmd);
+        cmd = next;
+    }
+    while (env)
+    {
+        next_env = env->next;
+        free(env->key);
+        free(env->value);
+        free(env);
+        env = next_env;
+    }
 }
 
 void	error_exit_message(t_env *env, t_cmd *cmd, char *message)
