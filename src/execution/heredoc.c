@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 16:38:41 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/12/16 17:35:03 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/16 18:29:33 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,24 +25,32 @@ static void	handle_heredoc_line(char *line, int fd, t_env *env, int expand_vars)
 		if (expanded_line)
 		{
 			write(fd, expanded_line, ft_strlen(expanded_line));
-			write(fd, "\n", 1);
 			free(expanded_line);
 		}
 	}
 	else
-	{
 		write(fd, line, ft_strlen(line));
-		write(fd, "\n", 1);
-	}
 }
 
-static int	check_delimiter(char *line, char *delimiter)
+static int	check_delimiter(const char *line, const char *delimiter)
 {
+	char	*trimmed_line;
+	int		result;
+	size_t	len;
+
 	if (!line || !delimiter)
 		return (0);
-	if (ft_strlen(line) > 0 && line[ft_strlen(line) - 1] == '\n')
-		line[ft_strlen(line) - 1] = '\0';
-	return (ft_strcmp(line, delimiter) == 0);
+	// Remove trailing newline if present
+	trimmed_line = ft_strdup(line);
+	if (!trimmed_line)
+		return (0);
+	len = ft_strlen(trimmed_line);
+	if (len > 0 && trimmed_line[len - 1] == '\n')
+		trimmed_line[len - 1] = '\0';
+	// Do the comparison
+	result = (ft_strcmp(trimmed_line, delimiter) == 0);
+	free(trimmed_line);
+	return (result);
 }
 
 static int	handle_heredoc_cleanup(int stdin_backup, int show_eof)
@@ -97,7 +105,7 @@ int	write_heredoc(int fd, char *delimiter, t_env *env, int expand_vars)
 		ft_putstr_fd(HEREDOC_PROMPT, STDERR_FILENO);
 		line = get_next_line(STDIN_FILENO);
 		ret = process_heredoc_line(line, fd, env, &data);
-		if (ret != -1)
+		if (ret >= 0)
 			return (ret);
 	}
 	ret = handle_heredoc_cleanup(data.stdin_backup, 0);

@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/16 16:28:40 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/12/04 17:14:18 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/16 18:01:45 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,76 +14,99 @@
 
 static int	init_pipeline(t_cmd *cmd, pid_t **pids, t_pipe_info *info)
 {
-	t_cmd	*current;
+    t_cmd	*current;
 
-	info->cmd_count = 0;
-	current = cmd;
-	while (current)
-	{
-		info->cmd_count++;
-		current = current->next;
-	}
-	*pids = malloc(sizeof(pid_t) * (info->cmd_count));
-	if (!(*pids))
-		return (0);
-	info->index = 0;
-	info->current_pipe = 0;
-	return (1);
-}
-
-static void	wait_for_children(pid_t *pids, int cmd_count, t_env **env,
-		t_cmd *first_cmd)
-{
-	int	i;
-	int	status;
-
-	i = 0;
-	while (i < cmd_count)
-	{
-		waitpid(pids[i], &status, 0);
-		if (i == cmd_count - 1)
-		{
-			handle_last_process_status(status, env);
-			first_cmd->exit_status = (*env)->last_exit_status;
-		}
-		i++;
-	}
+    info->cmd_count = 0;
+    current = cmd;
+    while (current)
+    {
+        info->cmd_count++;
+        current = current->next;
+    }
+    *pids = malloc(sizeof(pid_t) * (info->cmd_count));
+    if (!(*pids))
+        return (0);
+    info->index = 0;
+    info->current_pipe = 0;
+    return (1);
 }
 
 static void	close_pipe_fds(int pipe_fds[2][2])
 {
-	int	i;
+    int	i;
 
-	i = 0;
-	while (i < 2)
-	{
-		if (pipe_fds[i][0] != -1)
-			close(pipe_fds[i][0]);
-		if (pipe_fds[i][1] != -1)
-			close(pipe_fds[i][1]);
-		i++;
-	}
+    i = 0;
+    while (i < 2)
+    {
+        if (pipe_fds[i][0] != -1)
+            close(pipe_fds[i][0]);
+        if (pipe_fds[i][1] != -1)
+            close(pipe_fds[i][1]);
+        i++;
+    }
+}
+
+static void	wait_for_children(pid_t *pids, int cmd_count, t_env **env,
+        t_cmd *first_cmd)
+{
+    int	i;
+    int	status;
+    int pipeline_error;
+
+    i = 0;
+    pipeline_error = 0;
+    while (i < cmd_count)
+    {
+        waitpid(pids[i], &status, 0);
+        if (i == cmd_count - 1)
+        {
+            handle_last_process_status(status, env);
+            first_cmd->exit_status = (*env)->last_exit_status;
+        }
+        else if (WIFEXITED(status) && WEXITSTATUS(status) != 0)
+            pipeline_error = 1;
+        else if (WIFSIGNALED(status))
+            pipeline_error = 1;
+        i++;
+    }
+
+    if (pipeline_error)
+        cleanup_heredoc_files(first_cmd);
 }
 
 void	execute_pipeline(t_cmd *cmd, t_env **env)
 {
-	t_pipe_info	info;
-	pid_t		*pids;
-	t_cmd		*first_cmd;
-	int			pipe_fds[2][2];
+    t_pipe_info	info;
+    pid_t		*pids;
+    t_cmd		*first_cmd;
+    int			pipe_fds[2][2];
+    int         pipeline_error;
 
-	first_cmd = cmd;
-	ft_memset(pipe_fds, -1, sizeof(pipe_fds));
-	if (!init_pipeline(cmd, &pids, &info))
-	{
-		ft_putendl_fd("minishell: memory allocation failed", 2);
-		return ;
-	}
-	setup_parent_signals();
-	run_pipeline_loop(cmd, pids, &info, env);
-	if (info.index == info.cmd_count)
-		wait_for_children(pids, info.cmd_count, env, first_cmd);
-	close_pipe_fds(pipe_fds);
-	setup_signals();
-	free(pids);
+    first_cmd = cmd;
+    ft_memset(pipe_fds, -1, sizeof(pipe_fds));
+    pipeline_error = 0;
+
+    if (!init_pipeline(cmd, &pids, &info))
+    {
+        ft_putendl_fd("minishell: memory allocation failed", 2);
+        cleanup_heredoc_files(cmd);
+        return;
+    }
+
+    // Process heredocs before starting the pipeline
+    if (handle_multiple_heredocs(cmd, *env) != 0)
+    {
+        free(pids);
+        return;
+    }
+
+    setup_parent_signals();
+    run_pipeline_loop(cmd, pids, &info, env);
+
+    if (info.index == info.cmd_count)
+        wait_for_children(pids, info.cmd_count, env, first_cmd);
+
+    close_pipe_fds(pipe_fds);
+    setup_signals();
+    free(pids);
 }
