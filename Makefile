@@ -25,7 +25,7 @@ SRCS = src/main.c src/init/init.c src/execution/pipeline_utils.c src/execution/e
 	src/parsing/command_parser_utils.c src/parsing/token_utils.c src/parsing/tokenizer.c \
 	src/parsing/tokenizer_utils.c src/parsing/command_parser.c src/parsing/variable_expansion.c \
 	src/parsing/quote_handler.c src/parsing/memory_utils.c src/parsing/token_utils1.c src/parsing/command_parser_utils2.c \
-	src/parsing/tokenizer_utils2.c  
+	src/parsing/tokenizer_utils2.c src/execution/heredoc_utils5.c
 
 OBJS_DIR = objs
 OBJS = $(SRCS:%.c=$(OBJS_DIR)/%.o)

@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 16:38:41 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/12/16 18:29:33 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/16 18:31:16 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,14 +40,12 @@ static int	check_delimiter(const char *line, const char *delimiter)
 
 	if (!line || !delimiter)
 		return (0);
-	// Remove trailing newline if present
 	trimmed_line = ft_strdup(line);
 	if (!trimmed_line)
 		return (0);
 	len = ft_strlen(trimmed_line);
 	if (len > 0 && trimmed_line[len - 1] == '\n')
 		trimmed_line[len - 1] = '\0';
-	// Do the comparison
 	result = (ft_strcmp(trimmed_line, delimiter) == 0);
 	free(trimmed_line);
 	return (result);

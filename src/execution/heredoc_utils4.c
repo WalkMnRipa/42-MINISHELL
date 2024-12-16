@@ -6,51 +6,11 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/02 10:54:39 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/12/16 18:29:21 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/16 18:36:14 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
-#include <sys/resource.h>
-
-static int	count_total_heredocs(t_cmd *cmd)
-{
-	t_cmd		*current;
-	t_heredoc	*heredoc;
-	int			count;
-
-	count = 0;
-	current = cmd;
-	while (current)
-	{
-		heredoc = current->heredocs;
-		while (heredoc)
-		{
-			count++;
-			heredoc = heredoc->next;
-		}
-		current = current->next;
-	}
-	return (count);
-}
-
-static int	check_fd_limit(t_cmd *cmd)
-{
-	struct rlimit	rlim;
-	int				total_heredocs;
-	int				needed_fds;
-
-	if (getrlimit(RLIMIT_NOFILE, &rlim) != 0)
-		return (0);
-	total_heredocs = count_total_heredocs(cmd);
-	needed_fds = total_heredocs * 3;
-	if (needed_fds > (int)(rlim.rlim_cur - 20))
-	{
-		ft_putendl_fd("minishell: Too many heredocs", 2);
-		return (0);
-	}
-	return (1);
-}
 
 static int	open_heredoc_file(const char *filename)
 {
@@ -111,8 +71,6 @@ int	handle_heredoc_with_file(t_cmd *cmd, char *delimiter, t_env *env,
 	int		fd;
 	char	*clean_delim;
 
-	if (!check_fd_limit(cmd))
-		return (1);
 	g_signal_received = 0;
 	clean_delim = ft_strtrim(delimiter, "'\"");
 	if (!clean_delim)
