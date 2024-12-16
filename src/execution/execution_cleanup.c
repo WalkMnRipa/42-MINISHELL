@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 20:11:10 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/12/16 15:54:54 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/16 17:34:10 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,27 +70,36 @@ void	error_exit_message(t_env *env, t_cmd *cmd, char *message)
 	exit(EXIT_FAILURE);
 }
 
+static void	cleanup_heredoc_chain(t_heredoc *heredoc)
+{
+	t_heredoc	*next_heredoc;
+
+	while (heredoc)
+	{
+		next_heredoc = heredoc->next;
+		if (heredoc->filename)
+		{
+			unlink(heredoc->filename);
+			free(heredoc->filename);
+		}
+		if (heredoc->delimiter)
+			free(heredoc->delimiter);
+		free(heredoc);
+		heredoc = next_heredoc;
+	}
+}
+
 void	cleanup_heredoc_files(t_cmd *cmd)
 {
-	t_cmd		*current_cmd;
-	t_heredoc	*current_heredoc;
+	t_cmd	*current_cmd;
 
 	current_cmd = cmd;
 	while (current_cmd)
 	{
 		if (current_cmd->heredocs)
 		{
-			current_heredoc = current_cmd->heredocs;
-			while (current_heredoc)
-			{
-				if (current_heredoc->filename)
-				{
-					unlink(current_heredoc->filename);
-					free(current_heredoc->filename);
-					current_heredoc->filename = NULL;
-				}
-				current_heredoc = current_heredoc->next;
-			}
+			cleanup_heredoc_chain(current_cmd->heredocs);
+			current_cmd->heredocs = NULL;
 		}
 		current_cmd = current_cmd->next;
 	}

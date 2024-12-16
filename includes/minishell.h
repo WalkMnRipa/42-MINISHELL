@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 18:06:21 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/12/16 11:54:46 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/16 17:34:59 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,13 @@ typedef struct s_heredoc
 	int					expand_vars;
 	struct s_heredoc	*next;
 }						t_heredoc;
+
+typedef struct s_heredoc_data
+{
+	int					stdin_backup;
+	char				*delimiter;
+	int					expand_vars;
+}						t_heredoc_data;
 
 typedef struct s_env
 {

@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 18:00:00 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/12/16 15:54:43 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/16 17:33:00 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,10 @@ static int	handle_input(char *input, t_env **env, int *exit_status)
 {
 	t_token	*tokens;
 	t_cmd	*cmd;
-	int		cleanup_done;
 
-	cleanup_done = 0;
-	if (!input || !*input)
+	if (!input)
+		return (1);
+	if (!*input)
 		return (0);
 	add_history(input);
 	tokens = tokenizer(input, *env);
@@ -36,8 +36,9 @@ static int	handle_input(char *input, t_env **env, int *exit_status)
 			*exit_status = cmd->exit_status;
 		if (env && *env)
 			(*env)->last_exit_status = cmd->exit_status;
-		if (!cleanup_done)
-			free_cmd_list(cmd);
+		cleanup_heredoc_files(cmd);
+		free_cmd_list(cmd);
+		cmd = NULL;
 	}
 	return (0);
 }

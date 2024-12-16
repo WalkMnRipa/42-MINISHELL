@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 16:38:41 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/12/02 15:09:42 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/16 17:35:03 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,29 +56,52 @@ static int	handle_heredoc_cleanup(int stdin_backup, int show_eof)
 	return (g_signal_received);
 }
 
+static int	process_heredoc_line(char *line, int fd, t_env *env,
+		t_heredoc_data *data)
+{
+	int	ret;
+
+	if (!line)
+	{
+		ret = handle_heredoc_cleanup(data->stdin_backup, 1);
+		close(fd);
+		return (ret);
+	}
+	if (check_delimiter(line, data->delimiter))
+	{
+		free(line);
+		ret = handle_heredoc_cleanup(data->stdin_backup, 0);
+		close(fd);
+		return (ret);
+	}
+	handle_heredoc_line(line, fd, env, data->expand_vars);
+	free(line);
+	return (-1);
+}
+
 int	write_heredoc(int fd, char *delimiter, t_env *env, int expand_vars)
 {
-	char	*line;
-	int		stdin_backup;
+	char			*line;
+	int				ret;
+	t_heredoc_data	data;
 
-	stdin_backup = dup(STDIN_FILENO);
-	if (stdin_backup == -1)
+	data.stdin_backup = dup(STDIN_FILENO);
+	if (data.stdin_backup == -1)
 		return (1);
+	data.delimiter = delimiter;
+	data.expand_vars = expand_vars;
 	g_signal_received = 0;
 	setup_heredoc_signals();
 	while (!g_signal_received)
 	{
-		ft_putstr_fd("> ", STDERR_FILENO);
+		ft_putstr_fd(HEREDOC_PROMPT, STDERR_FILENO);
 		line = get_next_line(STDIN_FILENO);
-		if (!line)
-			return (handle_heredoc_cleanup(stdin_backup, 1));
-		if (check_delimiter(line, delimiter))
-		{
-			free(line);
-			return (handle_heredoc_cleanup(stdin_backup, 0));
-		}
-		handle_heredoc_line(line, fd, env, expand_vars);
-		free(line);
+		ret = process_heredoc_line(line, fd, env, &data);
+		if (ret != -1)
+			return (ret);
 	}
-	return (handle_heredoc_cleanup(stdin_backup, 0));
+	ret = handle_heredoc_cleanup(data.stdin_backup, 0);
+	close(fd);
+	setup_signals();
+	return (ret);
 }
