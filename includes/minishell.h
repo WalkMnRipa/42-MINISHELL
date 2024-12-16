@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 18:06:21 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/12/16 18:47:17 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/03 17:01:02 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@
 # define ERR_HEREDOC_OPEN "minishell: heredoc: Failed to open heredoc file"
 # define ERR_PIPE_FAILED "minishell: pipe creation failed"
 # define ERR_FORK_FAILED "minishell: fork failed"
+# define ERR_CMD_NOT_FOUND "minishell: command not found"
 # define ERR_NO_SUCH_FILE "minishell: No such file or directory"
 # define ERR_PERMISSION_DENIED "minishell: Permission denied"
 
@@ -48,13 +49,6 @@ typedef struct s_heredoc
 	int					expand_vars;
 	struct s_heredoc	*next;
 }						t_heredoc;
-
-typedef struct s_heredoc_data
-{
-	int					stdin_backup;
-	char				*delimiter;
-	int					expand_vars;
-}						t_heredoc_data;
 
 typedef struct s_env
 {
@@ -284,21 +278,5 @@ int						handle_heredoc_with_file(t_cmd *cmd, char *delimiter,
 int						setup_last_heredoc(t_cmd *cmd);
 int						prepare_command_execution(t_cmd *cmd, t_env **env);
 void					cleanup_heredoc_files(t_cmd *cmd);
-
-/* Tokenizer utils 2 */
-t_token					*handle_split_word_array(char **split_words);
-t_token					*split_expanded_word(char *word);
-int						should_split_word(const char *word, t_token *head,
-							t_token *prev_token);
-t_token					*handle_word_splitting(t_token *token);
-t_token					*process_tokenizer_token(char **input, t_env *env,
-							t_token *head, t_token *current);
-int						is_export_command(t_token *head);
-
-int						handle_multiple_heredocs(t_cmd *cmd, t_env *env);
-void					cleanup_heredoc_resources(t_heredoc *current);
-void					run_heredoc_child(t_heredoc *current, t_env *env,
-							int pipe_fds[2]);
-int						copy_pipe_to_file(int pipe_fd, t_heredoc *current);
 
 #endif

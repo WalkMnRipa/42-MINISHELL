@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/26 00:12:22 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/12/16 15:54:26 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/02 15:37:31 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,20 +14,9 @@
 
 static void	handle_child_process(t_cmd *cmd, t_env **env)
 {
-	int	exit_status;
-
 	reset_signals();
-	if (is_builtin(cmd->args[0]))
-	{
-		execute_builtin(cmd, env);
-		exit_status = cmd->exit_status;
-	}
-	else
-	{
-		execute_external_command(cmd, env);
-		exit_status = cmd->exit_status;
-	}
-	exit(exit_status);
+	execute_external_command(cmd, env);
+	exit(cmd->exit_status);
 }
 
 static void	handle_parent_process(t_cmd *cmd, pid_t pid)

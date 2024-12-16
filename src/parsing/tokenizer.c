@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 18:57:57 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/12/12 18:06:01 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/11/27 11:23:14 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,16 +57,6 @@ static char	*extract_word(char **input, t_env *env)
 	return (processed_word);
 }
 
-static void	update_token_list(t_token **head, t_token **current,
-		t_token *new_token)
-{
-	if (!*head)
-		*head = new_token;
-	else
-		add_token(head, new_token);
-	*current = new_token;
-}
-
 t_token	*get_next_token(char **input, t_env *env)
 {
 	t_token	*token;
@@ -94,18 +84,25 @@ t_token	*tokenizer(char *input, t_env *env)
 {
 	t_token	*head;
 	t_token	*new_token;
-	t_token	*current;
+	char	*current;
 
 	head = NULL;
-	current = head;
-	while (*input)
+	current = input;
+	while (*current)
 	{
-		new_token = process_tokenizer_token(&input, env, head, current);
-		if (!new_token && head)
-			return (NULL);
+		new_token = get_next_token(&current, env);
 		if (!new_token)
+		{
+			if (head)
+				free_tokens(head);
+			return (NULL);
+		}
+		if (new_token->type == TOKEN_EOF)
+		{
+			free_token(new_token);
 			break ;
-		update_token_list(&head, &current, new_token);
+		}
+		add_token(&head, new_token);
 	}
 	return (handle_syntax_check(head));
 }

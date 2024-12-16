@@ -24,8 +24,7 @@ SRCS = src/main.c src/init/init.c src/execution/pipeline_utils.c src/execution/e
 	src/parsing/syntax_check.c src/parsing/variable_expansion_utils.c src/parsing/quote_handler_utils.c \
 	src/parsing/command_parser_utils.c src/parsing/token_utils.c src/parsing/tokenizer.c \
 	src/parsing/tokenizer_utils.c src/parsing/command_parser.c src/parsing/variable_expansion.c \
-	src/parsing/quote_handler.c src/parsing/memory_utils.c src/parsing/token_utils1.c src/parsing/command_parser_utils2.c \
-	src/parsing/tokenizer_utils2.c src/execution/heredoc_utils5.c
+	src/parsing/quote_handler.c src/parsing/memory_utils.c src/parsing/token_utils1.c src/parsing/command_parser_utils2.c
 
 OBJS_DIR = objs
 OBJS = $(SRCS:%.c=$(OBJS_DIR)/%.o)
@@ -43,28 +42,27 @@ $(NAME): $(OBJS) $(LIBFT)
 $(OBJS_DIR)/%.o: %.c
 	@mkdir -p $(@D)
 	@printf "$(YELLOW)Compiling $<... $(RESET)"
-	@if $(CC) $(CFLAGS) -MMD -MP -I./includes -Ilibft -c $< -o $@; then \
+	@if $(CC) $(CFLAGS) -MMD -MP -I./includes -Ilibft -c $< -o $@ 2>/dev/null; then \
 		printf "$(GREEN)Done!$(RESET)\n"; \
 	else \
 		printf "$(RED)Failed!$(RESET)\n"; \
-		$(CC) $(CFLAGS) -MMD -MP -I./includes -Ilibft -c $< -o $@; \
 		exit 1; \
 	fi
 
 $(LIBFT):
 	@echo "$(YELLOW)Compiling libft...$(RESET)"
-	@$(MAKE) -C libft
+	@$(MAKE) -C libft > /dev/null 2>&1
 	@echo "$(GREEN)libft compilation done!$(RESET)"
 
 clean:
 	@echo "$(YELLOW)Cleaning up...$(RESET)"
-	@$(MAKE) -C libft clean
+	@$(MAKE) -C libft clean > /dev/null
 	@rm -rf $(OBJS_DIR)
 	@echo "$(GREEN)Clean done!$(RESET)"
 
 fclean: clean
 	@echo "$(YELLOW)Full cleanup...$(RESET)"
-	@$(MAKE) -C libft fclean
+	@$(MAKE) -C libft fclean > /dev/null
 	@rm -f $(NAME)
 	@echo "$(GREEN)Full cleanup done!$(RESET)"
 

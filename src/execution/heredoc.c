@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 16:38:41 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/12/16 18:31:16 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/02 15:09:42 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,30 +25,24 @@ static void	handle_heredoc_line(char *line, int fd, t_env *env, int expand_vars)
 		if (expanded_line)
 		{
 			write(fd, expanded_line, ft_strlen(expanded_line));
+			write(fd, "\n", 1);
 			free(expanded_line);
 		}
 	}
 	else
+	{
 		write(fd, line, ft_strlen(line));
+		write(fd, "\n", 1);
+	}
 }
 
-static int	check_delimiter(const char *line, const char *delimiter)
+static int	check_delimiter(char *line, char *delimiter)
 {
-	char	*trimmed_line;
-	int		result;
-	size_t	len;
-
 	if (!line || !delimiter)
 		return (0);
-	trimmed_line = ft_strdup(line);
-	if (!trimmed_line)
-		return (0);
-	len = ft_strlen(trimmed_line);
-	if (len > 0 && trimmed_line[len - 1] == '\n')
-		trimmed_line[len - 1] = '\0';
-	result = (ft_strcmp(trimmed_line, delimiter) == 0);
-	free(trimmed_line);
-	return (result);
+	if (ft_strlen(line) > 0 && line[ft_strlen(line) - 1] == '\n')
+		line[ft_strlen(line) - 1] = '\0';
+	return (ft_strcmp(line, delimiter) == 0);
 }
 
 static int	handle_heredoc_cleanup(int stdin_backup, int show_eof)
@@ -62,52 +56,29 @@ static int	handle_heredoc_cleanup(int stdin_backup, int show_eof)
 	return (g_signal_received);
 }
 
-static int	process_heredoc_line(char *line, int fd, t_env *env,
-		t_heredoc_data *data)
-{
-	int	ret;
-
-	if (!line)
-	{
-		ret = handle_heredoc_cleanup(data->stdin_backup, 1);
-		close(fd);
-		return (ret);
-	}
-	if (check_delimiter(line, data->delimiter))
-	{
-		free(line);
-		ret = handle_heredoc_cleanup(data->stdin_backup, 0);
-		close(fd);
-		return (ret);
-	}
-	handle_heredoc_line(line, fd, env, data->expand_vars);
-	free(line);
-	return (-1);
-}
-
 int	write_heredoc(int fd, char *delimiter, t_env *env, int expand_vars)
 {
-	char			*line;
-	int				ret;
-	t_heredoc_data	data;
+	char	*line;
+	int		stdin_backup;
 
-	data.stdin_backup = dup(STDIN_FILENO);
-	if (data.stdin_backup == -1)
+	stdin_backup = dup(STDIN_FILENO);
+	if (stdin_backup == -1)
 		return (1);
-	data.delimiter = delimiter;
-	data.expand_vars = expand_vars;
 	g_signal_received = 0;
 	setup_heredoc_signals();
 	while (!g_signal_received)
 	{
-		ft_putstr_fd(HEREDOC_PROMPT, STDERR_FILENO);
+		ft_putstr_fd("> ", STDERR_FILENO);
 		line = get_next_line(STDIN_FILENO);
-		ret = process_heredoc_line(line, fd, env, &data);
-		if (ret >= 0)
-			return (ret);
+		if (!line)
+			return (handle_heredoc_cleanup(stdin_backup, 1));
+		if (check_delimiter(line, delimiter))
+		{
+			free(line);
+			return (handle_heredoc_cleanup(stdin_backup, 0));
+		}
+		handle_heredoc_line(line, fd, env, expand_vars);
+		free(line);
 	}
-	ret = handle_heredoc_cleanup(data.stdin_backup, 0);
-	close(fd);
-	setup_signals();
-	return (ret);
+	return (handle_heredoc_cleanup(stdin_backup, 0));
 }

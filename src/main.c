@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 18:00:00 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/12/16 17:33:00 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/01 23:17:05 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,16 +19,13 @@ static int	handle_input(char *input, t_env **env, int *exit_status)
 	t_token	*tokens;
 	t_cmd	*cmd;
 
-	if (!input)
-		return (1);
-	if (!*input)
+	if (!input || !*input)
 		return (0);
 	add_history(input);
 	tokens = tokenizer(input, *env);
 	if (!tokens)
 		return (0);
 	cmd = group_tokens_into_commands(tokens, *env);
-	free_tokens(tokens);
 	if (cmd)
 	{
 		execute_command(cmd, env);
@@ -36,10 +33,9 @@ static int	handle_input(char *input, t_env **env, int *exit_status)
 			*exit_status = cmd->exit_status;
 		if (env && *env)
 			(*env)->last_exit_status = cmd->exit_status;
-		cleanup_heredoc_files(cmd);
 		free_cmd_list(cmd);
-		cmd = NULL;
 	}
+	free_tokens(tokens);
 	return (0);
 }
 
@@ -87,6 +83,5 @@ int	main(int argc, char **argv, char **envp)
 	exit_status = shell_loop(&env);
 	close(stdin_backup);
 	cleanup(env, NULL);
-	rl_clear_history();
 	return (exit_status);
 }
