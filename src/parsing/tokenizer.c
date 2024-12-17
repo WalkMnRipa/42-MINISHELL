@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 18:57:57 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/12/17 16:33:35 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/17 17:08:46 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,11 +27,9 @@ static char	*extract_word(char **input, t_env *env)
 	if (!word)
 		return (NULL);
 	processed_word = handle_quotes(word, env);
+	cleanup_ptr(word);
 	if (!processed_word)
-	{
-		cleanup_ptr(word);
 		return (NULL);
-	}
 	*input += len;
 	return (processed_word);
 }

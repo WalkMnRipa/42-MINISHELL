@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 16:19:03 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/12/17 16:59:05 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/17 17:14:17 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,30 +49,13 @@ static void	cleanup_heredoc_chain(t_heredoc *heredoc)
 		if (heredoc->filename)
 		{
 			unlink(heredoc->filename);
-			free(heredoc->filename);
+			cleanup_ptr(heredoc->filename);
 		}
-		free(heredoc->delimiter);
-		free(heredoc);
+		if (heredoc->delimiter)
+			cleanup_ptr(heredoc->delimiter);
+		cleanup_ptr(heredoc);
 		heredoc = next;
 	}
-}
-
-static void	cleanup_cmd_content(t_cmd *cmd)
-{
-	if (!cmd)
-		return ;
-	if (cmd->args)
-		free_string_array(cmd->args, -1);
-	if (cmd->input_file)
-		free(cmd->input_file);
-	if (cmd->output_file)
-		free(cmd->output_file);
-	if (cmd->input_fd != STDIN_FILENO)
-		close(cmd->input_fd);
-	if (cmd->output_fd != STDOUT_FILENO)
-		close(cmd->output_fd);
-	if (cmd->heredocs)
-		cleanup_heredoc_chain(cmd->heredocs);
 }
 
 static void	cleanup_cmd(t_cmd *cmd)
@@ -82,8 +65,17 @@ static void	cleanup_cmd(t_cmd *cmd)
 	while (cmd)
 	{
 		next = cmd->next;
-		cleanup_cmd_content(cmd);
-		free(cmd);
+		if (cmd->args)
+			free_string_array(cmd->args, -1);
+		cleanup_ptr(cmd->input_file);
+		cleanup_ptr(cmd->output_file);
+		if (cmd->input_fd != STDIN_FILENO)
+			close(cmd->input_fd);
+		if (cmd->output_fd != STDOUT_FILENO)
+			close(cmd->output_fd);
+		if (cmd->heredocs)
+			cleanup_heredoc_chain(cmd->heredocs);
+		cleanup_ptr(cmd);
 		cmd = next;
 	}
 }

@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/02 10:48:00 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/12/17 16:29:04 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/17 17:17:13 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,13 +40,17 @@ static int	copy_pipe_to_file(int pipe_fd, t_heredoc *current)
 	return (0);
 }
 
-static void	run_heredoc_child(t_heredoc *current, t_env *env, int pipe_fds[2])
+static void	run_heredoc_child(t_heredoc *current, t_env *env, int pipe_fds[2],
+		t_cmd *cmd)
 {
+	int	status;
+
 	close(pipe_fds[0]);
 	signal(SIGINT, handle_heredoc_signal);
-	write_heredoc(pipe_fds[1], current->delimiter, env, current->expand_vars);
+	status = write_heredoc(pipe_fds[1], current->delimiter, env,
+			current->expand_vars);
 	close(pipe_fds[1]);
-	exit(0);
+	cleanup_all(env, cmd, status);
 }
 
 static int	handle_parent_process(pid_t pid, t_heredoc *current,
@@ -75,7 +79,7 @@ static int	handle_parent_process(pid_t pid, t_heredoc *current,
 	return (copy_pipe_to_file(pipe_fds[0], current));
 }
 
-static int	process_heredoc(t_heredoc *current, t_env *env)
+static int	process_heredoc(t_heredoc *current, t_env *env, t_cmd *cmd)
 {
 	int		pipe_fds[2];
 	pid_t	pid;
@@ -92,7 +96,7 @@ static int	process_heredoc(t_heredoc *current, t_env *env)
 		return (1);
 	}
 	if (pid == 0)
-		run_heredoc_child(current, env, pipe_fds);
+		run_heredoc_child(current, env, pipe_fds, cmd);
 	ret = handle_parent_process(pid, current, pipe_fds);
 	return (ret);
 }
@@ -111,7 +115,7 @@ int	handle_multiple_heredocs(t_cmd *cmd, t_env *env)
 			current_heredoc = current_cmd->heredocs;
 			while (current_heredoc)
 			{
-				status = process_heredoc(current_heredoc, env);
+				status = process_heredoc(current_heredoc, env, cmd);
 				if (status != 0)
 				{
 					g_signal_received = 1;

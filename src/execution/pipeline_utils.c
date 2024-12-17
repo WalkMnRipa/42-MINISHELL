@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/16 16:48:24 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/12/17 16:27:10 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/17 17:34:05 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,10 @@ void	run_pipeline_loop(t_cmd *cmd, pid_t *pids, t_pipe_info *info,
 	while (cmd && info->index < info->cmd_count)
 	{
 		if (!handle_pipe_process(cmd, &data))
+		{
+			cleanup_ptr(pids);
 			return ;
+		}
 		info->current_pipe = !info->current_pipe;
 		cmd = cmd->next;
 		info->index++;

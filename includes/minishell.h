@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 18:06:21 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/12/17 17:01:06 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/17 17:24:38 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -228,7 +228,7 @@ int						builtin_pwd(void);
 int						builtin_export(t_cmd *cmd, t_env **env, char **args);
 int						builtin_unset(t_cmd *cmd, t_env **env, char **args);
 int						builtin_env(t_env *env);
-int						builtin_exit(t_cmd *cmd, char **args);
+int						builtin_exit(t_cmd *cmd, t_env **env, char **args);
 
 /* Export utilities */
 void					print_export_error(const char *arg);

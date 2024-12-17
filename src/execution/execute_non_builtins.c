@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/26 00:12:22 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/12/17 16:26:08 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/17 17:20:14 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ static void	handle_child_process(t_cmd *cmd, t_env **env)
 	cleanup_all(*env, cmd, cmd->exit_status);
 }
 
-static void	handle_parent_process(t_cmd *cmd, pid_t pid)
+static void	handle_non_builtin_parent(t_cmd *cmd, pid_t pid)
 {
 	int	status;
 	int	has_exited;
@@ -49,7 +49,7 @@ void	execute_non_builtin(t_cmd *cmd, t_env **env)
 	if (pid == 0)
 		handle_child_process(cmd, env);
 	else if (pid > 0)
-		handle_parent_process(cmd, pid);
+		handle_non_builtin_parent(cmd, pid);
 	else
 	{
 		perror("fork");

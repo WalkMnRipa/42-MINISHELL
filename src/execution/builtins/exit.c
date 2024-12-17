@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 20:01:56 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/25 18:08:35 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/17 17:26:23 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,12 +44,12 @@ static int	handle_numeric_argument(const char *arg)
 	return ((unsigned char)num);
 }
 
-int	builtin_exit(t_cmd *cmd, char **args)
+int	builtin_exit(t_cmd *cmd, t_env **env, char **args)
 {
 	int	status;
 
 	ft_putendl_fd("exit", STDOUT_FILENO);
-	if (!args || !cmd)
+	if (!args || !cmd || !env)
 		return (1);
 	status = cmd->exit_status;
 	if (args[1])
@@ -59,7 +59,8 @@ int	builtin_exit(t_cmd *cmd, char **args)
 			ft_putstr_fd("minishell: exit: ", STDERR_FILENO);
 			ft_putstr_fd(args[1], STDERR_FILENO);
 			ft_putendl_fd(": numeric argument required", STDERR_FILENO);
-			exit(2);
+			cleanup_all(*env, cmd, 2);
+			return (2);
 		}
 		status = handle_numeric_argument(args[1]);
 		if (args[2])
@@ -69,5 +70,7 @@ int	builtin_exit(t_cmd *cmd, char **args)
 			return (1);
 		}
 	}
-	exit(status & 0xFF);
+	cmd->exit_status = status & 0xFF;
+	cleanup_all(*env, cmd, cmd->exit_status);
+	return (status & 0xFF);
 }
