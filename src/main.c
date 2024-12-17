@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 18:00:00 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/12/16 23:41:36 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/17 01:54:31 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,8 @@ int	shell_loop(t_env **env)
 		}
 		handle_input(input, env, &exit_status);
 		free(input);
+		if (*env)
+			(*env)->last_exit_status = exit_status;
 	}
 	return (exit_status);
 }
@@ -82,6 +84,8 @@ int	main(int argc, char **argv, char **envp)
 	setup_signals();
 	exit_status = shell_loop(&env);
 	close(stdin_backup);
+	rl_clear_history();
+	clear_history();
 	cleanup(env, NULL);
 	return (exit_status);
 }

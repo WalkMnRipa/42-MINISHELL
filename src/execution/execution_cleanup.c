@@ -6,25 +6,18 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 20:11:10 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/12/17 01:27:57 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/17 01:57:29 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-static void	free_cmd_args(char **args)
+void	cleanup_readline(void)
 {
-	char	**tmp;
-
-	if (!args)
-		return ;
-	tmp = args;
-	while (*tmp)
-	{
-		free(*tmp);
-		tmp++;
-	}
-	free(args);
+	rl_clear_history();
+	clear_history();
+	rl_free_line_state();
+	rl_cleanup_after_signal();
 }
 
 void	free_cmd(t_cmd *cmd)
@@ -32,7 +25,7 @@ void	free_cmd(t_cmd *cmd)
 	if (!cmd)
 		return ;
 	if (cmd->args)
-		free_cmd_args(cmd->args);
+		free_string_array(cmd->args, -1);
 	if (cmd->input_file)
 		free(cmd->input_file);
 	if (cmd->output_file)
@@ -49,13 +42,21 @@ void	free_cmd(t_cmd *cmd)
 void	cleanup(t_env *env, t_cmd *cmd)
 {
 	t_cmd	*next;
+	t_env	*env_next;
 
-	free_env(env);
 	while (cmd)
 	{
 		next = cmd->next;
 		free_cmd(cmd);
 		cmd = next;
+	}
+	while (env)
+	{
+		env_next = env->next;
+		free(env->key);
+		free(env->value);
+		free(env);
+		env = env_next;
 	}
 }
 

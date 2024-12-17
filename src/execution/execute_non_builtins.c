@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/26 00:12:22 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/12/16 23:26:16 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/17 02:10:39 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,12 +60,9 @@ void	execute_non_builtin(t_cmd *cmd, t_env **env)
 
 int	prepare_command_execution(t_cmd *cmd, t_env **env)
 {
-	int	status;
-
 	if (cmd->heredocs)
 	{
-		status = handle_multiple_heredocs(cmd, *env);
-		if (status != 0)
+		if (handle_multiple_heredocs(cmd, *env) != 0)
 		{
 			cmd->exit_status = 1;
 			return (0);

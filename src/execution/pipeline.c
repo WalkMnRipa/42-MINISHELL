@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/16 16:28:40 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/12/04 17:14:18 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/17 02:00:45 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,6 +74,11 @@ void	execute_pipeline(t_cmd *cmd, t_env **env)
 
 	first_cmd = cmd;
 	ft_memset(pipe_fds, -1, sizeof(pipe_fds));
+	if (handle_multiple_heredocs(cmd, *env) != 0)
+	{
+		first_cmd->exit_status = 1;
+		return ;
+	}
 	if (!init_pipeline(cmd, &pids, &info))
 	{
 		ft_putendl_fd("minishell: memory allocation failed", 2);
