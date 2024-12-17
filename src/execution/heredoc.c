@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 16:38:41 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/12/17 16:27:47 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/17 21:05:47 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,19 +15,23 @@
 static void	handle_heredoc_line(char *line, int fd, t_env *env, int expand_vars)
 {
 	char	*expanded_line;
+	char	*temp;
 
 	if (!line)
 		return ;
 	if (expand_vars)
 	{
-		expanded_line = expand_variables_in_str(ft_strdup(line), env,
-				STATE_NORMAL);
-		if (expanded_line)
+		temp = ft_strdup(line);
+		if (!temp)
+			return ;
+		expanded_line = expand_variables_in_str(temp, env, STATE_NORMAL);
+		if (expanded_line && expanded_line != temp)
 		{
 			write(fd, expanded_line, ft_strlen(expanded_line));
 			write(fd, "\n", 1);
 			cleanup_ptr(expanded_line);
 		}
+		cleanup_ptr(temp);
 	}
 	else
 	{

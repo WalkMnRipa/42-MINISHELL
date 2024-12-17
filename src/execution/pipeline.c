@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/16 16:28:40 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/12/17 17:29:19 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/17 21:19:04 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,5 +90,5 @@ void	execute_pipeline(t_cmd *cmd, t_env **env)
 		wait_for_children(pids, info.cmd_count, env, first_cmd);
 	close_pipe_fds(pipe_fds);
 	setup_signals();
-	cleanup_ptr(pids);
+	cleanup_ptr(pids); // Always free pids regardless of execution path
 }

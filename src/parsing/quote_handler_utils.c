@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 17:03:21 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/12/17 16:37:11 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/17 21:18:49 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,7 @@ char	*handle_quotes(char *str, t_env *env)
 {
 	t_quote_state	quote_state;
 	char			*result;
+	char			*processed;
 
 	if (!str)
 		return (NULL);
@@ -56,8 +57,15 @@ char	*handle_quotes(char *str, t_env *env)
 	if (!result)
 		return (NULL);
 	quote_state = STATE_NORMAL;
-	result = process_string(result, env, quote_state);
-	if (!result)
+	processed = process_string(result, env, quote_state);
+	if (!processed)
+	{
+		cleanup_ptr(result);
 		return (NULL);
-	return (copy_without_quotes(result));
+	}
+	if (processed != result)
+		cleanup_ptr(result);
+	result = copy_without_quotes(processed);
+	// copy_without_quotes already frees processed
+	return (result);
 }
