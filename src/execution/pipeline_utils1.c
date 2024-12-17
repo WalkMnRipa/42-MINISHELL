@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/16 17:14:39 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/12/17 21:19:29 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/17 21:24:56 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,6 @@ int	handle_pipe_process(t_cmd *cmd, t_pipe_data *data)
 	{
 		(*data->env)->last_exit_status = 1;
 		return (0);
-		// Remove cleanup_ptr(data->pids) as it's handled in execute_pipeline
 	}
 	data->pids[data->info->index] = create_process(cmd, data->env,
 			data->pipe_fds, data->info);
@@ -26,7 +25,6 @@ int	handle_pipe_process(t_cmd *cmd, t_pipe_data *data)
 	{
 		(*data->env)->last_exit_status = 1;
 		return (0);
-		// Remove cleanup_ptr(data->pids) as it's handled in execute_pipeline
 	}
 	handle_parent_pipes(data->pipe_fds, data->info->index,
 		data->info->current_pipe);

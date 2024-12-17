@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 17:03:21 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/12/17 21:18:49 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/17 21:25:00 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,5 @@ char	*handle_quotes(char *str, t_env *env)
 	if (processed != result)
 		cleanup_ptr(result);
 	result = copy_without_quotes(processed);
-	// copy_without_quotes already frees processed
 	return (result);
 }

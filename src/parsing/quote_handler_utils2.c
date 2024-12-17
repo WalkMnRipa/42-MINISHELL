@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 19:50:31 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/12/17 21:10:21 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/17 21:25:50 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ static void	copy_chars(t_quote_data *data)
 	while (data->str[data->i])
 	{
 		if ((data->str[data->i] == '\'' || data->str[data->i] == '"')
-				&& (data->state == STATE_NORMAL
+			&& (data->state == STATE_NORMAL
 				|| data->str[data->i] == data->current_quote))
 		{
 			handle_quote_removal(data);

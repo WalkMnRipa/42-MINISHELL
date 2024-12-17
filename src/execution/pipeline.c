@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/16 16:28:40 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/12/17 21:19:04 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/17 21:21:54 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ static int	init_pipeline(t_cmd *cmd, pid_t **pids, t_pipe_info *info)
 		info->cmd_count++;
 		current = current->next;
 	}
-	*pids = malloc(sizeof(pid_t) * (info->cmd_count));
+	*pids = malloc(sizeof(pid_t) * info->cmd_count);
 	if (!(*pids))
 		return (0);
 	info->index = 0;
@@ -90,5 +90,5 @@ void	execute_pipeline(t_cmd *cmd, t_env **env)
 		wait_for_children(pids, info.cmd_count, env, first_cmd);
 	close_pipe_fds(pipe_fds);
 	setup_signals();
-	cleanup_ptr(pids); // Always free pids regardless of execution path
+	cleanup_ptr(pids);
 }
