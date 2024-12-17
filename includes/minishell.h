@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 18:06:21 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/12/03 17:01:02 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/17 01:27:13 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -278,5 +278,7 @@ int						handle_heredoc_with_file(t_cmd *cmd, char *delimiter,
 int						setup_last_heredoc(t_cmd *cmd);
 int						prepare_command_execution(t_cmd *cmd, t_env **env);
 void					cleanup_heredoc_files(t_cmd *cmd);
+int						get_word_length(char *input, t_quote_state *state);
+char					*get_var_value(char *var_name, t_env *env);
 
 #endif

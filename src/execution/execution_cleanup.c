@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 20:11:10 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/12/16 23:48:21 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/17 01:27:57 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,4 +66,3 @@ void	error_exit_message(t_env *env, t_cmd *cmd, char *message)
 	cleanup(env, cmd);
 	exit(EXIT_FAILURE);
 }
-

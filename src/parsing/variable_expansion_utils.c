@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 17:43:17 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/25 18:12:04 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/17 01:30:46 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,23 +14,22 @@
 
 static char	*extract_var_name(char *str, int *i)
 {
-	int		start;
+	int		s;
 	int		len;
 	char	*name;
 
-	start = *i + 1;
+	s = *i + 1;
 	len = 0;
-	if (str[start] == '?')
+	if (str[s] == '?')
 	{
 		*i += 1;
 		return (ft_strdup("?"));
 	}
-	while (str[start + len] && (ft_isalnum(str[start + len]) || str[start
-				+ len] == '_'))
+	while (str[s + len] && (ft_isalnum(str[s + len]) || str[s + len] == '_'))
 		len++;
 	if (len == 0)
 		return (NULL);
-	name = ft_substr(str, start, len);
+	name = ft_substr(str, s, len);
 	*i += len;
 	return (name);
 }
@@ -47,16 +46,32 @@ static void	free_expansion_data(char *var_name, char *var_value, char *before,
 		free(after);
 }
 
-static char	*get_var_value(char *var_name, t_env *env)
+static char	*process_expanded_command(char *expanded_value)
 {
-	char	*env_val;
+	char	*result;
+	char	**args;
+	int		i;
+	char	*temp;
 
-	if (ft_strcmp(var_name, "?") == 0)
-		return (ft_itoa(env->last_exit_status));
-	env_val = get_env_value(env, var_name);
-	if (env_val)
-		return (ft_strdup(env_val));
-	return (ft_strdup(""));
+	if (!ft_strchr(expanded_value, ' '))
+		return (expanded_value);
+	args = ft_split(expanded_value, ' ');
+	if (!args)
+		return (expanded_value);
+	result = ft_strdup(args[0]);
+	i = 1;
+	while (args[i])
+	{
+		temp = result;
+		result = ft_strjoin3(result, "\x1F", args[i]);
+		free(temp);
+		if (!result)
+			break ;
+		i++;
+	}
+	free_string_array(args, -1);
+	free(expanded_value);
+	return (result);
 }
 
 char	*expand_single_var(char *str, int *i, t_env *env)
@@ -78,6 +93,8 @@ char	*expand_single_var(char *str, int *i, t_env *env)
 		return (str);
 	}
 	var_value = get_var_value(var_name, env);
+	if (var_value)
+		var_value = process_expanded_command(var_value);
 	result = join_expanded_var(before, var_value, after, i);
 	free_expansion_data(var_name, var_value, before, after);
 	if (!result)

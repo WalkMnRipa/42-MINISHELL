@@ -6,31 +6,11 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 18:57:57 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/12/16 23:33:07 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/17 01:25:56 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
-
-static int	get_word_length(char *input, t_quote_state *state)
-{
-	int	len;
-
-	len = 0;
-	while (input[len])
-	{
-		if (is_quote(input[len]))
-			*state = get_quote_state(input[len], *state);
-		if (*state == STATE_NORMAL && !is_quote(input[len]))
-		{
-			if (is_whitespace(input[len]) || (is_operator(input[len])
-					&& len == 0))
-				break ;
-		}
-		len++;
-	}
-	return (len);
-}
 
 static char	*extract_word(char **input, t_env *env)
 {
@@ -57,6 +37,51 @@ static char	*extract_word(char **input, t_env *env)
 	return (processed_word);
 }
 
+static t_token	*create_words_from_args(char **args)
+{
+	t_token	*head;
+	t_token	*current;
+	t_token	*tmp;
+	int		i;
+
+	head = NULL;
+	i = 0;
+	while (args[i])
+	{
+		current = create_token(TOKEN_WORD, ft_strdup(args[i]));
+		if (!current)
+			return (free_tokens(head), NULL);
+		if (!head)
+			head = current;
+		else
+		{
+			tmp = head;
+			while (tmp->next)
+				tmp = tmp->next;
+			tmp->next = current;
+		}
+		i++;
+	}
+	return (head);
+}
+
+t_token	*handle_expanded_command(char *value)
+{
+	t_token	*head;
+	char	**args;
+
+	head = NULL;
+	if (!ft_strchr(value, '\x1F'))
+		return (create_token(TOKEN_WORD, value));
+	args = ft_split(value, '\x1F');
+	free(value);
+	if (!args)
+		return (NULL);
+	head = create_words_from_args(args);
+	free_string_array(args, -1);
+	return (head);
+}
+
 t_token	*get_next_token(char **input, t_env *env)
 {
 	t_token	*token;
@@ -71,6 +96,8 @@ t_token	*get_next_token(char **input, t_env *env)
 	value = extract_word(input, env);
 	if (!value)
 		return (NULL);
+	if (value[0] != '\0' && ft_strchr(value, '\x1F'))
+		return (handle_expanded_command(value));
 	token = create_token(TOKEN_WORD, value);
 	if (!token)
 	{

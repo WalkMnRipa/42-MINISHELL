@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 17:39:32 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/27 11:14:45 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/17 01:27:07 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,4 +56,36 @@ t_token	*handle_syntax_check(t_token *head)
 		return (NULL);
 	}
 	return (head);
+}
+
+int	get_word_length(char *input, t_quote_state *state)
+{
+	int	len;
+
+	len = 0;
+	while (input[len])
+	{
+		if (is_quote(input[len]))
+			*state = get_quote_state(input[len], *state);
+		if (*state == STATE_NORMAL && !is_quote(input[len]))
+		{
+			if (is_whitespace(input[len]) || (is_operator(input[len])
+					&& len == 0))
+				break ;
+		}
+		len++;
+	}
+	return (len);
+}
+
+char	*get_var_value(char *var_name, t_env *env)
+{
+	char	*env_val;
+
+	if (ft_strcmp(var_name, "?") == 0)
+		return (ft_itoa(env->last_exit_status));
+	env_val = get_env_value(env, var_name);
+	if (env_val)
+		return (ft_strdup(env_val));
+	return (ft_strdup(""));
 }
