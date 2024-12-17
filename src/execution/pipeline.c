@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/16 16:28:40 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/12/17 02:00:45 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/17 16:26:54 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,7 @@ void	execute_pipeline(t_cmd *cmd, t_env **env)
 	if (!init_pipeline(cmd, &pids, &info))
 	{
 		ft_putendl_fd("minishell: memory allocation failed", 2);
-		return ;
+		cleanup_all(*env, cmd, 1);
 	}
 	setup_parent_signals();
 	run_pipeline_loop(cmd, pids, &info, env);
@@ -90,5 +90,5 @@ void	execute_pipeline(t_cmd *cmd, t_env **env)
 		wait_for_children(pids, info.cmd_count, env, first_cmd);
 	close_pipe_fds(pipe_fds);
 	setup_signals();
-	free(pids);
+	cleanup_ptr(pids);
 }

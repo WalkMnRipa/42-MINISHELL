@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 20:14:16 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/12/17 02:18:12 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/17 16:25:51 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,10 +45,8 @@ static int	handle_command_error(t_cmd *cmd, char *command_path, t_env **env)
 	{
 		ft_putendl_fd("minishell: : command not found", 2);
 		cmd->exit_status = 127;
-		if (command_path)
-			free(command_path);
-		cleanup(*env, cmd);
-		exit(127);
+		cleanup_ptr(command_path);
+		cleanup_all(*env, cmd, 127);
 		return (1);
 	}
 	if (!command_path)
@@ -57,8 +55,7 @@ static int	handle_command_error(t_cmd *cmd, char *command_path, t_env **env)
 		ft_putstr_fd(cmd->args[0], 2);
 		ft_putendl_fd(": command not found", 2);
 		cmd->exit_status = 127;
-		cleanup(*env, cmd);
-		exit(127);
+		cleanup_all(*env, cmd, 127);
 		return (1);
 	}
 	return (0);
@@ -75,15 +72,15 @@ void	execute_external_command(t_cmd *cmd, t_env **env)
 	env_array = env_to_array(*env);
 	if (!env_array)
 	{
-		free(command_path);
-		error_exit_message(*env, cmd, "malloc failed");
+		cleanup_ptr(command_path);
+		cleanup_all(*env, cmd, 1);
 	}
 	reset_signals();
 	execve(command_path, cmd->args, env_array);
 	perror("execve failed");
-	free(command_path);
+	cleanup_ptr(command_path);
 	free_string_array(env_array, -1);
-	exit(1);
+	cleanup_all(*env, cmd, 1);
 }
 
 static void	execute_command_with_fds(t_cmd *cmd, t_env **env)

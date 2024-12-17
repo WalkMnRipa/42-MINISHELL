@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 18:20:46 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/25 18:11:14 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/17 16:52:03 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,22 +33,6 @@ char	*ft_strjoin_array(char **array, char *delimiter)
 		i++;
 	}
 	return (result);
-}
-
-void	ft_free_array(char **array)
-{
-	int	i;
-
-	i = 0;
-	if (array)
-	{
-		while (array[i])
-		{
-			free(array[i]);
-			i++;
-		}
-		free(array);
-	}
 }
 
 char	*ft_strtok(char *str, const char *delim)

@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/26 00:12:22 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/12/17 02:10:39 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/17 16:26:08 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,7 @@ static void	handle_child_process(t_cmd *cmd, t_env **env)
 {
 	reset_signals();
 	execute_external_command(cmd, env);
-	cleanup(*env, cmd);
-	exit(cmd->exit_status);
+	cleanup_all(*env, cmd, cmd->exit_status);
 }
 
 static void	handle_parent_process(t_cmd *cmd, pid_t pid)

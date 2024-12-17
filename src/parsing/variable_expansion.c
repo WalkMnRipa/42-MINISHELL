@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 18:59:44 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/25 18:12:08 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/17 16:35:05 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,13 +29,20 @@ static int	is_valid_var_char(char c)
 
 static char	*handle_var_expansion(char *str, int *i, t_env *env)
 {
+	char	*result;
+
 	if (should_skip_char(str[*i + 1]))
 	{
 		(*i)++;
 		return (str);
 	}
 	if (is_valid_var_char(str[*i + 1]))
-		return (expand_single_var(str, i, env));
+	{
+		result = expand_single_var(str, i, env);
+		if (!result)
+			return (NULL);
+		return (result);
+	}
 	(*i)++;
 	return (str);
 }
@@ -55,7 +62,10 @@ char	*expand_variables_in_str(char *str, t_env *env, t_quote_state state)
 		{
 			result = handle_var_expansion(result, &i, env);
 			if (!result)
+			{
+				cleanup_ptr(str);
 				return (NULL);
+			}
 			continue ;
 		}
 		i++;

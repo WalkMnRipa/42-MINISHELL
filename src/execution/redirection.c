@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/15 17:39:24 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/12/04 17:13:51 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/17 16:31:03 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,6 @@ static int	handle_input_redirection(t_cmd *cmd, int *prev_fds)
 	if (fd == -1 || dup2(fd, STDIN_FILENO) == -1)
 	{
 		perror("minishell: input redirection");
-		cleanup_fds(prev_fds[0], prev_fds[1]);
 		if (fd != -1)
 			close(fd);
 		return (0);

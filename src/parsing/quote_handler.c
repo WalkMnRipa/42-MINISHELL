@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 18:58:27 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/25 18:11:44 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/17 16:36:56 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,9 +46,14 @@ char	*copy_without_quotes(char *str)
 {
 	t_quote_data	data;
 
+	if (!str)
+		return (NULL);
 	data.result = malloc(ft_strlen(str) + 1);
 	if (!data.result)
+	{
+		cleanup_ptr(str);
 		return (NULL);
+	}
 	data.i = 0;
 	data.j = 0;
 	data.state = STATE_NORMAL;
@@ -57,7 +62,7 @@ char	*copy_without_quotes(char *str)
 	while (str[data.i])
 	{
 		if ((str[data.i] == '\'' || str[data.i] == '"')
-			&& (data.state == STATE_NORMAL
+				&& (data.state == STATE_NORMAL
 				|| str[data.i] == data.current_quote))
 		{
 			handle_quote_removal(&data);
@@ -67,11 +72,29 @@ char	*copy_without_quotes(char *str)
 		data.result[data.j++] = str[data.i++];
 	}
 	data.result[data.j] = '\0';
-	free(str);
+	cleanup_ptr(str);
 	return (data.result);
 }
 
 int	is_quote(char c)
 {
 	return (c == '\'' || c == '"');
+}
+
+int	is_quote_closed(char *str)
+{
+	t_quote_state	state;
+	int				i;
+
+	if (!str)
+		return (1);
+	state = STATE_NORMAL;
+	i = 0;
+	while (str[i])
+	{
+		if (is_quote(str[i]))
+			state = get_quote_state(str[i], state);
+		i++;
+	}
+	return (state == STATE_NORMAL);
 }

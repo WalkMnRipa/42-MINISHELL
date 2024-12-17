@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/16 16:48:24 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/25 18:10:03 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/17 16:27:10 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,35 +39,59 @@ int	handle_pipe_creation(t_cmd *cmd, int pipe_fds[2][2], int current_pipe)
 	return (1);
 }
 
-void	handle_parent_pipes(int pipe_fds[2][2], int i, int current_pipe)
+static void	execute_child_process(t_cmd *cmd, t_env **env)
 {
-	if (i > 0)
+	reset_signals();
+	if (is_builtin(cmd->args[0]))
 	{
-		close(pipe_fds[!current_pipe][0]);
-		close(pipe_fds[!current_pipe][1]);
+		execute_builtin(cmd, env);
+		cleanup_all(*env, cmd, cmd->exit_status);
 	}
+	else
+		execute_external_command(cmd, env);
 }
 
-void	cleanup_pipeline(pid_t *pids, int pipe_fds[2][2], int i)
+pid_t	create_process(t_cmd *cmd, t_env **env, int pipe_fds[2][2],
+		t_pipe_info *info)
 {
-	if (i > 0)
+	pid_t	pid;
+
+	pid = fork();
+	if (pid == -1)
 	{
-		close(pipe_fds[0][0]);
-		close(pipe_fds[0][1]);
-		close(pipe_fds[1][0]);
-		close(pipe_fds[1][1]);
+		perror("fork");
+		return (-1);
 	}
-	free(pids);
+	if (pid == 0)
+	{
+		setup_child_pipes(pipe_fds, info->index, info->current_pipe,
+			cmd->next != NULL);
+		if (!setup_redirections(cmd))
+		{
+			if (cmd->next)
+				cleanup_all(*env, cmd, 0);
+			else
+				cleanup_all(*env, cmd, 1);
+		}
+		execute_child_process(cmd, env);
+	}
+	return (pid);
 }
 
-void	handle_last_process_status(int status, t_env **env)
+void	run_pipeline_loop(t_cmd *cmd, pid_t *pids, t_pipe_info *info,
+		t_env **env)
 {
-	if (WIFEXITED(status))
-		(*env)->last_exit_status = WEXITSTATUS(status);
-	else if (WIFSIGNALED(status))
+	t_pipe_data	data;
+
+	data.pids = pids;
+	data.info = info;
+	data.env = env;
+	while (cmd && info->index < info->cmd_count)
 	{
-		(*env)->last_exit_status = 128 + WTERMSIG(status);
-		if (WTERMSIG(status) == SIGQUIT)
-			ft_putendl_fd("Quit (core dumped)", STDERR_FILENO);
+		if (!handle_pipe_process(cmd, &data))
+			return ;
+		info->current_pipe = !info->current_pipe;
+		cmd = cmd->next;
+		info->index++;
 	}
 }

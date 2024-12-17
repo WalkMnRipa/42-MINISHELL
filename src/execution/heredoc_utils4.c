@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/02 10:54:39 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/12/02 15:19:42 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/17 16:30:16 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ static int	write_to_heredoc(int fd, char *clean_delim, t_env *env,
 	if (result)
 	{
 		close(fd);
-		free(clean_delim);
+		cleanup_ptr(clean_delim);
 		unlink(filename);
 		g_signal_received = 0;
 		setup_signals();
@@ -70,12 +70,12 @@ int	handle_heredoc_with_file(t_cmd *cmd, char *delimiter, t_env *env,
 	fd = open_heredoc_file(filename);
 	if (fd == -1)
 	{
-		free(clean_delim);
+		cleanup_ptr(clean_delim);
 		return (1);
 	}
 	if (write_to_heredoc(fd, clean_delim, env, filename))
 		return (1);
 	close(fd);
-	free(clean_delim);
+	cleanup_ptr(clean_delim);
 	return (setup_input_fd(cmd, filename));
 }

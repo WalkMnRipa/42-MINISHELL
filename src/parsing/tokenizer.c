@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 18:57:57 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/12/17 01:25:56 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/17 16:33:35 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,11 +29,10 @@ static char	*extract_word(char **input, t_env *env)
 	processed_word = handle_quotes(word, env);
 	if (!processed_word)
 	{
-		free(word);
+		cleanup_ptr(word);
 		return (NULL);
 	}
 	*input += len;
-	free(word);
 	return (processed_word);
 }
 
@@ -50,7 +49,10 @@ static t_token	*create_words_from_args(char **args)
 	{
 		current = create_token(TOKEN_WORD, ft_strdup(args[i]));
 		if (!current)
-			return (free_tokens(head), NULL);
+		{
+			free_tokens(head);
+			return (NULL);
+		}
 		if (!head)
 			head = current;
 		else
@@ -70,11 +72,10 @@ t_token	*handle_expanded_command(char *value)
 	t_token	*head;
 	char	**args;
 
-	head = NULL;
 	if (!ft_strchr(value, '\x1F'))
 		return (create_token(TOKEN_WORD, value));
 	args = ft_split(value, '\x1F');
-	free(value);
+	cleanup_ptr(value);
 	if (!args)
 		return (NULL);
 	head = create_words_from_args(args);
@@ -101,7 +102,7 @@ t_token	*get_next_token(char **input, t_env *env)
 	token = create_token(TOKEN_WORD, value);
 	if (!token)
 	{
-		free(value);
+		cleanup_ptr(value);
 		return (NULL);
 	}
 	return (token);

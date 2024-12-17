@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 18:59:19 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/25 18:11:51 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/17 16:34:23 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,10 @@ t_token	*create_token(t_token_type type, char *value)
 
 	new_token = (t_token *)malloc(sizeof(t_token));
 	if (!new_token)
+	{
+		cleanup_ptr(value);
 		return (NULL);
+	}
 	new_token->type = type;
 	new_token->value = value;
 	new_token->quote_type = STATE_NORMAL;
@@ -45,12 +48,8 @@ void	free_token(t_token *token)
 {
 	if (!token)
 		return ;
-	if (token->value)
-	{
-		free(token->value);
-		token->value = NULL;
-	}
-	free(token);
+	cleanup_ptr(token->value);
+	cleanup_ptr(token);
 }
 
 void	free_tokens(t_token *head)
@@ -58,15 +57,12 @@ void	free_tokens(t_token *head)
 	t_token	*current;
 	t_token	*next;
 
-	if (!head)
-		return ;
 	current = head;
 	while (current)
 	{
 		next = current->next;
-		if (current->value)
-			free(current->value);
-		free(current);
+		cleanup_ptr(current->value);
+		cleanup_ptr(current);
 		current = next;
 	}
 }

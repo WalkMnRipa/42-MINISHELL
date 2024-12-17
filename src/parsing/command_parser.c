@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 19:00:03 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/12/03 14:50:52 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/17 16:31:50 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,14 +62,20 @@ t_cmd	*group_tokens_into_commands(t_token *tokens, t_env *env)
 	while (token)
 	{
 		if (!process_token(&current, &token, env))
-			return (free_cmd_list(head), NULL);
+		{
+			cleanup_all(NULL, head, -1);
+			return (NULL);
+		}
 		token = token->next;
 	}
 	if (current && !current->args && (current->input_file
 			|| current->output_file || current->heredocs))
 	{
 		if (!add_argument(current, ""))
-			return (free_cmd_list(head), NULL);
+		{
+			cleanup_all(NULL, head, -1);
+			return (NULL);
+		}
 	}
 	return (head);
 }

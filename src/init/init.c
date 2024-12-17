@@ -6,25 +6,11 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 13:18:58 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/11/27 10:29:22 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/17 16:52:50 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
-
-void	free_env(t_env *env)
-{
-	t_env	*tmp;
-
-	while (env)
-	{
-		tmp = env;
-		env = env->next;
-		free(tmp->key);
-		free(tmp->value);
-		free(tmp);
-	}
-}
 
 t_env	*create_env_node(char *envp)
 {
@@ -47,9 +33,9 @@ t_env	*create_env_node(char *envp)
 	}
 	if (!new_node->key || !new_node->value)
 	{
-		free(new_node->key);
-		free(new_node->value);
-		free(new_node);
+		cleanup_ptr(new_node->key);
+		cleanup_ptr(new_node->value);
+		cleanup_ptr(new_node);
 		return (NULL);
 	}
 	return (new_node->next = NULL, new_node);
@@ -69,7 +55,8 @@ t_env	*init_env(char **envp)
 		if (!new_node)
 		{
 			ft_putendl_fd("minishell: env initialization failed", 2);
-			return (free_env(env), NULL);
+			cleanup_all(env, NULL, -1);
+			return (NULL);
 		}
 		if (!env)
 			env = new_node;

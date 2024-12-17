@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/01 23:47:10 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/12/02 10:55:21 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/17 16:33:16 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,20 +14,20 @@
 
 int	handle_input_redirect(t_cmd *cmd, t_token *next)
 {
-	char	*old_file;
+	char	*new_file;
 
-	old_file = cmd->input_file;
-	cmd->input_file = ft_strdup(next->value);
-	if (!cmd->input_file)
+	new_file = ft_strdup(next->value);
+	if (!new_file)
 		return (0);
-	free(old_file);
+	cleanup_ptr(cmd->input_file);
+	cmd->input_file = new_file;
 	return (1);
 }
 
 int	handle_output_redirect(t_cmd *cmd, t_token *token, t_token *next)
 {
 	int		fd;
-	char	*old_file;
+	char	*new_file;
 
 	if (cmd->output_file)
 	{
@@ -35,10 +35,11 @@ int	handle_output_redirect(t_cmd *cmd, t_token *token, t_token *next)
 		if (fd != -1)
 			close(fd);
 	}
-	old_file = cmd->output_file;
-	cmd->output_file = ft_strdup(next->value);
-	if (!cmd->output_file)
+	new_file = ft_strdup(next->value);
+	if (!new_file)
 		return (0);
+	cleanup_ptr(cmd->output_file);
+	cmd->output_file = new_file;
 	if (token->type == TOKEN_REDIR_OUT)
 	{
 		fd = open(next->value, O_CREAT | O_WRONLY | O_TRUNC, 0644);
@@ -46,6 +47,5 @@ int	handle_output_redirect(t_cmd *cmd, t_token *token, t_token *next)
 			close(fd);
 	}
 	cmd->append_output = (token->type == TOKEN_REDIR_APPEND);
-	free(old_file);
 	return (1);
 }

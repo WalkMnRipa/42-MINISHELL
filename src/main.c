@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 18:00:00 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/12/17 01:54:31 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/17 16:25:30 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ static int	handle_input(char *input, t_env **env, int *exit_status)
 			*exit_status = cmd->exit_status;
 		if (env && *env)
 			(*env)->last_exit_status = cmd->exit_status;
-		free_cmd_list(cmd);
+		cleanup_all(NULL, cmd, -1);
 	}
 	return (0);
 }
@@ -78,14 +78,11 @@ int	main(int argc, char **argv, char **envp)
 	if (stdin_backup == -1)
 	{
 		perror("minishell: dup failed");
-		cleanup(env, NULL);
-		return (1);
+		cleanup_all(env, NULL, 1);
 	}
 	setup_signals();
 	exit_status = shell_loop(&env);
 	close(stdin_backup);
-	rl_clear_history();
-	clear_history();
-	cleanup(env, NULL);
+	cleanup_all(env, NULL, exit_status);
 	return (exit_status);
 }

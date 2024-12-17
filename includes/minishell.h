@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 18:06:21 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/12/17 02:10:31 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/17 17:01:06 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,7 +131,6 @@ typedef struct s_quote_data
 t_env					*init_env(char **envp);
 t_env					*create_env_node(char *envp);
 t_env					*initialize_shell(char **envp);
-void					free_env(t_env *env);
 
 /* Environment handling functions */
 char					*get_env_value(t_env *env, const char *key);
@@ -143,16 +142,19 @@ int						is_readonly_var(const char *name);
 int						is_valid_env_name(const char *name);
 char					**env_to_array(t_env *env);
 
+/* Memory management and cleanup */
+void					cleanup_all(t_env *env, t_cmd *cmd, int exit_code);
+void					cleanup_ptr(void *ptr);
+void					cleanup_heredoc_files(t_cmd *cmd);
+void					cleanup_readline(void);
+void					error_exit_message(t_env *env, t_cmd *cmd,
+							char *message);
+void					free_string_array(char **array, int count);
+
 /* Parsing functions */
 t_token					*tokenizer(char *input, t_env *env);
 t_cmd					*group_tokens_into_commands(t_token *tokens,
 							t_env *env);
-char					*handle_quotes(char *str, t_env *env);
-t_quote_state			get_quote_state(char c, t_quote_state current);
-int						is_quote(char c);
-int						is_quote_closed(char *str);
-char					*expand_variables_in_str(char *str, t_env *env,
-							t_quote_state state);
 void					print_syntax_error(char *token);
 int						check_syntax_errors(t_token *tokens);
 
@@ -169,6 +171,7 @@ char					*expand_variables_in_str(char *str, t_env *env,
 char					*expand_single_var(char *str, int *i, t_env *env);
 char					*join_expanded_var(char *before, char *var_value,
 							char *after, int *i);
+char					*get_var_value(char *var_name, t_env *env);
 
 /* Command parsing functions */
 t_cmd					*create_command(void);
@@ -178,8 +181,6 @@ int						handle_redirection(t_cmd *cmd, t_token *token,
 int						handle_output_redirect(t_cmd *cmd, t_token *token,
 							t_token *next);
 int						handle_input_redirect(t_cmd *cmd, t_token *next);
-int						handle_heredoc_with_file(t_cmd *cmd, char *delimiter,
-							t_env *env, const char *filename);
 
 /* Token handling functions */
 t_token					*create_token(t_token_type type, char *value);
@@ -192,6 +193,7 @@ void					free_token(t_token *token);
 int						is_operator(char c);
 int						is_whitespace(char c);
 int						is_special_char(char c);
+int						get_word_length(char *input, t_quote_state *state);
 
 /* Command execution functions */
 void					execute_pipeline(t_cmd *cmd, t_env **env);
@@ -201,6 +203,7 @@ void					execute_external_command(t_cmd *cmd, t_env **env);
 char					*find_command_path(const char *command, t_env *env);
 int						setup_redirections(t_cmd *cmd);
 void					update_exit_status(t_cmd *cmd, int status);
+int						prepare_command_execution(t_cmd *cmd, t_env **env);
 
 /* Pipeline utilities */
 void					setup_child_pipes(int pipe_fds[2][2], int i,
@@ -209,13 +212,12 @@ int						handle_pipe_creation(t_cmd *cmd, int pipe_fds[2][2],
 							int current_pipe);
 void					handle_parent_pipes(int pipe_fds[2][2], int i,
 							int current_pipe);
-void					cleanup_pipeline(pid_t *pids, int pipe_fds[2][2],
-							int i);
 pid_t					create_process(t_cmd *cmd, t_env **env,
 							int pipe_fds[2][2], t_pipe_info *info);
 void					handle_last_process_status(int status, t_env **env);
 void					run_pipeline_loop(t_cmd *cmd, pid_t *pids,
 							t_pipe_info *info, t_env **env);
+int						handle_pipe_process(t_cmd *cmd, t_pipe_data *data);
 
 /* Builtin commands */
 int						is_builtin(char *cmd);
@@ -243,30 +245,9 @@ void					setup_signals(void);
 void					reset_signals(void);
 void					setup_parent_signals(void);
 
-/* Memory management */
-void					cleanup(t_env *env, t_cmd *cmd);
-void					free_cmd(t_cmd *cmd);
-void					free_cmd_list(t_cmd *head);
-void					free_string_array(char **array, int count);
-void					error_exit_message(t_env *env, t_cmd *cmd,
-							char *message);
-
-/* Utility functions */
-char					*ft_strjoin3(const char *s1, const char *s2,
-							const char *s3);
-int						is_direct_executable(const char *command);
-char					*try_path(const char *dir, const char *command);
-char					*ft_strtok(char *str, const char *delim);
-void					update_pwd(t_env *env, char *old_pwd, char *new_pwd);
-void					cleanup_fds(int prev_in_fd, int prev_out_fd);
-int						check_input_permissions(t_cmd *cmd, int *prev_fds);
-int						check_output_permissions(t_cmd *cmd, int *prev_fds);
-int						setup_output_fd(t_cmd *cmd, int flags, int *prev_fds);
-
-/* Heredoc */
+/* Heredoc handling */
 int						write_heredoc(int fd, char *delimiter, t_env *env,
 							int expand_vars);
-void					free_heredocs(t_heredoc *heredoc);
 t_heredoc				*create_heredoc(char *delimiter);
 char					*generate_heredoc_filename(void);
 void					handle_heredoc_signal(int sig);
@@ -276,9 +257,17 @@ int						handle_multiple_heredocs(t_cmd *cmd, t_env *env);
 int						handle_heredoc_with_file(t_cmd *cmd, char *delimiter,
 							t_env *env, const char *filename);
 int						setup_last_heredoc(t_cmd *cmd);
-int						prepare_command_execution(t_cmd *cmd, t_env **env);
-void					cleanup_heredoc_files(t_cmd *cmd);
-int						get_word_length(char *input, t_quote_state *state);
-char					*get_var_value(char *var_name, t_env *env);
-void					cleanup_readline(void);
+
+/* File and descriptor utilities */
+void					cleanup_fds(int prev_in_fd, int prev_out_fd);
+int						check_input_permissions(t_cmd *cmd, int *prev_fds);
+int						check_output_permissions(t_cmd *cmd, int *prev_fds);
+int						setup_output_fd(t_cmd *cmd, int flags, int *prev_fds);
+char					*ft_strjoin3(const char *s1, const char *s2,
+							const char *s3);
+int						is_direct_executable(const char *command);
+char					*try_path(const char *dir, const char *command);
+char					*ft_strtok(char *str, const char *delim);
+void					update_pwd(t_env *env, char *old_pwd, char *new_pwd);
+
 #endif

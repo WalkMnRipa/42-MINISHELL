@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 16:36:46 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/12/01 13:32:16 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/17 16:31:31 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,12 +65,12 @@ int	check_output_permissions(t_cmd *cmd, int *prev_fds)
 			ft_putstr_fd("minishell: ", 2);
 			ft_putstr_fd(cmd->output_file, 2);
 			ft_putendl_fd(": Permission denied", 2);
-			free(dir_path);
+			cleanup_ptr(dir_path);
 			restore_fds(prev_fds);
 			return (0);
 		}
 	}
-	free(dir_path);
+	cleanup_ptr(dir_path);
 	return (1);
 }
 

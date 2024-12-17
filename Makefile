@@ -11,7 +11,7 @@ CFLAGS = -Wall -Wextra -Werror
 LDFLAGS = -lreadline
 
 SRCS = src/main.c src/init/init.c src/execution/pipeline_utils.c src/execution/env_utils.c \
-	src/execution/pipeline.c src/execution/custom_setenv.c src/execution/execution_cleanup.c src/execution/execution_cleanup2.c \
+	src/execution/pipeline.c src/execution/custom_setenv.c src/execution/cleanup.c \
 	src/execution/redirection.c src/execution/env_utils1.c src/execution/signals.c \
 	src/execution/heredoc.c src/execution/heredoc_utils.c src/execution/heredoc_utils2.c \
 	src/execution/heredoc_utils3.c src/execution/heredoc_utils4.c src/execution/execute_command.c src/execution/pipeline_utils1.c \
@@ -24,7 +24,7 @@ SRCS = src/main.c src/init/init.c src/execution/pipeline_utils.c src/execution/e
 	src/parsing/syntax_check.c src/parsing/variable_expansion_utils.c src/parsing/quote_handler_utils.c \
 	src/parsing/command_parser_utils.c src/parsing/token_utils.c src/parsing/tokenizer.c \
 	src/parsing/tokenizer_utils.c src/parsing/command_parser.c src/parsing/variable_expansion.c \
-	src/parsing/quote_handler.c src/parsing/memory_utils.c src/parsing/token_utils1.c src/parsing/command_parser_utils2.c
+	src/parsing/quote_handler.c src/parsing/token_utils1.c src/parsing/command_parser_utils2.c
 
 OBJS_DIR = objs
 OBJS = $(SRCS:%.c=$(OBJS_DIR)/%.o)

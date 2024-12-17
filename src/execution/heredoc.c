@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 16:38:41 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/12/02 15:09:42 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/17 16:27:47 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ static void	handle_heredoc_line(char *line, int fd, t_env *env, int expand_vars)
 		{
 			write(fd, expanded_line, ft_strlen(expanded_line));
 			write(fd, "\n", 1);
-			free(expanded_line);
+			cleanup_ptr(expanded_line);
 		}
 	}
 	else
@@ -74,11 +74,11 @@ int	write_heredoc(int fd, char *delimiter, t_env *env, int expand_vars)
 			return (handle_heredoc_cleanup(stdin_backup, 1));
 		if (check_delimiter(line, delimiter))
 		{
-			free(line);
+			cleanup_ptr(line);
 			return (handle_heredoc_cleanup(stdin_backup, 0));
 		}
 		handle_heredoc_line(line, fd, env, expand_vars);
-		free(line);
+		cleanup_ptr(line);
 	}
 	return (handle_heredoc_cleanup(stdin_backup, 0));
 }

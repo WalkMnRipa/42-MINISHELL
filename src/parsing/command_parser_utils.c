@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 16:54:27 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/12/02 14:15:45 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/17 16:33:05 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@ int	add_argument(t_cmd *cmd, char *arg)
 {
 	int		i;
 	char	**new_args;
+	char	*new_arg;
 
 	i = 0;
 	if (cmd->args)
@@ -43,6 +44,12 @@ int	add_argument(t_cmd *cmd, char *arg)
 	new_args = (char **)malloc(sizeof(char *) * (i + 2));
 	if (!new_args)
 		return (0);
+	new_arg = ft_strdup(arg);
+	if (!new_arg)
+	{
+		cleanup_ptr(new_args);
+		return (0);
+	}
 	i = 0;
 	if (cmd->args)
 	{
@@ -53,7 +60,7 @@ int	add_argument(t_cmd *cmd, char *arg)
 		}
 		free(cmd->args);
 	}
-	new_args[i] = ft_strdup(arg);
+	new_args[i] = new_arg;
 	new_args[i + 1] = NULL;
 	cmd->args = new_args;
 	return (1);

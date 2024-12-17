@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/01 21:36:33 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/12/03 17:02:01 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/17 16:28:28 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ char	*generate_heredoc_filename(void)
 	if (!num_str)
 		return (NULL);
 	filename = ft_strjoin(".heredoc_tmp_", num_str);
-	free(num_str);
+	cleanup_ptr(num_str);
 	return (filename);
 }
 
@@ -39,9 +39,9 @@ t_heredoc	*create_heredoc(char *delimiter)
 	new_heredoc->next = NULL;
 	if (!new_heredoc->delimiter || !new_heredoc->filename)
 	{
-		free(new_heredoc->delimiter);
-		free(new_heredoc->filename);
-		free(new_heredoc);
+		cleanup_ptr(new_heredoc->delimiter);
+		cleanup_ptr(new_heredoc->filename);
+		cleanup_ptr(new_heredoc);
 		return (NULL);
 	}
 	return (new_heredoc);
@@ -57,11 +57,10 @@ void	free_heredocs(t_heredoc *heredoc)
 		if (heredoc->filename)
 		{
 			unlink(heredoc->filename);
-			free(heredoc->filename);
+			cleanup_ptr(heredoc->filename);
 		}
-		if (heredoc->delimiter)
-			free(heredoc->delimiter);
-		free(heredoc);
+		cleanup_ptr(heredoc->delimiter);
+		cleanup_ptr(heredoc);
 		heredoc = next;
 	}
 }
@@ -87,7 +86,7 @@ int	setup_last_heredoc(t_cmd *cmd)
 				last_filename) != 0)
 		{
 			unlink(current->filename);
-			free(current->filename);
+			cleanup_ptr(current->filename);
 			current->filename = NULL;
 		}
 		current = current->next;

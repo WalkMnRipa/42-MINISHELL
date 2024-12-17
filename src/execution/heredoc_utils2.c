@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/01 23:27:29 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/12/02 15:26:37 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/17 16:28:39 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ int	write_heredoc_content(t_heredoc *heredoc, t_env *env)
 	if (status)
 	{
 		unlink(heredoc->filename);
-		free(heredoc->filename);
+		cleanup_ptr(heredoc->filename);
 		heredoc->filename = NULL;
 		return (1);
 	}
