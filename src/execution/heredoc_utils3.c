@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/02 10:48:00 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/12/17 17:17:13 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/17 20:27:00 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,10 +117,7 @@ int	handle_multiple_heredocs(t_cmd *cmd, t_env *env)
 			{
 				status = process_heredoc(current_heredoc, env, cmd);
 				if (status != 0)
-				{
-					g_signal_received = 1;
-					return (status);
-				}
+					return ((g_signal_received = 1), status);
 				current_heredoc = current_heredoc->next;
 			}
 			if (setup_last_heredoc(current_cmd))

@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 20:01:56 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/12/17 17:26:23 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/17 20:29:34 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,11 +64,8 @@ int	builtin_exit(t_cmd *cmd, t_env **env, char **args)
 		}
 		status = handle_numeric_argument(args[1]);
 		if (args[2])
-		{
-			ft_putendl_fd("minishell: exit: too many arguments", STDERR_FILENO);
-			cmd->exit_status = 1;
-			return (1);
-		}
+			return ((ft_putendl_fd("minishell: exit: too many arguments",
+						STDERR_FILENO), cmd->exit_status = 1), 1);
 	}
 	cmd->exit_status = status & 0xFF;
 	cleanup_all(*env, cmd, cmd->exit_status);

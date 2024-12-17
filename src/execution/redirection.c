@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/15 17:39:24 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/12/17 18:54:39 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/17 20:28:19 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,16 +43,9 @@ static int	handle_input_redirection(t_cmd *cmd, int *prev_fds)
 		return (0);
 	fd = open(cmd->input_file, O_RDONLY);
 	if (fd == -1)
-	{
-		perror("minishell: input redirection");
-		return (0);
-	}
+		return (perror("minishell: input redirection"), 0);
 	if (dup2(fd, STDIN_FILENO) == -1)
-	{
-		perror("minishell: input redirection");
-		close(fd);
-		return (0);
-	}
+		return (perror("minishell: input redirection"), close(fd), 0);
 	close(fd);
 	return (1);
 }

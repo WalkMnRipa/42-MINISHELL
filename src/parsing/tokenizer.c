@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 18:57:57 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/12/17 17:08:46 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/17 20:23:59 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,10 +47,7 @@ static t_token	*create_words_from_args(char **args)
 	{
 		current = create_token(TOKEN_WORD, ft_strdup(args[i]));
 		if (!current)
-		{
-			free_tokens(head);
-			return (NULL);
-		}
+			return (free_tokens(head), NULL);
 		if (!head)
 			head = current;
 		else

@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 17:39:32 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/12/17 16:39:00 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/17 19:58:03 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,11 +95,15 @@ char	*get_var_value(char *var_name, t_env *env)
 	if (ft_strcmp(var_name, "?") == 0)
 	{
 		value = ft_itoa(env->last_exit_status);
-		return (value ? value : ft_strdup(""));
+		if (!value)
+			return (ft_strdup(""));
+		return (value);
 	}
 	env_val = get_env_value(env, var_name);
 	if (!env_val)
 		return (ft_strdup(""));
 	value = ft_strdup(env_val);
-	return (value ? value : ft_strdup(""));
+	if (!value)
+		return (ft_strdup(""));
+	return (value);
 }
