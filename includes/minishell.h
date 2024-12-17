@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 18:06:21 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/12/17 19:44:38 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/17 20:46:44 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -157,6 +157,7 @@ void					cleanup_readline(void);
 void					error_exit_message(t_env *env, t_cmd *cmd,
 							char *message);
 void					free_string_array(char **array, int count);
+void					cleanup_env(t_env *env);
 
 /* Parsing functions */
 t_token					*tokenizer(char *input, t_env *env);
