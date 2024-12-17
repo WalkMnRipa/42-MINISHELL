@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/01 23:47:10 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/12/17 16:33:16 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/17 20:35:14 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,4 +48,23 @@ int	handle_output_redirect(t_cmd *cmd, t_token *token, t_token *next)
 	}
 	cmd->append_output = (token->type == TOKEN_REDIR_APPEND);
 	return (1);
+}
+
+t_cmd	*create_command(void)
+{
+	t_cmd	*cmd;
+
+	cmd = (t_cmd *)malloc(sizeof(t_cmd));
+	if (!cmd)
+		return (NULL);
+	cmd->args = NULL;
+	cmd->input_file = NULL;
+	cmd->output_file = NULL;
+	cmd->input_fd = STDIN_FILENO;
+	cmd->output_fd = STDOUT_FILENO;
+	cmd->append_output = 0;
+	cmd->exit_status = 0;
+	cmd->heredocs = NULL;
+	cmd->next = NULL;
+	return (cmd);
 }
