@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 17:43:17 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/12/17 16:36:27 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/17 19:42:51 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,11 +50,7 @@ static char	*process_expanded_command(char *expanded_value)
 		return (expanded_value);
 	result = ft_strdup(args[0]);
 	if (!result)
-	{
-		free_string_array(args, -1);
-		cleanup_ptr(expanded_value);
-		return (NULL);
-	}
+		return (free_string_array(args, -1), cleanup_ptr(expanded_value), NULL);
 	i = 1;
 	while (args[i])
 	{
@@ -62,16 +58,11 @@ static char	*process_expanded_command(char *expanded_value)
 		result = ft_strjoin3(result, "\x1F", args[i]);
 		cleanup_ptr(temp);
 		if (!result)
-		{
-			free_string_array(args, -1);
-			cleanup_ptr(expanded_value);
-			return (NULL);
-		}
+			return (free_string_array(args, -1), cleanup_ptr(expanded_value),
+				NULL);
 		i++;
 	}
-	free_string_array(args, -1);
-	cleanup_ptr(expanded_value);
-	return (result);
+	return (free_string_array(args, -1), cleanup_ptr(expanded_value), result);
 }
 
 char	*join_expanded_var(char *before, char *var_value, char *after, int *i)
@@ -90,33 +81,46 @@ char	*join_expanded_var(char *before, char *var_value, char *after, int *i)
 	return (result);
 }
 
-char	*expand_single_var(char *str, int *i, t_env *env)
+static char	*handle_var_expansion(char *str, char *before, char *after,
+		t_var_data *data)
 {
-	char	*var_name;
 	char	*var_value;
-	char	*before;
-	char	*after;
 	char	*result;
 
-	var_name = extract_var_name(str, i);
-	if (!var_name)
-		return (str);
-	before = ft_substr(str, 0, *i - ft_strlen(var_name));
-	after = ft_strdup(str + *i + 1);
-	if (!before || !after)
-	{
-		cleanup_ptr(var_name);
-		cleanup_ptr(before);
-		cleanup_ptr(after);
-		return (str);
-	}
-	var_value = get_var_value(var_name, env);
+	var_value = get_var_value(data->var_name, data->env);
 	if (var_value)
 		var_value = process_expanded_command(var_value);
-	result = join_expanded_var(before, var_value ? var_value : "", after, i);
-	cleanup_ptr(var_name);
+	result = join_expanded_var(before, var_value, after, data->i);
+	cleanup_ptr(data->var_name);
 	cleanup_ptr(var_value);
 	cleanup_ptr(before);
 	cleanup_ptr(after);
-	return (result ? result : str);
+	if (result)
+		return (result);
+	return (str);
+}
+
+char	*expand_single_var(char *str, int *i, t_env *env)
+{
+	char		*before;
+	char		*after;
+	t_var_data	data;
+
+	data.var_name = extract_var_name(str, i);
+	if (!data.var_name)
+		return (str);
+	before = ft_substr(str, 0, *i - ft_strlen(data.var_name));
+	after = ft_strdup(str + *i + 1);
+	if (!before || !after)
+	{
+		cleanup_ptr(data.var_name);
+		if (before)
+			cleanup_ptr(before);
+		if (after)
+			cleanup_ptr(after);
+		return (str);
+	}
+	data.env = env;
+	data.i = i;
+	return (handle_var_expansion(str, before, after, &data));
 }

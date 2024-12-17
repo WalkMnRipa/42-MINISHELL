@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 18:06:21 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/12/17 17:24:38 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/12/17 19:44:38 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,13 @@ typedef struct s_env
 	int					last_exit_status;
 	struct s_env		*next;
 }						t_env;
+
+typedef struct s_var_data
+{
+	char				*var_name;
+	t_env				*env;
+	int					*i;
+}						t_var_data;
 
 typedef struct s_cmd
 {
